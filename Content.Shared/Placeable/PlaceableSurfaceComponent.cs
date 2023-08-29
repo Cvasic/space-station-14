@@ -6,7 +6,7 @@ namespace Content.Shared.Placeable
 {
     [RegisterComponent, NetworkedComponent]
     [Access(typeof(PlaceableSurfaceSystem))]
-    public sealed partial class PlaceableSurfaceComponent : Component
+    public sealed class PlaceableSurfaceComponent : Component
     {
         [DataField("isPlaceable")]
         public bool IsPlaceable { get; set; } = true;

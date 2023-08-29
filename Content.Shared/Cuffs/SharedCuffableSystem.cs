@@ -36,7 +36,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Cuffs
 {
     // TODO remove all the IsServer() checks.
-    public abstract partial class SharedCuffableSystem : EntitySystem
+    public abstract class SharedCuffableSystem : EntitySystem
     {
         [Dependency] private readonly IComponentFactory _componentFactory = default!;
         [Dependency] private readonly INetManager _net = default!;
@@ -705,12 +705,12 @@ namespace Content.Shared.Cuffs
         }
 
         [Serializable, NetSerializable]
-        private sealed partial class UnCuffDoAfterEvent : SimpleDoAfterEvent
+        private sealed class UnCuffDoAfterEvent : SimpleDoAfterEvent
         {
         }
 
         [Serializable, NetSerializable]
-        private sealed partial class AddCuffDoAfterEvent : SimpleDoAfterEvent
+        private sealed class AddCuffDoAfterEvent : SimpleDoAfterEvent
         {
         }
     }

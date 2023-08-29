@@ -9,7 +9,7 @@ namespace Content.Shared.Radio.Components;
 ///     It should be used for intercoms and other radios in future.
 /// </summary>
 [RegisterComponent]
-public sealed partial class EncryptionKeyComponent : Component
+public sealed class EncryptionKeyComponent : Component
 {
     [DataField("channels", customTypeSerializer: typeof(PrototypeIdHashSetSerializer<RadioChannelPrototype>))]
     public HashSet<string> Channels = new();
@@ -18,5 +18,5 @@ public sealed partial class EncryptionKeyComponent : Component
     ///     This is the channel that will be used when using the default/department prefix (<see cref="SharedChatSystem.DefaultChannelKey"/>).
     /// </summary>
     [DataField("defaultChannel", customTypeSerializer: typeof(PrototypeIdSerializer<RadioChannelPrototype>))]
-    public string? DefaultChannel;
+    public readonly string? DefaultChannel;
 }

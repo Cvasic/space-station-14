@@ -6,7 +6,7 @@
 /// This functions outside of the whitelist.
 /// </summary>
 [RegisterComponent]
-public sealed partial class ReproductivePartnerComponent : Component
+public sealed class ReproductivePartnerComponent : Component
 {
 
 }

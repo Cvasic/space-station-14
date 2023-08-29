@@ -9,7 +9,7 @@ namespace Content.Server.Worldgen.Components.Debris;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(DebrisFeaturePlacerSystem))]
-public sealed partial class SimpleDebrisSelectorComponent : Component
+public sealed class SimpleDebrisSelectorComponent : Component
 {
     private EntitySpawnCollectionCache? _cache;
 

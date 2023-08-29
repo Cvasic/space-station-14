@@ -4,7 +4,7 @@ namespace Content.Shared.Glue;
 
 [RegisterComponent]
 [Access(typeof(SharedGlueSystem))]
-public sealed partial class GluedComponent : Component
+public sealed class GluedComponent : Component
 {
     /// <summary>
     /// Reverts name to before prefix event (essentially removes prefix).

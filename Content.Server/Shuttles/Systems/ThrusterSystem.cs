@@ -445,7 +445,7 @@ public sealed class ThrusterSystem : EntitySystem
 
     private void OnStartCollide(EntityUid uid, ThrusterComponent component, ref StartCollideEvent args)
     {
-        if (args.OurFixtureId != BurnFixture)
+        if (args.OurFixture.ID != BurnFixture)
             return;
 
         component.Colliding.Add(args.OtherEntity);
@@ -453,7 +453,7 @@ public sealed class ThrusterSystem : EntitySystem
 
     private void OnEndCollide(EntityUid uid, ThrusterComponent component, ref EndCollideEvent args)
     {
-        if (args.OurFixtureId != BurnFixture)
+        if (args.OurFixture.ID != BurnFixture)
             return;
 
         component.Colliding.Remove(args.OtherEntity);

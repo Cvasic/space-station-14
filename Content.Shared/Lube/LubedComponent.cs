@@ -1,7 +1,7 @@
 namespace Content.Shared.Lube;
 
 [RegisterComponent]
-public sealed partial class LubedComponent : Component
+public sealed class LubedComponent : Component
 {
     /// <summary>
     /// Reverts name to before prefix event (essentially removes prefix).

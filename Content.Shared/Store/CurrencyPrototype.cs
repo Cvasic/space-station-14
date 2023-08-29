@@ -12,11 +12,11 @@ namespace Content.Shared.Store;
 /// </summary>
 [Prototype("currency")]
 [DataDefinition, Serializable, NetSerializable]
-public sealed partial class CurrencyPrototype : IPrototype
+public sealed class CurrencyPrototype : IPrototype
 {
     [ViewVariables]
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     /// <summary>
     /// The Loc string used for displaying the currency in the store ui.
@@ -24,23 +24,23 @@ public sealed partial class CurrencyPrototype : IPrototype
     /// that which is displayed to the user.
     /// </summary>
     [DataField("displayName")]
-    public string DisplayName { get; private set; } = string.Empty;
+    public string DisplayName { get; } = string.Empty;
 
     /// <summary>
     /// The physical entity of the currency
     /// </summary>
     [DataField("cash", customTypeSerializer: typeof(PrototypeIdValueDictionarySerializer<FixedPoint2, EntityPrototype>))]
-    public Dictionary<FixedPoint2, string>? Cash { get; private set; }
+    public Dictionary<FixedPoint2, string>? Cash { get; }
 
     /// <summary>
     /// Whether or not this currency can be withdrawn from a shop by a player. Requires a valid entityId.
     /// </summary>
     [DataField("canWithdraw")]
-    public bool CanWithdraw { get; private set; } = true;
+    public bool CanWithdraw { get; } = true;
 
 
     // start-backmen: currency
     [DataField("currencySymbol")]
-    public string CurrencySymbol { get; private set; } = string.Empty;
+    public string CurrencySymbol { get; } = string.Empty;
     // end-backmen: currency
 }

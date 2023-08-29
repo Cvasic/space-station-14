@@ -6,7 +6,7 @@ namespace Content.Shared.SprayPainter.Prototypes;
 public sealed class AirlockGroupPrototype : IPrototype
 {
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     [DataField("stylePaths")]
     public Dictionary<string, string> StylePaths = default!;

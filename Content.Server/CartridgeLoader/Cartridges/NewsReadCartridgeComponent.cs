@@ -1,7 +1,7 @@
 namespace Content.Server.CartridgeLoader.Cartridges;
 
 [RegisterComponent]
-public sealed partial class NewsReadCartridgeComponent : Component
+public sealed class NewsReadCartridgeComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite)]
     public int ArticleNum;

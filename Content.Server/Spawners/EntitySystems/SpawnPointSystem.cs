@@ -28,6 +28,7 @@ public sealed class SpawnPointSystem : EntitySystem
         // TODO: Cache all this if it ends up important.
         var points = EntityQueryEnumerator<SpawnPointComponent, TransformComponent>();
         var possiblePositions = new List<EntityCoordinates>();
+        EntityCoordinates? firstLoc = null;
 
         while ( points.MoveNext(out var uid, out var spawnPoint, out var xform))
         {

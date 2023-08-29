@@ -1,9 +1,9 @@
 ﻿namespace Content.Shared.Construction.Steps
 {
     [ImplicitDataDefinitionForInheritors]
-    public abstract partial class EntityInsertConstructionGraphStep : ConstructionGraphStep
+    public abstract class EntityInsertConstructionGraphStep : ConstructionGraphStep
     {
-        [DataField("store")] public string Store { get; private set; } = string.Empty;
+        [DataField("store")] public string Store { get; } = string.Empty;
 
         public abstract bool EntityValid(EntityUid uid, IEntityManager entityManager, IComponentFactory compFactory);
     }

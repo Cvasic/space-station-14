@@ -3,7 +3,7 @@
 namespace Content.Shared.Ame;
 
 [Virtual]
-public partial class SharedAmeShieldComponent : Component
+public class SharedAmeShieldComponent : Component
 {
 }
 

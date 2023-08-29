@@ -4,10 +4,10 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Storage;
 
 [Serializable, NetSerializable]
-public sealed partial class AreaPickupDoAfterEvent : DoAfterEvent
+public sealed class AreaPickupDoAfterEvent : DoAfterEvent
 {
     [DataField("entities", required: true)]
-    public IReadOnlyList<EntityUid> Entities = default!;
+    public readonly IReadOnlyList<EntityUid> Entities = default!;
 
     private AreaPickupDoAfterEvent()
     {

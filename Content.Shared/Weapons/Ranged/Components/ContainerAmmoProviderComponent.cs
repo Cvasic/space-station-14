@@ -6,7 +6,7 @@ namespace Content.Shared.Weapons.Ranged.Components;
 ///     Handles pulling entities from the given container to use as ammunition.
 /// </summary>
 [RegisterComponent]
-public sealed partial class ContainerAmmoProviderComponent : AmmoProviderComponent
+public sealed class ContainerAmmoProviderComponent : AmmoProviderComponent
 {
     [DataField("container", required: true)]
     [ViewVariables]

@@ -31,7 +31,7 @@ using Content.Shared.Tiles;
 namespace Content.Server.Backmen.Arrivals;
 
 [RegisterComponent]
-public sealed partial class ArrivalsProtectComponent : Component
+public sealed class ArrivalsProtectComponent : Component
 {
 
 }

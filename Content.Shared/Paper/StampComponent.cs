@@ -10,7 +10,7 @@ namespace Content.Shared.Paper;
 ///     equivalent in the component.
 /// </summary>
 [DataDefinition, Serializable, NetSerializable]
-public partial struct StampDisplayInfo
+public struct StampDisplayInfo
 {
     StampDisplayInfo(string s)
     {
@@ -25,7 +25,7 @@ public partial struct StampDisplayInfo
 };
 
 [RegisterComponent]
-public sealed partial class StampComponent : Component
+public sealed class StampComponent : Component
 {
     /// <summary>
     ///     The loc string name that will be stamped to the piece of paper on examine.

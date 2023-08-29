@@ -25,7 +25,6 @@ using Content.Shared.Roles;
 using Content.Shared.Store;
 using JetBrains.Annotations;
 using Robust.Server.GameObjects;
-using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
@@ -41,7 +40,6 @@ public sealed class EconomySystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly BankManagerSystem _bankManager = default!;
     [Dependency] private readonly MindSystem _mindSystem = default!;
-    [Dependency] private readonly MetaDataSystem _metaDataSystem = default!;
 
     public override void Initialize()
     {
@@ -68,11 +66,8 @@ public sealed class EconomySystem : EntitySystem
     {
         foreach (var department in _prototype.EnumeratePrototypes<DepartmentPrototype>())
         {
-            var dummy = Spawn("CaptainIDCard",MapCoordinates.Nullspace);
-            _metaDataSystem.SetEntityName(dummy,"Bank: "+department.AccountNumber);
-            var bankAccount = _bankManagerSystem.CreateNewBankAccount(dummy, department.AccountNumber, true);
-            if (bankAccount == null)
-                continue;
+            var bankAccount = _bankManagerSystem.CreateNewBankAccount(department.AccountNumber, true);
+            if (bankAccount == null) continue;
             bankAccount.AccountName = department.ID;
             bankAccount.Balance = 100000;
         }
@@ -87,7 +82,7 @@ public sealed class EconomySystem : EntitySystem
         bankAccount = null;
         if (!Resolve(uid, ref id))
             return false;
-        bankAccount = _bankManager.CreateNewBankAccount(uid);
+        bankAccount = _bankManager.CreateNewBankAccount();
         if (bankAccount == null)
             return false;
         id.StoredBankAccountNumber = bankAccount.AccountNumber;

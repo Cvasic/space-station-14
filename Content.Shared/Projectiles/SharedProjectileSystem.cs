@@ -16,7 +16,7 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared.Projectiles;
 
-public abstract partial class SharedProjectileSystem : EntitySystem
+public abstract class SharedProjectileSystem : EntitySystem
 {
     public const string ProjectileFixture = "projectile";
 
@@ -132,7 +132,7 @@ public abstract partial class SharedProjectileSystem : EntitySystem
     }
 
     [Serializable, NetSerializable]
-    private sealed partial class RemoveEmbeddedProjectileEvent : DoAfterEvent
+    private sealed class RemoveEmbeddedProjectileEvent : DoAfterEvent
     {
         public override DoAfterEvent Clone() => this;
     }

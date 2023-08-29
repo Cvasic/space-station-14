@@ -4,6 +4,6 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Sticky;
 
 [Serializable, NetSerializable]
-public sealed partial class StickyDoAfterEvent : SimpleDoAfterEvent
+public sealed class StickyDoAfterEvent : SimpleDoAfterEvent
 {
 }

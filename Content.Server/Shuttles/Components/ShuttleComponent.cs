@@ -3,7 +3,7 @@ using System.Numerics;
 namespace Content.Server.Shuttles.Components
 {
     [RegisterComponent]
-    public sealed partial class ShuttleComponent : Component
+    public sealed class ShuttleComponent : Component
     {
         [ViewVariables]
         public bool Enabled = true;

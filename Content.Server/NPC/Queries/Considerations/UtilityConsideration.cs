@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Content.Server.NPC.Queries.Considerations;
 
 [ImplicitDataDefinitionForInheritors, MeansImplicitUse]
-public abstract partial class UtilityConsideration
+public abstract class UtilityConsideration
 {
     [DataField("curve", required: true)]
     public IUtilityCurve Curve = default!;

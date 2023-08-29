@@ -1,10 +1,10 @@
 namespace Content.Client.Kudzu
 {
     [RegisterComponent]
-    public sealed partial class KudzuVisualsComponent : Component
+    public sealed class KudzuVisualsComponent : Component
     {
         [DataField("layer")]
-        public int Layer { get; private set; } = 0;
+        public int Layer { get; } = 0;
     }
 
 }

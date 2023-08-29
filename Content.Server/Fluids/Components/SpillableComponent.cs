@@ -3,7 +3,7 @@ using Content.Shared.FixedPoint;
 namespace Content.Server.Fluids.Components;
 
 [RegisterComponent]
-public sealed partial class SpillableComponent : Component
+public sealed class SpillableComponent : Component
 {
     [DataField("solution")]
     public string SolutionName = "puddle";

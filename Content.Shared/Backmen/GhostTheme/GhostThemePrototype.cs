@@ -3,7 +3,7 @@
 namespace Content.Shared.Backmen.GhostTheme;
 
 [Prototype("ghostTheme")]
-public sealed partial class GhostThemePrototype : IPrototype
+public sealed class GhostThemePrototype : IPrototype
 {
     /// <inheritdoc/>
     [IdDataField]

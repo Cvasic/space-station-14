@@ -21,7 +21,7 @@ namespace Content.Server.Chemistry.ReactionEffects
     /// </summary>
     [UsedImplicitly]
     [DataDefinition]
-    public sealed partial class AreaReactionEffect : ReagentEffect
+    public sealed class AreaReactionEffect : ReagentEffect
     {
         /// <summary>
         /// How many seconds will the effect stay, counting after fully spreading.

@@ -2,7 +2,7 @@
 
 namespace Content.Server.Backmen.Drone.Actions;
 
-public sealed partial class bloodpackCraftActionEvent: InstantActionEvent
+public sealed class bloodpackCraftActionEvent: InstantActionEvent
 {
 
 }

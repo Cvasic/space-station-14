@@ -1559,12 +1559,6 @@
       state: tarantula
       sprite: Mobs/Animals/spider.rsi
   - type: Physics
-  - type: Arachne
-  - type: Puller
-    needsHands: false
-  - type: BloodSucker
-    unitsToSucc: 15
-    webRequired: true
   - type: Fixtures
     fixtures:
       fix1:
@@ -1590,7 +1584,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      90: Dead
+      150: Dead
   - type: MeleeWeapon
     hidden: true
     angle: 0
@@ -1599,8 +1593,8 @@
       path: /Audio/Effects/bite.ogg
     damage:
       types:
-        Piercing: 6
-        Poison: 6
+        Piercing: 12
+        Poison: 4
   - type: ReplacementAccent
     accent: xeno
   - type: InteractionPopup

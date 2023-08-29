@@ -107,4 +107,4 @@ public abstract class SharedCombatModeSystem : EntitySystem
     }
 }
 
-public sealed partial class ToggleCombatActionEvent : InstantActionEvent { }
+public sealed class ToggleCombatActionEvent : InstantActionEvent { }

@@ -5,7 +5,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Chemistry.Components;
 
 [NetworkedComponent()]
-public abstract partial class SharedHyposprayComponent : Component
+public abstract class SharedHyposprayComponent : Component
 {
     [DataField("solutionName")]
     public string SolutionName = "hypospray";

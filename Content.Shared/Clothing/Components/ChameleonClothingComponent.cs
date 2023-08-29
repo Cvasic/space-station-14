@@ -12,7 +12,7 @@ namespace Content.Shared.Clothing.Components;
 /// </summary>
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedChameleonClothingSystem))]
-public sealed partial class ChameleonClothingComponent : Component
+public sealed class ChameleonClothingComponent : Component
 {
     /// <summary>
     ///     Filter possible chameleon options by their slot flag.

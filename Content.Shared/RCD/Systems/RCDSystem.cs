@@ -320,13 +320,13 @@ public sealed class RCDSystem : EntitySystem
 }
 
 [Serializable, NetSerializable]
-public sealed partial class RCDDoAfterEvent : DoAfterEvent
+public sealed class RCDDoAfterEvent : DoAfterEvent
 {
     [DataField("location", required: true)]
-    public EntityCoordinates Location = default!;
+    public readonly EntityCoordinates Location = default!;
 
     [DataField("startingMode", required: true)]
-    public RcdMode StartingMode = default!;
+    public readonly RcdMode StartingMode = default!;
 
     private RCDDoAfterEvent()
     {

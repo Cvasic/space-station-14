@@ -9,7 +9,7 @@ namespace Content.Shared.Chemistry.Components;
 ///     tank of a car.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public sealed partial class RefillableSolutionComponent : Component
+public sealed class RefillableSolutionComponent : Component
 {
     /// <summary>
     /// Solution name that can added to easily.

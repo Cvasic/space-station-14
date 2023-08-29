@@ -12,7 +12,7 @@ using Content.Server.Stack;
 
 namespace Content.Server.Sericulture;
 
-public sealed partial class SericultureSystem : EntitySystem
+public sealed class SericultureSystem : EntitySystem
 {
     [Dependency] private readonly ActionsSystem _actionsSystem = default!;
     [Dependency] private readonly DoAfterSystem _doAfterSystem = default!;
@@ -97,5 +97,5 @@ public sealed partial class SericultureSystem : EntitySystem
         return false;
     }
 
-    public sealed partial class SericultureActionEvent : InstantActionEvent { }
+    public sealed class SericultureActionEvent : InstantActionEvent { }
 }

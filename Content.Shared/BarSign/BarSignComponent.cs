@@ -5,7 +5,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Shared.BarSign
 {
     [RegisterComponent, NetworkedComponent]
-    public sealed partial class BarSignComponent : Component
+    public sealed class BarSignComponent : Component
     {
         [DataField("current", customTypeSerializer:typeof(PrototypeIdSerializer<BarSignPrototype>))]
         public string? CurrentSign;

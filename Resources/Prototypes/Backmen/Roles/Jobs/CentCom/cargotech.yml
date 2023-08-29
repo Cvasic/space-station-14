@@ -44,7 +44,7 @@
     back: ClothingBackpackFilled
     shoes: ClothingShoesColorBlack
     id: CCCargoPDA
-    ears: ClothingHeadsetCentCom
+    ears: ClothingHeadsetCargo
     pocket1: AppraisalTool
   innerclothingskirt: ClothingUniformJumpskirtCargo
   satchel: ClothingBackpackSatchelFilled

@@ -3,18 +3,18 @@ using Content.Shared.Atmos.Monitor;
 namespace Content.Client.Atmos.Monitor;
 
 [RegisterComponent]
-public sealed partial class AtmosAlarmableVisualsComponent : Component
+public sealed class AtmosAlarmableVisualsComponent : Component
 {
     [DataField("layerMap")]
-    public string LayerMap { get; private set; } = string.Empty;
+    public string LayerMap { get; } = string.Empty;
 
     [DataField("alarmStates")]
-    public Dictionary<AtmosAlarmType, string> AlarmStates = new();
+    public readonly Dictionary<AtmosAlarmType, string> AlarmStates = new();
 
     [DataField("hideOnDepowered")]
-    public List<string>? HideOnDepowered;
+    public readonly List<string>? HideOnDepowered;
 
     // eh...
     [DataField("setOnDepowered")]
-    public Dictionary<string, string>? SetOnDepowered;
+    public readonly Dictionary<string, string>? SetOnDepowered;
 }

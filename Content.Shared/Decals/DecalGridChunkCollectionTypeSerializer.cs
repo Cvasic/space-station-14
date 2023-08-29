@@ -16,7 +16,7 @@ using static Content.Shared.Decals.DecalGridComponent;
 namespace Content.Shared.Decals
 {
     [TypeSerializer]
-    public sealed partial class DecalGridChunkCollectionTypeSerializer : ITypeSerializer<DecalGridChunkCollection, MappingDataNode>
+    public sealed class DecalGridChunkCollectionTypeSerializer : ITypeSerializer<DecalGridChunkCollection, MappingDataNode>
     {
         public ValidationNode Validate(ISerializationManager serializationManager, MappingDataNode node,
             IDependencyCollection dependencies, ISerializationContext? context = null)
@@ -163,22 +163,22 @@ namespace Content.Shared.Decals
         }
 
         [DataDefinition]
-        private readonly partial struct DecalData : IEquatable<DecalData>, IComparable<DecalData>
+        private readonly struct DecalData : IEquatable<DecalData>, IComparable<DecalData>
         {
             [DataField("id")]
-            public string Id { get; init; } = string.Empty;
+            public readonly string Id = string.Empty;
 
             [DataField("color")]
-            public Color? Color { get; init; }
+            public readonly Color? Color;
 
             [DataField("angle")]
-            public Angle Angle { get; init; } = Angle.Zero;
+            public readonly Angle Angle = Angle.Zero;
 
             [DataField("zIndex")]
-            public int ZIndex { get; init; }
+            public readonly int ZIndex;
 
             [DataField("cleanable")]
-            public bool Cleanable { get; init; }
+            public readonly bool Cleanable;
 
             public DecalData(string id, Color? color, Angle angle, int zIndex, bool cleanable)
             {

@@ -13,7 +13,7 @@ namespace Content.Server.Anomaly.Components;
 /// anomalies randomly on the station.
 /// </summary>
 [RegisterComponent, Access(typeof(SharedAnomalySystem))]
-public sealed partial class AnomalyGeneratorComponent : Component
+public sealed class AnomalyGeneratorComponent : Component
 {
     /// <summary>
     /// The time at which the cooldown for generating another anomaly will be over

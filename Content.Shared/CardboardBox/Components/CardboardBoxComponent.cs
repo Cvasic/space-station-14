@@ -9,7 +9,7 @@ namespace Content.Shared.CardboardBox.Components;
 /// Used for big cardboard box entities.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public sealed partial class CardboardBoxComponent : Component
+public sealed class CardboardBoxComponent : Component
 {
     /// <summary>
     /// The person in control of this box
@@ -55,7 +55,7 @@ public sealed partial class CardboardBoxComponent : Component
     /// Time between sound effects. Prevents effect spam
     /// </summary>
     [DataField("cooldownDuration")]
-    public TimeSpan CooldownDuration = TimeSpan.FromSeconds(5f);
+    public readonly TimeSpan CooldownDuration = TimeSpan.FromSeconds(5f);
 }
 
 [Serializable, NetSerializable]

@@ -8,7 +8,7 @@ namespace Content.Shared.StepTrigger.Components;
 [RegisterComponent]
 [NetworkedComponent]
 [Access(typeof(StepTriggerSystem))]
-public sealed partial class StepTriggerComponent : Component
+public sealed class StepTriggerComponent : Component
 {
     /// <summary>
     ///     List of entities that are currently colliding with the entity.
@@ -50,7 +50,7 @@ public sealed partial class StepTriggerComponent : Component
 
 [RegisterComponent]
 [Access(typeof(StepTriggerSystem))]
-public sealed partial class StepTriggerActiveComponent : Component
+public sealed class StepTriggerActiveComponent : Component
 {
 
 }

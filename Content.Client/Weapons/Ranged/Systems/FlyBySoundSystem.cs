@@ -33,7 +33,7 @@ public sealed class FlyBySoundSystem : SharedFlyBySoundSystem
             return;
         }
 
-        if (args.OurFixtureId != FlyByFixture ||
+        if (args.OurFixture.ID != FlyByFixture ||
             !_random.Prob(component.Prob))
         {
             return;

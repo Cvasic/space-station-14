@@ -107,10 +107,10 @@ public sealed class ResponseConstructionGuide : EntityEventArgs
 }
 
 [Serializable, NetSerializable]
-public sealed partial class ConstructionInteractDoAfterEvent : DoAfterEvent
+public sealed class ConstructionInteractDoAfterEvent : DoAfterEvent
 {
     [DataField("clickLocation")]
-    public EntityCoordinates ClickLocation;
+    public readonly EntityCoordinates ClickLocation;
 
     private ConstructionInteractDoAfterEvent()
     {
@@ -125,6 +125,6 @@ public sealed partial class ConstructionInteractDoAfterEvent : DoAfterEvent
 }
 
 [Serializable, NetSerializable]
-public sealed partial class WelderRefineDoAfterEvent : SimpleDoAfterEvent
+public sealed class WelderRefineDoAfterEvent : SimpleDoAfterEvent
 {
 }

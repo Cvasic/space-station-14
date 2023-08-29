@@ -3,7 +3,7 @@
 namespace Content.Server.ParticleAccelerator.Components;
 
 [RegisterComponent]
-public sealed partial class ParticleAcceleratorEmitterComponent : Component
+public sealed class ParticleAcceleratorEmitterComponent : Component
 {
     [DataField("emittedPrototype")]
     [ViewVariables(VVAccess.ReadWrite)]

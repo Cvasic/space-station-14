@@ -7,10 +7,10 @@ namespace Content.Shared.Construction.Conditions
 {
     [UsedImplicitly]
     [DataDefinition]
-    public sealed partial class TileType : IConstructionCondition
+    public sealed class TileType : IConstructionCondition
     {
         [DataField("targets")]
-        public List<string> TargetTiles { get; private set; } = new();
+        public List<string> TargetTiles { get; } = new();
 
         [DataField("guideText")]
         public string? GuideText;

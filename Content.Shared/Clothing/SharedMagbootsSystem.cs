@@ -90,4 +90,4 @@ public abstract class SharedMagbootsSystem : EntitySystem
     }
 }
 
-public sealed partial class ToggleMagbootsEvent : InstantActionEvent {}
+public sealed class ToggleMagbootsEvent : InstantActionEvent {}

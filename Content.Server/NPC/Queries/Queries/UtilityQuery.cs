@@ -4,7 +4,7 @@ namespace Content.Server.NPC.Queries.Queries;
 /// Adds entities to a query.
 /// </summary>
 [ImplicitDataDefinitionForInheritors]
-public abstract partial class UtilityQuery
+public abstract class UtilityQuery
 {
 
 }

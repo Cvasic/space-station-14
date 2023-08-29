@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.Sprite;
 
 [RegisterComponent, NetworkedComponent]
-public sealed partial class RandomSpriteComponent : Component
+public sealed class RandomSpriteComponent : Component
 {
     /// <summary>
     /// Whether or not all groups from <see cref="Available"/> are used,

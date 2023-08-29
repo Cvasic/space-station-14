@@ -6,7 +6,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.Xenoarchaeology.XenoArtifacts;
 
 [RegisterComponent, Access(typeof(ArtifactSystem))]
-public sealed partial class ArtifactComponent : Component
+public sealed class ArtifactComponent : Component
 {
     /// <summary>
     /// Every node contained in the tree
@@ -97,7 +97,7 @@ public sealed partial class ArtifactComponent : Component
 /// A single "node" of an artifact that contains various data about it.
 /// </summary>
 [DataDefinition]
-public sealed partial class ArtifactNode : ICloneable
+public sealed class ArtifactNode : ICloneable
 {
     /// <summary>
     /// A numeric id corresponding to each node.

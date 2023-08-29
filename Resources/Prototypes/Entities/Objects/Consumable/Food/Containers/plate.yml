@@ -46,7 +46,7 @@
     - Trash
   - type: PhysicalComposition
     materialComposition:
-      Glass: 60
+      Glass: 100
   - type: SpaceGarbage
 
 - type: entity
@@ -91,9 +91,6 @@
             max: 1
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: PhysicalComposition
-    materialComposition:
-      Glass: 30
 
 - type: entity
   parent: FoodPlateTrash

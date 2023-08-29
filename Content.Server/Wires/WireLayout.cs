@@ -15,7 +15,7 @@ namespace Content.Server.Wires;
 public sealed class WireLayoutPrototype : IPrototype, IInheritingPrototype
 {
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     [ParentDataField(typeof(AbstractPrototypeIdArraySerializer<WireLayoutPrototype>))]
     public string[]? Parents { get; private set; }
@@ -29,11 +29,11 @@ public sealed class WireLayoutPrototype : IPrototype, IInheritingPrototype
     ///     initialization)
     /// </summary>
     [DataField("dummyWires")]
-    public int DummyWires { get; private set; } = default!;
+    public int DummyWires { get; } = default!;
 
     /// <summary>
     ///     All the valid IWireActions currently in this layout.
     /// </summary>
     [DataField("wires")]
-    public List<IWireAction>? Wires { get; private set; }
+    public List<IWireAction>? Wires { get; }
 }

@@ -11,7 +11,7 @@ namespace Content.Server.Chemistry.Components;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(SolutionRegenerationSystem))]
-public sealed partial class SolutionRegenerationComponent : Component
+public sealed class SolutionRegenerationComponent : Component
 {
     /// <summary>
     /// The name of the solution to add to.

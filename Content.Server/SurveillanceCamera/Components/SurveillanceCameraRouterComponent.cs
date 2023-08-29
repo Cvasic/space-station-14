@@ -5,7 +5,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.SurveillanceCamera;
 
 [RegisterComponent]
-public sealed partial class SurveillanceCameraRouterComponent : Component
+public sealed class SurveillanceCameraRouterComponent : Component
 {
     [ViewVariables] public bool Active { get; set; }
 
@@ -27,5 +27,5 @@ public sealed partial class SurveillanceCameraRouterComponent : Component
     public string? SubnetFrequencyId { get; set;  }
 
     [DataField("setupAvailableNetworks", customTypeSerializer:typeof(PrototypeIdListSerializer<DeviceFrequencyPrototype>))]
-    public List<string> AvailableNetworks { get; private set; } = new();
+    public List<string> AvailableNetworks { get; } = new();
 }

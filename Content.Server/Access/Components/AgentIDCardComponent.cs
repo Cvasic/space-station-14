@@ -4,12 +4,12 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.Access.Components
 {
     [RegisterComponent]
-    public sealed partial class AgentIDCardComponent : Component
+    public sealed class AgentIDCardComponent : Component
     {
         /// <summary>
         /// Set of job icons that the agent ID card can show.
         /// </summary>
         [DataField("icons", customTypeSerializer: typeof(PrototypeIdHashSetSerializer<StatusIconPrototype>))]
-        public HashSet<string> Icons = new();
+        public readonly HashSet<string> Icons = new();
     }
 }

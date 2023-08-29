@@ -6,7 +6,7 @@ using Content.Shared.Whitelist;
 namespace Content.Server.Body.Components
 {
     [RegisterComponent, Access(typeof(StomachSystem), typeof(FoodSystem))]
-    public sealed partial class StomachComponent : Component
+    public sealed class StomachComponent : Component
     {
         public float AccumulatedFrameTime;
 

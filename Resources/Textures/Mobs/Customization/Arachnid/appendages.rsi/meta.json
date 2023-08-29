@@ -8,67 +8,35 @@
   },
   "states": [
     {
-      "name": "long_primary",
+      "name": "long",
       "directions": 4
     },
     {
-      "name": "long_secondary",
+      "name": "sharp",
       "directions": 4
     },
     {
-      "name": "sharp_primary",
+      "name": "stingers",
       "directions": 4
     },
     {
-      "name": "sharp_secondary",
+      "name": "curled",
       "directions": 4
     },
     {
-      "name": "stingers_primary",
+      "name": "zigzag",
       "directions": 4
     },
     {
-      "name": "stingers_secondary",
+      "name": "chipped",
       "directions": 4
     },
     {
-      "name": "curled_primary",
+      "name": "harvest",
       "directions": 4
     },
     {
-      "name": "curled_secondary",
-      "directions": 4
-    },
-    {
-      "name": "zigzag_primary",
-      "directions": 4
-    },
-    {
-      "name": "zigzag_secondary",
-      "directions": 4
-    },
-    {
-      "name": "chipped_primary",
-      "directions": 4
-    },
-    {
-      "name": "chipped_secondary",
-      "directions": 4
-    },
-    {
-      "name": "harvest_primary",
-      "directions": 4
-    },
-    {
-      "name": "harvest_secondary",
-      "directions": 4
-    },
-    {
-      "name": "short_primary",
-      "directions": 4
-    },
-    {
-      "name": "short_secondary",
+      "name": "short",
       "directions": 4
     }
   ]

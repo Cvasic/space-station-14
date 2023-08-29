@@ -41,9 +41,9 @@ namespace Content.Server.Backmen.Economy.ATM;
         {
             base.Initialize();
             SubscribeLocalEvent<ATMComponent, PowerChangedEvent>(OnPowerChanged);
-            SubscribeLocalEvent<ATMComponent, ComponentStartup>((uid, comp, _) => UpdateComponentUserInterface(uid,comp));
-            SubscribeLocalEvent<ATMComponent, EntInsertedIntoContainerMessage>((uid, comp, _) => UpdateComponentUserInterface(uid,comp));
-            SubscribeLocalEvent<ATMComponent, EntRemovedFromContainerMessage>((uid, comp, _) => UpdateComponentUserInterface(uid,comp));
+            SubscribeLocalEvent<ATMComponent, ComponentStartup>((_, comp, _) => UpdateComponentUserInterface(comp));
+            SubscribeLocalEvent<ATMComponent, EntInsertedIntoContainerMessage>((_, comp, _) => UpdateComponentUserInterface(comp));
+            SubscribeLocalEvent<ATMComponent, EntRemovedFromContainerMessage>((_, comp, _) => UpdateComponentUserInterface(comp));
             SubscribeLocalEvent<ATMComponent, ATMRequestWithdrawMessage>(OnRequestWithdraw);
             SubscribeLocalEvent<AtmCurrencyComponent,AfterInteractEvent>(OnAfterInteract, before: new[]{typeof(StoreSystem)});
             SubscribeLocalEvent<ATMComponent, AfterActivatableUIOpenEvent>(OnInteract);
@@ -54,7 +54,7 @@ namespace Content.Server.Backmen.Economy.ATM;
             if (!this.IsPowered(uid, EntityManager))
                 return;
 
-            UpdateComponentUserInterface(uid,component);
+            UpdateComponentUserInterface(component);
         }
 
         public Dictionary<string, FixedPoint2> GetCurrencyValue(EntityUid uid, PhysicalCompositionComponent component)
@@ -78,13 +78,13 @@ namespace Content.Server.Backmen.Economy.ATM;
 
             var user = args.User;
 
-            args.Handled = TryAddCurrency(GetCurrencyValue(args.Used, component), args.Target.Value, store);
+            args.Handled = TryAddCurrency(GetCurrencyValue(uid, component), store);
 
             if (args.Handled)
             {
                 var msg = Loc.GetString("store-currency-inserted", ("used", args.Used), ("target", args.Target));
                 _popup.PopupEntity(msg, args.Target.Value);
-                Del(args.Used);
+                QueueDel(args.Used);
             }
         }
 
@@ -102,36 +102,19 @@ namespace Content.Server.Backmen.Economy.ATM;
             {
                 finalState = ATMVisualState.Off;
             }
-            if (TryComp<AppearanceComponent>(uid, out var appearance))
+            if (TryComp<AppearanceComponent>(component.Owner, out var appearance))
             {
                 _appearanceSystem.SetData(uid, ATMVisuals.VisualState, finalState, appearance);
             }
         }
-        public void UpdateUi(EntityUid uid, BankAccountComponent bankAccount)
+        private void UpdateComponentUserInterface(ATMComponent component)
         {
-            if (!_uiSystem.TryGetUi(uid, ATMUiKey.Key, out var ui))
-                return;
-
-            var currencySymbol = "";
-            if(_prototypeManager.TryIndex(bankAccount.CurrencyType, out CurrencyPrototype? p))
-                currencySymbol = Loc.GetString(p.CurrencySymbol);
-
-            UserInterfaceSystem.SetUiState(ui,new AtmBoundUserInterfaceBalanceState(
-                bankAccount.Balance,
-                currencySymbol
-            ));
-        }
-        private void UpdateComponentUserInterface(EntityUid uid, ATMComponent? component = null)
-        {
-            if (!Resolve(uid, ref component))
-                return;
-
             string? idCardFullName = null;
             string? idCardEntityName = null;
             string? idCardStoredBankAccountNumber = null;
-            var haveAccessToBankAccount = false;
+            bool haveAccessToBankAccount = false;
             FixedPoint2? bankAccountBalance = null;
-            var currencySymbol = string.Empty;
+            string currencySymbol = string.Empty;
             if (component.IdCardSlot.Item is { Valid: true } idCardEntityUid)
             {
                 if (_entities.TryGetComponent<IdCardComponent>(idCardEntityUid, out var idCardComponent))
@@ -144,19 +127,14 @@ namespace Content.Server.Backmen.Economy.ATM;
                         {
                             haveAccessToBankAccount = true;
                             bankAccountBalance = bankAccount.Balance;
-                            if(_prototypeManager.TryIndex(bankAccount.CurrencyType, out CurrencyPrototype? p))
+                            if(bankAccount.CurrencyType != null && _prototypeManager.TryIndex(bankAccount.CurrencyType, out CurrencyPrototype? p))
                                 currencySymbol = Loc.GetString(p.CurrencySymbol);
                         }
                     }
                 }
-                idCardEntityName = MetaData(idCardEntityUid).EntityName;
+                idCardEntityName = _entities.GetComponent<MetaDataComponent>(idCardEntityUid)?.EntityName;
             }
-
-            var ui = _uiSystem.GetUiOrNull(uid, ATMUiKey.Key);
-            if (ui == null)
-                return;
-
-            UserInterfaceSystem.SetUiState(ui,new AtmBoundUserInterfaceState(
+            var newState = new SharedATMComponent.ATMBoundUserInterfaceState(
                 component.IdCardSlot.HasItem,
                 idCardFullName,
                 idCardEntityName,
@@ -164,7 +142,12 @@ namespace Content.Server.Backmen.Economy.ATM;
                 haveAccessToBankAccount,
                 bankAccountBalance,
                 currencySymbol
-            ));
+                );
+
+            var ui = _uiSystem.GetUiOrNull(component.Owner, ATMUiKey.Key);
+            if (ui == null)
+                return;
+            UserInterfaceSystem.SetUiState(ui,newState);
         }
         private void OnRequestWithdraw(EntityUid uid, ATMComponent component, ATMRequestWithdrawMessage msg)
         {
@@ -172,28 +155,28 @@ namespace Content.Server.Backmen.Economy.ATM;
                 return;
             if (msg.Amount <= 0)
             {
-                Deny(uid, component);
+                Deny(component);
                 return;
             }
             if (!TryGetBankAccountNumberFromStoredIdCard(component, out var bankAccountNumber))
             {
-                Deny(uid, component);
+                Deny(component);
                 return;
             }
             if (component.CurrencyWhitelist.Count == 0)
             {
-                Deny(uid, component);
+                Deny(component);
                 return;
             }
             var currency = component.CurrencyWhitelist.First();
             if (!_proto.TryIndex<CurrencyPrototype>(currency, out var proto))
             {
-                Deny(uid, component);
+                Deny(component);
                 return;
             }
             if (proto.Cash == null || !proto.CanWithdraw)
             {
-                Deny(uid, component);
+                Deny(component);
                 return;
             }
 
@@ -202,7 +185,7 @@ namespace Content.Server.Backmen.Economy.ATM;
                 bankAccountNumber, msg.AccountPin,
                 new KeyValuePair<string, FixedPoint2>(currency, amountRemaining)))
             {
-                Deny(uid, component);
+                Deny(component);
                 return;
             }
 
@@ -217,16 +200,12 @@ namespace Content.Server.Backmen.Economy.ATM;
                 _hands.PickupOrDrop(buyer, ents.First());
                 amountRemaining -= value * amountToSpawn;
             }
-            Apply(uid, component);
-            _audioSystem.PlayPvs(component.SoundWithdrawCurrency, uid, AudioParams.Default.WithVolume(-2f));
-            UpdateComponentUserInterface(uid, component);
+            Apply(component);
+            _audioSystem.PlayPvs(component.SoundWithdrawCurrency, component.Owner, AudioParams.Default.WithVolume(-2f));
+            UpdateComponentUserInterface(component);
         }
-        public bool TryAddCurrency(Dictionary<string, FixedPoint2> currency, EntityUid atm, ATMComponent? component = null)
+        public bool TryAddCurrency(Dictionary<string, FixedPoint2> currency, ATMComponent component)
         {
-            if (!Resolve(atm,ref component))
-            {
-                return false;
-            }
             foreach (var type in currency)
             {
                 if (!component.CurrencyWhitelist.Contains(type.Key))
@@ -240,8 +219,8 @@ namespace Content.Server.Backmen.Economy.ATM;
                 if (!_bankManagerSystem.TryInsertToBankAccount(bankAccountNumber, type))
                     return false;
             }
-            _audioSystem.PlayPvs(component.SoundInsertCurrency, atm, AudioParams.Default.WithVolume(-2f));
-            UpdateComponentUserInterface(atm, component);
+            _audioSystem.PlayPvs(component.SoundInsertCurrency, component.Owner, AudioParams.Default.WithVolume(-2f));
+            UpdateComponentUserInterface(component);
             return true;
         }
         private bool TryGetBankAccountNumberFromStoredIdCard(ATMComponent component, out string storedBankAccountNumber)
@@ -256,20 +235,12 @@ namespace Content.Server.Backmen.Economy.ATM;
             storedBankAccountNumber = idCardComponent.StoredBankAccountNumber;
             return true;
         }
-        private void Deny(EntityUid atm, ATMComponent? component = null)
+        private void Deny(ATMComponent component)
         {
-            if (!Resolve(atm,ref component))
-            {
-                return;
-            }
-            _audioSystem.PlayPvs(component.SoundDeny, atm, AudioParams.Default.WithVolume(-2f));
+            _audioSystem.PlayPvs(component.SoundDeny, component.Owner, AudioParams.Default.WithVolume(-2f));
         }
-        private void Apply(EntityUid atm, ATMComponent? component = null)
+        private void Apply(ATMComponent component)
         {
-            if (!Resolve(atm,ref component))
-            {
-                return;
-            }
-            _audioSystem.PlayPvs(component.SoundApply, atm, AudioParams.Default.WithVolume(-2f));
+            _audioSystem.PlayPvs(component.SoundApply, component.Owner, AudioParams.Default.WithVolume(-2f));
         }
     }

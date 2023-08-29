@@ -1,7 +1,7 @@
 ﻿namespace Content.Server.Dragon;
 
 [RegisterComponent]
-public sealed partial class DragonRuleComponent : Component
+public sealed class DragonRuleComponent : Component
 {
 
 }

@@ -11,7 +11,7 @@ namespace Content.Shared.Random;
 /// </summary>
 [Serializable, NetSerializable]
 [DataDefinition]
-public sealed partial class RandomFillSolution
+public sealed class RandomFillSolution
 {
     /// <summary>
     ///     Quantity of listed reagents.

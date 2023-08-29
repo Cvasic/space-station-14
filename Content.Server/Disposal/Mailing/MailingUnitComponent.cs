@@ -4,14 +4,14 @@ namespace Content.Server.Disposal.Mailing;
 
 [Access(typeof(MailingUnitSystem))]
 [RegisterComponent]
-public sealed partial class MailingUnitComponent : Component
+public sealed class MailingUnitComponent : Component
 {
     /// <summary>
     /// List of targets the mailing unit can send to.
     /// Each target is just a disposal routing tag
     /// </summary>
     [DataField("targetList")]
-    public List<string> TargetList = new();
+    public readonly List<string> TargetList = new();
 
     /// <summary>
     /// The target that gets attached to the disposal holders tag list on flush

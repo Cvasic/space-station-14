@@ -5,7 +5,7 @@ namespace Content.Server.Medical.CrewMonitoring;
 
 [RegisterComponent]
 [Access(typeof(CrewMonitoringServerSystem))]
-public sealed partial class CrewMonitoringServerComponent : Component
+public sealed class CrewMonitoringServerComponent : Component
 {
 
     /// <summary>

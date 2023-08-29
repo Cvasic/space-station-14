@@ -6,19 +6,19 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Fluids;
 
 [Serializable, NetSerializable]
-public sealed partial class AbsorbantDoAfterEvent : DoAfterEvent
+public sealed class AbsorbantDoAfterEvent : DoAfterEvent
 {
     [DataField("solution", required: true)]
-    public string TargetSolution = default!;
+    public readonly string TargetSolution = default!;
 
     [DataField("message", required: true)]
-    public string Message = default!;
+    public readonly string Message = default!;
 
     [DataField("sound", required: true)]
-    public SoundSpecifier Sound = default!;
+    public readonly SoundSpecifier Sound = default!;
 
     [DataField("transferAmount", required: true)]
-    public FixedPoint2 TransferAmount;
+    public readonly FixedPoint2 TransferAmount;
 
     private AbsorbantDoAfterEvent()
     {

@@ -5,7 +5,7 @@ namespace Content.Server.Spawners.Components
 {
     [RegisterComponent]
     [Virtual]
-    public partial class ConditionalSpawnerComponent : Component
+    public class ConditionalSpawnerComponent : Component
     {
         [ViewVariables(VVAccess.ReadWrite)]
         [DataField("prototypes", customTypeSerializer: typeof(PrototypeIdListSerializer<EntityPrototype>))]
@@ -13,7 +13,7 @@ namespace Content.Server.Spawners.Components
 
         [ViewVariables(VVAccess.ReadWrite)]
         [DataField("gameRules", customTypeSerializer: typeof(PrototypeIdListSerializer<EntityPrototype>))]
-        public List<string> GameRules = new();
+        public readonly List<string> GameRules = new();
 
         [ViewVariables(VVAccess.ReadWrite)]
         [DataField("chance")]

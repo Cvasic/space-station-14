@@ -11,7 +11,7 @@ namespace Content.Server.DeviceLinking.Components;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(LogicGateSystem))]
-public sealed partial class LogicGateComponent : Component
+public sealed class LogicGateComponent : Component
 {
     /// <summary>
     /// The logic gate operation to use.

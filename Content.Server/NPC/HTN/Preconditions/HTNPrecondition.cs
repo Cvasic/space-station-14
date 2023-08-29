@@ -4,7 +4,7 @@ namespace Content.Server.NPC.HTN.Preconditions;
 /// Condition that needs to be true for a particular primitive task or compound task branch.
 /// </summary>
 [ImplicitDataDefinitionForInheritors]
-public abstract partial class HTNPrecondition
+public abstract class HTNPrecondition
 {
     /// <summary>
     /// Handles one-time initialization of this precondition.

@@ -8,7 +8,7 @@ namespace Content.Shared.Mech.Equipment.Components;
 /// A piece of equipment that can be installed into <see cref="MechComponent"/>
 /// </summary>
 [RegisterComponent]
-public sealed partial class MechEquipmentComponent : Component
+public sealed class MechEquipmentComponent : Component
 {
     /// <summary>
     /// How long does it take to install this piece of equipment
@@ -42,12 +42,12 @@ public sealed class MechEquipmentInstallCancelled : EntityEventArgs
 }
 
 [Serializable, NetSerializable]
-public sealed partial class GrabberDoAfterEvent : SimpleDoAfterEvent
+public sealed class GrabberDoAfterEvent : SimpleDoAfterEvent
 {
 }
 
 [Serializable, NetSerializable]
-public sealed partial class InsertEquipmentEvent : SimpleDoAfterEvent
+public sealed class InsertEquipmentEvent : SimpleDoAfterEvent
 {
 }
 

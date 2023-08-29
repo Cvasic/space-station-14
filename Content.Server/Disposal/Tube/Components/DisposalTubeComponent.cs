@@ -10,9 +10,11 @@ namespace Content.Server.Disposal.Tube.Components
 {
     [RegisterComponent]
     [Access(typeof(DisposalTubeSystem), typeof(DisposableSystem))]
-    public sealed partial class DisposalTubeComponent : Component
+    public sealed class DisposalTubeComponent : Component
     {
         [DataField("containerId")] public string ContainerId { get; set; } = "DisposalTube";
+
+        [Dependency] private readonly IEntityManager _entMan = default!;
 
         public static readonly TimeSpan ClangDelay = TimeSpan.FromSeconds(0.5);
         public TimeSpan LastClang;

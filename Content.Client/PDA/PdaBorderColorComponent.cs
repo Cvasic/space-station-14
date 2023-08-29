@@ -4,7 +4,7 @@
 /// Used for specifying the pda windows border colors
 /// </summary>
 [RegisterComponent]
-public sealed partial class PdaBorderColorComponent : Component
+public sealed class PdaBorderColorComponent : Component
 {
     [DataField("borderColor", required: true)]
     public string? BorderColor;

@@ -4,7 +4,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.SprayPainter;
 
 [RegisterComponent]
-public sealed partial class PaintableAirlockComponent : Component
+public sealed class PaintableAirlockComponent : Component
 {
     [DataField("group", customTypeSerializer:typeof(PrototypeIdSerializer<AirlockGroupPrototype>))]
     public string Group = default!;

@@ -5,7 +5,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Shared.Construction.Components
 {
     [RegisterComponent, NetworkedComponent]
-    public sealed partial class MachinePartComponent : Component
+    public sealed class MachinePartComponent : Component
     {
         [DataField("part", required: true, customTypeSerializer: typeof(PrototypeIdSerializer<MachinePartPrototype>))]
         public string PartType { get; private set; } = default!;

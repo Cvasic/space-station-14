@@ -8,26 +8,26 @@ namespace Content.Shared.Atmos.Monitor;
 public sealed class AtmosAlarmThresholdPrototype : IPrototype
 {
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     [DataField("ignore")]
-    public bool Ignore;
+    public readonly bool Ignore;
 
     [DataField("upperBound")]
-    public AlarmThresholdSetting UpperBound = AlarmThresholdSetting.Disabled;
+    public readonly AlarmThresholdSetting UpperBound = AlarmThresholdSetting.Disabled;
 
     [DataField("lowerBound")]
-    public AlarmThresholdSetting LowerBound = AlarmThresholdSetting.Disabled;
+    public readonly AlarmThresholdSetting LowerBound = AlarmThresholdSetting.Disabled;
 
     [DataField("upperWarnAround")]
-    public AlarmThresholdSetting UpperWarningPercentage = AlarmThresholdSetting.Disabled;
+    public readonly AlarmThresholdSetting UpperWarningPercentage = AlarmThresholdSetting.Disabled;
 
     [DataField("lowerWarnAround")]
-    public AlarmThresholdSetting LowerWarningPercentage = AlarmThresholdSetting.Disabled;
+    public readonly AlarmThresholdSetting LowerWarningPercentage = AlarmThresholdSetting.Disabled;
 }
 
 [Serializable, NetSerializable, DataDefinition]
-public sealed partial class AtmosAlarmThreshold
+public sealed class AtmosAlarmThreshold
 {
     [DataField("ignore")]
     public bool Ignore;
@@ -256,7 +256,7 @@ public sealed partial class AtmosAlarmThreshold
 }
 
 [DataDefinition, Serializable]
-public readonly partial struct AlarmThresholdSetting
+public readonly struct AlarmThresholdSetting
 {
     [DataField("enabled")]
     public bool Enabled { get; init; } = true;

@@ -3,7 +3,7 @@ using Content.Shared.Humanoid;
 namespace Content.Server.VoiceMask;
 
 [RegisterComponent]
-public sealed partial class VoiceMaskComponent : Component
+public sealed class VoiceMaskComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite)] public bool Enabled = true;
 

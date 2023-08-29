@@ -12,7 +12,7 @@ namespace Content.Server.Devour.Components;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedDevourSystem))]
-public sealed partial class DevourerComponent : Component
+public sealed class DevourerComponent : Component
 {
     [DataField("devourAction")]
     public EntityTargetAction? DevourAction;

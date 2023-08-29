@@ -13,11 +13,6 @@
 - type: accessLevel
   id: CCOfficer
   name: ЦК Офицеры
-
-- type: accessLevel
-  id: CCAdmiral
-  name: ЦК Адмирал
-
 - type: accessGroup
   id: CentCom
   tags:
@@ -25,5 +20,4 @@
   - CCSecurity
   - CCGeneral
   - CCOfficer
-  - CCAdmiral
 

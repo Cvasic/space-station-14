@@ -8,7 +8,7 @@ namespace Content.Server.NPC.HTN.PrimitiveTasks;
 /// Concrete code that gets run for an NPC task.
 /// </summary>
 [ImplicitDataDefinitionForInheritors, MeansImplicitUse]
-public abstract partial class HTNOperator
+public abstract class HTNOperator
 {
     /// <summary>
     /// Called once whenever prototypes reload. Typically used to inject dependencies.

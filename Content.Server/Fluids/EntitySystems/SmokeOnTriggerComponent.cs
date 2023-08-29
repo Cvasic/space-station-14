@@ -4,7 +4,7 @@ using Robust.Shared.Audio;
 namespace Content.Server.Fluids.EntitySystems;
 
 [RegisterComponent]
-public sealed partial class SmokeOnTriggerComponent : Component
+public sealed class SmokeOnTriggerComponent : Component
 {
     [DataField("spreadAmount"), ViewVariables(VVAccess.ReadWrite)]
     public int SpreadAmount = 20;

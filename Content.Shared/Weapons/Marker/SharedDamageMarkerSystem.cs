@@ -60,7 +60,7 @@ public abstract class SharedDamageMarkerSystem : EntitySystem
     private void OnMarkerCollide(EntityUid uid, DamageMarkerOnCollideComponent component, ref StartCollideEvent args)
     {
         if (!args.OtherFixture.Hard ||
-            args.OurFixtureId != SharedProjectileSystem.ProjectileFixture ||
+            args.OurFixture.ID != SharedProjectileSystem.ProjectileFixture ||
             component.Amount <= 0 ||
             component.Whitelist?.IsValid(args.OtherEntity, EntityManager) == false ||
             !TryComp<ProjectileComponent>(uid, out var projectile) ||

@@ -5,7 +5,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.DeviceLinking.Components;
 
 [RegisterComponent]
-public sealed partial class SignalTimerComponent : Component
+public sealed class SignalTimerComponent : Component
 {
     [DataField("delay"), ViewVariables(VVAccess.ReadWrite)]
     public double Delay = 5;

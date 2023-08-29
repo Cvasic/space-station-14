@@ -7,10 +7,10 @@ namespace Content.Server.Construction.Completions
 {
     [UsedImplicitly]
     [DataDefinition]
-    public sealed partial class PopupUser : IGraphAction
+    public sealed class PopupUser : IGraphAction
     {
-        [DataField("cursor")] public bool Cursor { get; private set; }
-        [DataField("text")] public string Text { get; private set; } = string.Empty;
+        [DataField("cursor")] public bool Cursor { get; }
+        [DataField("text")] public string Text { get; } = string.Empty;
 
         public void PerformAction(EntityUid uid, EntityUid? userUid, IEntityManager entityManager)
         {

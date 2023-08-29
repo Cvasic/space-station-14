@@ -4,11 +4,11 @@ namespace Content.Server.Speech.Components;
 
 [RegisterComponent]
 [Access(typeof(ArchaicAccentSystem))]
-public sealed partial class ArchaicAccentComponent : Component
+public sealed class ArchaicAccentComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("forsoothChance")]
-    public float ForsoothChance = 0.15f;
+    public readonly float ForsoothChance = 0.15f;
 
     [ViewVariables]
     public readonly List<string> ArchaicWords = new()
