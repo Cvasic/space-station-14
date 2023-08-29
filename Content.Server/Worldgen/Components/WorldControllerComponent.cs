@@ -9,7 +9,7 @@ namespace Content.Server.Worldgen.Components;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(WorldControllerSystem))]
-public sealed partial class WorldControllerComponent : Component
+public sealed class WorldControllerComponent : Component
 {
     /// <summary>
     ///     The prototype to use for chunks on this world map.

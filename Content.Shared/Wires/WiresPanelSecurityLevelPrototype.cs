@@ -6,7 +6,7 @@ namespace Content.Shared.Wires;
 public sealed class WiresPanelSecurityLevelPrototype : IPrototype
 {
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     [DataField("examine")]
     public string? Examine = default!;

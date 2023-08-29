@@ -7,6 +7,6 @@ namespace Content.Server.Nutrition.Components;
 /// Including but not limited to: uranium, death pills, insulation
 /// </summary>
 [RegisterComponent, Access(typeof(FoodSystem))]
-public sealed partial class BadFoodComponent : Component
+public sealed class BadFoodComponent : Component
 {
 }

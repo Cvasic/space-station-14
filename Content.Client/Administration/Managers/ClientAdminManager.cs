@@ -4,7 +4,6 @@ using Robust.Client.Console;
 using Robust.Client.Player;
 using Robust.Shared.ContentPack;
 using Robust.Shared.Network;
-using Robust.Shared.Players;
 using Robust.Shared.Utility;
 
 namespace Content.Client.Administration.Managers
@@ -121,14 +120,6 @@ namespace Content.Client.Administration.Managers
             return uid == _player.LocalPlayer?.ControlledEntity
                 ? _adminData
                 : null;
-        }
-
-        public AdminData? GetAdminData(ICommonSession session, bool includeDeAdmin = false)
-        {
-            if (_player.LocalPlayer?.UserId == session.UserId)
-                return _adminData;
-
-            return null;
         }
     }
 }

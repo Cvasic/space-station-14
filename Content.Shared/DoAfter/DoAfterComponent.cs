@@ -6,13 +6,13 @@ namespace Content.Shared.DoAfter;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedDoAfterSystem))]
-public sealed partial class DoAfterComponent : Component
+public sealed class DoAfterComponent : Component
 {
     [DataField("nextId")]
     public ushort NextId;
 
     [DataField("doAfters")]
-    public Dictionary<ushort, DoAfter> DoAfters = new();
+    public readonly Dictionary<ushort, DoAfter> DoAfters = new();
 
     // Used by obsolete async do afters
     public readonly Dictionary<ushort, TaskCompletionSource<DoAfterStatus>> AwaitedDoAfters = new();

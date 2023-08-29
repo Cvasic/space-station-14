@@ -8,10 +8,10 @@ namespace Content.Server.Construction.Completions
 {
     [UsedImplicitly]
     [DataDefinition]
-    public sealed partial class MoveContainer : IGraphAction
+    public sealed class MoveContainer : IGraphAction
     {
-        [DataField("from")] public string? FromContainer { get; private set; }
-        [DataField("to")] public string? ToContainer { get; private set; }
+        [DataField("from")] public string? FromContainer { get; }
+        [DataField("to")] public string? ToContainer { get; }
 
         public void PerformAction(EntityUid uid, EntityUid? userUid, IEntityManager entityManager)
         {

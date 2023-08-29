@@ -4,13 +4,13 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Wires;
 
 [Serializable, NetSerializable]
-public sealed partial class WireDoAfterEvent : DoAfterEvent
+public sealed class WireDoAfterEvent : DoAfterEvent
 {
     [DataField("action", required: true)]
-    public WiresAction Action;
+    public readonly WiresAction Action;
 
     [DataField("id", required: true)]
-    public int Id;
+    public readonly int Id;
 
     private WireDoAfterEvent()
     {

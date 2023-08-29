@@ -5,7 +5,7 @@
 /// </summary>
 [RegisterComponent]
 [Access(typeof(ElectrocutionSystem))]
-public sealed partial class ElectrocutionComponent : Component
+public sealed class ElectrocutionComponent : Component
 {
     [DataField("timeLeft")]
     public float TimeLeft;

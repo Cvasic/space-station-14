@@ -11,7 +11,7 @@ namespace Content.Shared.Singularity.Components;
 /// Energy management is server-side.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public sealed partial class SingularityComponent : Component
+public sealed class SingularityComponent : Component
 {
     /// <summary>
     /// The current level of the singularity.

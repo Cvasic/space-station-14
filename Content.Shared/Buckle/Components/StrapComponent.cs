@@ -10,7 +10,7 @@ namespace Content.Shared.Buckle.Components;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedBuckleSystem), typeof(SharedVehicleSystem))]
-public sealed partial class StrapComponent : Component
+public sealed class StrapComponent : Component
 {
     /// <summary>
     /// The entities that are currently buckled

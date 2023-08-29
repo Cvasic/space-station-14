@@ -2,9 +2,6 @@
 using Content.Server.Chat.Systems;
 using Content.Server.GameTicking;
 using Content.Server.Mind.Components;
-using Content.Server.Popups;
-using Content.Server.Speech.Muting;
-using Content.Shared.ActionBlocker;
 using Content.Shared.Actions;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -23,7 +20,6 @@ public sealed class CritMobActionsSystem : EntitySystem
     [Dependency] private readonly DeathgaspSystem _deathgasp = default!;
     [Dependency] private readonly IServerConsoleHost _host = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly QuickDialogSystem _quickDialog = default!;
 
     private const int MaxLastWordsLength = 30;
@@ -51,12 +47,6 @@ public sealed class CritMobActionsSystem : EntitySystem
         if (!_mobState.IsCritical(uid))
             return;
 
-        if (HasComp<MutedComponent>(uid))
-        {
-            _popupSystem.PopupEntity(Loc.GetString("fake-death-muted"), uid, uid);
-            return;
-        }
-
         args.Handled = _deathgasp.Deathgasp(uid);
     }
 
@@ -68,7 +58,6 @@ public sealed class CritMobActionsSystem : EntitySystem
         _quickDialog.OpenDialog(actor.PlayerSession, Loc.GetString("action-name-crit-last-words"), "",
             (string lastWords) =>
             {
-                // Intentionally does not check for muteness
                 if (actor.PlayerSession.AttachedEntity != uid
                     || !_mobState.IsCritical(uid))
                     return;
@@ -90,20 +79,20 @@ public sealed class CritMobActionsSystem : EntitySystem
 /// <summary>
 ///     Only applies to mobs in crit capable of ghosting/succumbing
 /// </summary>
-public sealed partial class CritSuccumbEvent : InstantActionEvent
+public sealed class CritSuccumbEvent : InstantActionEvent
 {
 }
 
 /// <summary>
 ///     Only applies/has functionality to mobs in crit that have <see cref="DeathgaspComponent"/>
 /// </summary>
-public sealed partial class CritFakeDeathEvent : InstantActionEvent
+public sealed class CritFakeDeathEvent : InstantActionEvent
 {
 }
 
 /// <summary>
 ///     Only applies to mobs capable of speaking, as a last resort in crit
 /// </summary>
-public sealed partial class CritLastWordsEvent : InstantActionEvent
+public sealed class CritLastWordsEvent : InstantActionEvent
 {
 }

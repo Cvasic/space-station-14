@@ -7,10 +7,10 @@ namespace Content.Server.Destructible.Thresholds.Triggers
     /// </summary>
     [Serializable]
     [DataDefinition]
-    public sealed partial class OrTrigger : IThresholdTrigger
+    public sealed class OrTrigger : IThresholdTrigger
     {
         [DataField("triggers")]
-        public List<IThresholdTrigger> Triggers { get; private set; } = new();
+        public List<IThresholdTrigger> Triggers { get; } = new();
 
         public bool Reached(DamageableComponent damageable, DestructibleSystem system)
         {

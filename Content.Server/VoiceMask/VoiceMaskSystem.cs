@@ -90,6 +90,6 @@ public sealed partial class VoiceMaskSystem : EntitySystem
     }
 }
 
-public sealed partial class VoiceMaskSetNameEvent : InstantActionEvent
+public sealed class VoiceMaskSetNameEvent : InstantActionEvent
 {
 }

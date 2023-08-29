@@ -10,7 +10,7 @@ namespace Content.Shared.Materials;
 
 [Access(typeof(SharedMaterialStorageSystem))]
 [RegisterComponent, NetworkedComponent]
-public sealed partial class MaterialStorageComponent : Component
+public sealed class MaterialStorageComponent : Component
 {
     [DataField("storage", customTypeSerializer: typeof(PrototypeIdDictionarySerializer<int, MaterialPrototype>))]
     public Dictionary<string, int> Storage { get; set; } = new();

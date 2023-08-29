@@ -8,7 +8,7 @@ namespace Content.Shared.Glue;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedGlueSystem))]
-public sealed partial class GlueComponent : Component
+public sealed class GlueComponent : Component
 {
     /// <summary>
     /// Noise made when glue applied.

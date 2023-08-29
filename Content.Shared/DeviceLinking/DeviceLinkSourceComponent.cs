@@ -6,7 +6,7 @@ namespace Content.Shared.DeviceLinking;
 [RegisterComponent]
 [NetworkedComponent] // for interactions. Actual state isn't currently synced.
 [Access(typeof(SharedDeviceLinkSystem))]
-public sealed partial class DeviceLinkSourceComponent : Component
+public sealed class DeviceLinkSourceComponent : Component
 {
     /// <summary>
     /// The ports the device link source sends signals from

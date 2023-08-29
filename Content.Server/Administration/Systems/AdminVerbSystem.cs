@@ -79,7 +79,7 @@ namespace Content.Server.Administration.Systems
 
         private void AddAdminVerbs(GetVerbsEvent<Verb> args)
         {
-            if (!EntityManager.TryGetComponent(args.User, out ActorComponent? actor))
+            if (!EntityManager.TryGetComponent<ActorComponent?>(args.User, out var actor))
                 return;
 
             var player = actor.PlayerSession;
@@ -215,13 +215,13 @@ namespace Content.Server.Administration.Systems
 
         private void AddDebugVerbs(GetVerbsEvent<Verb> args)
         {
-            if (!EntityManager.TryGetComponent(args.User, out ActorComponent? actor))
+            if (!EntityManager.TryGetComponent<ActorComponent?>(args.User, out var actor))
                 return;
 
             var player = actor.PlayerSession;
 
             // Delete verb
-            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("delete"), null), player, out _) ?? false)
+            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.GetCommand("delete"), null), player, out _) ?? false)
             {
                 Verb verb = new()
                 {
@@ -236,7 +236,7 @@ namespace Content.Server.Administration.Systems
             }
 
             // Rejuvenate verb
-            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("rejuvenate"), null), player, out _) ?? false)
+            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.GetCommand("rejuvenate"), null), player, out _) ?? false)
             {
                 Verb verb = new()
                 {
@@ -250,7 +250,7 @@ namespace Content.Server.Administration.Systems
             }
 
             // Control mob verb
-            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("mind"), "control"), player, out _) ?? false &&
+            if (_groupController.CanCommand(player, "controlmob") &&
                 args.User != args.Target)
             {
                 Verb verb = new()
@@ -349,7 +349,7 @@ namespace Content.Server.Administration.Systems
 
             // Get Disposal tube direction verb
             if (_groupController.CanCommand(player, "tubeconnections") &&
-                EntityManager.TryGetComponent(args.Target, out DisposalTubeComponent? tube))
+                EntityManager.TryGetComponent<DisposalTubeComponent?>(args.Target, out var tube))
             {
                 Verb verb = new()
                 {
@@ -376,7 +376,7 @@ namespace Content.Server.Administration.Systems
             }
 
             if (_groupController.CanAdminMenu(player) &&
-                EntityManager.TryGetComponent(args.Target, out ConfigurationComponent? config))
+                EntityManager.TryGetComponent<ConfigurationComponent?>(args.Target, out var config))
             {
                 Verb verb = new()
                 {

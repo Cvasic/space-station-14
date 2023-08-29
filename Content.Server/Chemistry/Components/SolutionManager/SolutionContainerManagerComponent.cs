@@ -5,10 +5,10 @@ namespace Content.Server.Chemistry.Components.SolutionManager
 {
     [RegisterComponent]
     [Access(typeof(SolutionContainerSystem))]
-    public sealed partial class SolutionContainerManagerComponent : Component
+    public sealed class SolutionContainerManagerComponent : Component
     {
         [DataField("solutions")]
         [Access(typeof(SolutionContainerSystem), Other = AccessPermissions.ReadExecute)] // FIXME Friends
-        public Dictionary<string, Solution> Solutions = new();
+        public readonly Dictionary<string, Solution> Solutions = new();
     }
 }

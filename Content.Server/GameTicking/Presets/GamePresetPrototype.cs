@@ -13,34 +13,34 @@ namespace Content.Server.GameTicking.Presets
     public sealed class GamePresetPrototype : IPrototype
     {
         [IdDataField]
-        public string ID { get; private set; } = default!;
+        public string ID { get; } = default!;
 
         [DataField("alias")]
-        public string[] Alias = Array.Empty<string>();
+        public readonly string[] Alias = Array.Empty<string>();
 
         [DataField("name")]
-        public string ModeTitle = "????";
+        public readonly string ModeTitle = "????";
 
         [DataField("description")]
-        public string Description = string.Empty;
+        public readonly string Description = string.Empty;
 
         [DataField("showInVote")]
-        public bool ShowInVote;
+        public readonly bool ShowInVote;
 
         [DataField("minPlayers")]
-        public int? MinPlayers;
+        public readonly int? MinPlayers;
 
         [DataField("maxPlayers")]
-        public int? MaxPlayers;
+        public readonly int? MaxPlayers;
 
         [DataField("rules", customTypeSerializer: typeof(PrototypeIdListSerializer<EntityPrototype>))]
-        public IReadOnlyList<string> Rules { get; private set; } = Array.Empty<string>();
+        public IReadOnlyList<string> Rules { get; } = Array.Empty<string>();
 
         /// <summary>
         /// If specified, the gamemode will only be run with these maps.
         /// If none are elligible, the global fallback will be used.
         /// </summary>
         [DataField("supportedMaps", customTypeSerializer: typeof(PrototypeIdSerializer<GameMapPoolPrototype>))]
-        public string? MapPool;
+        public readonly string? MapPool;
     }
 }

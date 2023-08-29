@@ -1,17 +1,19 @@
+
+
 using Content.Shared.Roles;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.Backmen.SpecForces;
 
 [RegisterComponent]
-public sealed partial class SpecForceComponent : Component
+public sealed class SpecForceComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("actionName")]
-    public string? ActionName { get; private set; }
+    public string? ActionName;
 
     [DataField("requirements")]
-    public HashSet<JobRequirement>? Requirements { get; private set; }
+    public HashSet<JobRequirement>? Requirements;
 
     /// <summary>
     /// A dictionary mapping the component type list to the YAML mapping containing their settings.
@@ -19,7 +21,7 @@ public sealed partial class SpecForceComponent : Component
 
     [DataField("components")]
     [AlwaysPushInheritance]
-    public ComponentRegistry Components { get; private set; } = new();
+    public ComponentRegistry Components { get; } = new();
 
     [DataField("whitelistRequired")]
     public bool WhitelistRequired { get; set; } = false;

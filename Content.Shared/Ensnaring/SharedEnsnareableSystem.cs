@@ -7,7 +7,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Ensnaring;
 
 [Serializable, NetSerializable]
-public sealed partial class EnsnareableDoAfterEvent : SimpleDoAfterEvent
+public sealed class EnsnareableDoAfterEvent : SimpleDoAfterEvent
 {
 }
 

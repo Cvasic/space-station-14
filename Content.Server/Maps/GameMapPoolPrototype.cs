@@ -12,11 +12,11 @@ public sealed class GameMapPoolPrototype : IPrototype
 {
     /// <inheritdoc/>
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     /// <summary>
     ///     Which maps are in this pool.
     /// </summary>
     [DataField("maps", customTypeSerializer:typeof(PrototypeIdHashSetSerializer<GameMapPrototype>), required: true)]
-    public HashSet<string> Maps = new(0);
+    public readonly HashSet<string> Maps = new(0);
 }

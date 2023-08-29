@@ -9,7 +9,7 @@ namespace Content.Server.Worldgen.Components.Debris;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(BlobFloorPlanBuilderSystem))]
-public sealed partial class BlobFloorPlanBuilderComponent : Component
+public sealed class BlobFloorPlanBuilderComponent : Component
 {
     /// <summary>
     ///     The probability that placing a floor tile will add up to three-four neighboring tiles as well.
@@ -26,12 +26,12 @@ public sealed partial class BlobFloorPlanBuilderComponent : Component
     /// </summary>
     [DataField("floorTileset", required: true,
         customTypeSerializer: typeof(PrototypeIdListSerializer<ContentTileDefinition>))]
-    public List<string> FloorTileset { get; private set;  } = default!;
+    public List<string> FloorTileset { get; } = default!;
 
     /// <summary>
     ///     The number of floor tiles to place when drawing the asteroid layout.
     /// </summary>
     [DataField("floorPlacements", required: true)]
-    public int FloorPlacements { get; private set; }
+    public int FloorPlacements { get; }
 }
 

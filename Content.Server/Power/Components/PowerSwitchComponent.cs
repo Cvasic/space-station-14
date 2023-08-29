@@ -4,6 +4,6 @@ namespace Content.Server.Power.Components
     /// Provides an alt verb to toggle power.
     /// </summary>
     [RegisterComponent]
-    public sealed partial class PowerSwitchComponent : Component
+    public sealed class PowerSwitchComponent : Component
     {}
 }

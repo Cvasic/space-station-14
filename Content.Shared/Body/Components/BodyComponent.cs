@@ -9,10 +9,10 @@ namespace Content.Shared.Body.Components;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedBodySystem))]
-public sealed partial class BodyComponent : Component
+public sealed class BodyComponent : Component
 {
     [DataField("prototype", customTypeSerializer: typeof(PrototypeIdSerializer<BodyPrototype>))]
-    public string? Prototype;
+    public readonly string? Prototype;
 
     [DataField("root")]
     public BodyPartSlot? Root;

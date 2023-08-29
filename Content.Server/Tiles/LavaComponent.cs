@@ -7,7 +7,7 @@ namespace Content.Server.Tiles;
 /// Applies flammable and damage while vaulting.
 /// </summary>
 [RegisterComponent, Access(typeof(LavaSystem))]
-public sealed partial class LavaComponent : Component
+public sealed class LavaComponent : Component
 {
     /// <summary>
     /// Sound played if something disintegrates in lava.

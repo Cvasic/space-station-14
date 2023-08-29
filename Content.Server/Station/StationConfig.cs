@@ -8,7 +8,7 @@ namespace Content.Server.Station;
 /// A config for a station. Specifies name and component modifications.
 /// </summary>
 [DataDefinition, PublicAPI]
-public sealed partial class StationConfig
+public sealed class StationConfig
 {
     [DataField("stationProto", required: true)]
     public string StationPrototype = default!;

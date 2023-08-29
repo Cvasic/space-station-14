@@ -22,7 +22,7 @@ namespace Content.Shared.Materials
 
         [ViewVariables]
         [IdDataField]
-        public string ID { get; private set; } = default!;
+        public string ID { get; } = default!;
 
         /// <summary>
         ///     For material storage to be able to convert back and forth
@@ -36,13 +36,13 @@ namespace Content.Shared.Materials
         public string Name = "";
 
         [DataField("color")]
-        public Color Color { get; private set; } = Color.Gray;
+        public Color Color { get; } = Color.Gray;
 
         /// <summary>
         ///     An icon used to represent the material in graphic interfaces.
         /// </summary>
         [DataField("icon")]
-        public SpriteSpecifier Icon { get; private set; } = SpriteSpecifier.Invalid;
+        public SpriteSpecifier Icon { get; } = SpriteSpecifier.Invalid;
 
         /// <summary>
         /// The price per cm3.

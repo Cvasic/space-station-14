@@ -12,7 +12,7 @@ namespace Content.Server.Holiday
 
         [ViewVariables]
         [IdDataField]
-        public string ID { get; private set; } = default!;
+        public string ID { get; } = default!;
 
         [DataField("beginDay")]
         public byte BeginDay { get; set; } = 1;
@@ -33,13 +33,13 @@ namespace Content.Server.Holiday
         public Month EndMonth { get; set; } = Month.Invalid;
 
         [DataField("shouldCelebrate")]
-        private IHolidayShouldCelebrate _shouldCelebrate = new DefaultHolidayShouldCelebrate();
+        private readonly IHolidayShouldCelebrate _shouldCelebrate = new DefaultHolidayShouldCelebrate();
 
         [DataField("greet")]
-        private IHolidayGreet _greet = new DefaultHolidayGreet();
+        private readonly IHolidayGreet _greet = new DefaultHolidayGreet();
 
         [DataField("celebrate")]
-        private IHolidayCelebrate? _celebrate = null;
+        private readonly IHolidayCelebrate? _celebrate = null;
 
         public bool ShouldCelebrate(DateTime date)
         {

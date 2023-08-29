@@ -20,7 +20,6 @@ using Content.Shared.Zombies;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
-using Content.Shared.Humanoid;
 
 namespace Content.Server.Zombies
 {
@@ -259,11 +258,7 @@ namespace Content.Server.Zombies
                 _humanoidAppearance.SetBaseLayerColor(target, layer, info.Color);
                 _humanoidAppearance.SetBaseLayerId(target, layer, info.ID);
             }
-            if(TryComp<HumanoidAppearanceComponent>(target, out var appcomp))
-            {
-                appcomp.EyeColor = zombiecomp.BeforeZombifiedEyeColor;
-            }
-            _humanoidAppearance.SetSkinColor(target, zombiecomp.BeforeZombifiedSkinColor, false);
+            _humanoidAppearance.SetSkinColor(target, zombiecomp.BeforeZombifiedSkinColor);
             _bloodstream.ChangeBloodReagent(target, zombiecomp.BeforeZombifiedBloodReagent);
 
             _metaData.SetEntityName(target, zombiecomp.BeforeZombifiedEntityName);

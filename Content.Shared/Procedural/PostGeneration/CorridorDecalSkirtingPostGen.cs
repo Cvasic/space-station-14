@@ -7,7 +7,7 @@ namespace Content.Shared.Procedural.PostGeneration;
 /// <summary>
 /// Applies decal skirting to corridors.
 /// </summary>
-public sealed partial class CorridorDecalSkirtingPostGen : IPostDunGen
+public sealed class CorridorDecalSkirtingPostGen : IPostDunGen
 {
     /// <summary>
     /// Color to apply to decals.

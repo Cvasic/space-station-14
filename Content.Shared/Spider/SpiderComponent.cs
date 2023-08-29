@@ -8,7 +8,7 @@ namespace Content.Shared.Spider;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedSpiderSystem))]
-public sealed partial class SpiderComponent : Component
+public sealed class SpiderComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("webPrototype", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
@@ -19,4 +19,4 @@ public sealed partial class SpiderComponent : Component
     public string WebActionName = "SpiderWebAction";
 }
 
-public sealed partial class SpiderWebActionEvent : InstantActionEvent { }
+public sealed class SpiderWebActionEvent : InstantActionEvent { }

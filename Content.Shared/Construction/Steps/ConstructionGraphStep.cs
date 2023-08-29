@@ -4,11 +4,11 @@ namespace Content.Shared.Construction.Steps
 {
     [Serializable]
     [ImplicitDataDefinitionForInheritors]
-    public abstract partial class ConstructionGraphStep
+    public abstract class ConstructionGraphStep
     {
         [DataField("completed", serverOnly: true)] private IGraphAction[] _completed = Array.Empty<IGraphAction>();
 
-        [DataField("doAfter")] public float DoAfter { get; private set; }
+        [DataField("doAfter")] public float DoAfter { get; }
 
         public IReadOnlyList<IGraphAction> Completed => _completed;
 

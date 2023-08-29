@@ -1,7 +1,7 @@
 namespace Content.Server.Zombies;
 
 [RegisterComponent]
-public sealed partial class ZombieImmuneComponent : Component
+public sealed class ZombieImmuneComponent : Component
 {
     //still no
 }

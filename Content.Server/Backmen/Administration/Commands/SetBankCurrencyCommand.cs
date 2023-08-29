@@ -68,7 +68,7 @@ public sealed class SetBankCurrencyCommand : IConsoleCommand
                 break;
             }
             default:
-                bankManagerSystem.TrySetBalance(account.Owner,account.Balance);
+                account.SetBalance(0);
                 return;
         }
 

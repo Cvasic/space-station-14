@@ -9,7 +9,7 @@ namespace Content.Server.DeviceLinking.Components;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(EdgeDetectorSystem))]
-public sealed partial class EdgeDetectorComponent : Component
+public sealed class EdgeDetectorComponent : Component
 {
     /// <summary>
     /// Name of the input port.

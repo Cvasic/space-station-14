@@ -114,16 +114,16 @@ public sealed class WeldableSystem : EntitySystem
         if (!TryComp<FixturesComponent>(uid, out var fixtures))
             return;
 
-        foreach (var (id, fixture) in fixtures.Fixtures)
+        foreach (var fixture in fixtures.Fixtures.Values)
         {
             switch (args.IsWelded)
             {
                 case true when fixture.CollisionLayer == (int) component.UnWeldedLayer:
-                    _physics.SetCollisionLayer(uid, id, fixture, (int) component.WeldedLayer);
+                    _physics.SetCollisionLayer(uid, fixture, (int) component.WeldedLayer);
                     break;
 
                 case false when fixture.CollisionLayer == (int) component.WeldedLayer:
-                    _physics.SetCollisionLayer(uid, id, fixture, (int) component.UnWeldedLayer);
+                    _physics.SetCollisionLayer(uid, fixture, (int) component.UnWeldedLayer);
                     break;
             }
         }

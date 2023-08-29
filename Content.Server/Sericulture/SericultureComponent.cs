@@ -1,7 +1,7 @@
 namespace Content.Server.Sericulture;
 
 [RegisterComponent]
-public sealed partial class SericultureComponent : Component
+public sealed class SericultureComponent : Component
 {
 
     [DataField("popupText")]

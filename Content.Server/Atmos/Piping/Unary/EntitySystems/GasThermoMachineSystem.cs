@@ -24,6 +24,7 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
     {
         [Dependency] private readonly AtmosphereSystem _atmosphereSystem = default!;
         [Dependency] private readonly UserInterfaceSystem _userInterfaceSystem = default!;
+        [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
         [Dependency] private readonly PowerReceiverSystem _power = default!;
         [Dependency] private readonly NodeContainerSystem _nodeContainer = default!;
         [Dependency] private readonly DeviceNetworkSystem _deviceNetwork = default!;
@@ -48,74 +49,48 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
 
         private void OnThermoMachineUpdated(EntityUid uid, GasThermoMachineComponent thermoMachine, AtmosDeviceUpdateEvent args)
         {
-            if (!(_power.IsPowered(uid) && TryComp<ApcPowerReceiverComponent>(uid, out var receiver))
-                || !TryComp<NodeContainerComponent>(uid, out var nodeContainer)
+
+            if (!(_power.IsPowered(uid))
+                || !TryComp(uid, out NodeContainerComponent? nodeContainer)
                 || !_nodeContainer.TryGetNode(nodeContainer, thermoMachine.InletName, out PipeNode? inlet))
             {
                 return;
             }
 
-            float sign = Math.Sign(thermoMachine.Cp); // 1 if heater, -1 if freezer
-            float targetTemp = thermoMachine.TargetTemperature;
-            float highTemp = targetTemp + sign * thermoMachine.TemperatureTolerance;
-            float temp = inlet.Air.Temperature;
+            var airHeatCapacity = _atmosphereSystem.GetHeatCapacity(inlet.Air);
+            var combinedHeatCapacity = airHeatCapacity + thermoMachine.HeatCapacity;
 
-            if (sign * temp >= sign * highTemp) // upper bound
-                thermoMachine.HysteresisState = false; // turn off
-            else if (sign * temp < sign * targetTemp) // lower bound
-                thermoMachine.HysteresisState = true; // turn on
+            var startEnergy = inlet.Air.Temperature * airHeatCapacity;
 
-            if (thermoMachine.HysteresisState)
-                targetTemp = highTemp; // when on, target upper hysteresis bound
-
-            if (!thermoMachine.HysteresisState) // Hysteresis is the same as "Should this be on?"
+            if (!MathHelper.CloseTo(combinedHeatCapacity, 0, 0.001f))
             {
-                // Turn dynamic load back on when power has been adjusted to not cause lights to
-                // blink every time this heater comes on.
-                //receiver.Load = 0f;
-                return;
+                var combinedEnergy = thermoMachine.HeatCapacity * thermoMachine.TargetTemperature + airHeatCapacity * inlet.Air.Temperature;
+                inlet.Air.Temperature = combinedEnergy / combinedHeatCapacity;
+
+                thermoMachine.LastEnergyDelta = inlet.Air.Temperature * airHeatCapacity - startEnergy;
             }
-
-            // Multiply power in by coefficient of performance, add that heat to gas
-            float dQ = thermoMachine.HeatCapacity * thermoMachine.Cp * args.dt;
-
-            // Clamps the heat transferred to not overshoot
-            float Cin = _atmosphereSystem.GetHeatCapacity(inlet.Air);
-            float dT = targetTemp - temp;
-            float dQLim = dT * Cin;
-            float scale = 1f;
-            if (Math.Abs(dQ) > Math.Abs(dQLim))
-            {
-                scale = dQLim / dQ; // reduce power consumption
-                thermoMachine.HysteresisState = false; // turn off
-            }
-            float dQActual = dQ * scale;
-            _atmosphereSystem.AddHeat(inlet.Air, dQActual);
-            receiver.Load = thermoMachine.HeatCapacity;// * scale; // we're not ready for dynamic load yet, see note above
-        }
-
-        private bool IsHeater(GasThermoMachineComponent comp)
-        {
-            return comp.Cp >= 0;
         }
 
         private void OnGasThermoRefreshParts(EntityUid uid, GasThermoMachineComponent thermoMachine, RefreshPartsEvent args)
         {
             var heatCapacityPartRating = args.PartRatings[thermoMachine.MachinePartHeatCapacity];
+            var temperatureRangePartRating = args.PartRatings[thermoMachine.MachinePartTemperature];
+
             thermoMachine.HeatCapacity = thermoMachine.BaseHeatCapacity * MathF.Pow(heatCapacityPartRating, 2);
 
-            var temperatureRangePartRating = args.PartRatings[thermoMachine.MachinePartTemperature];
-            if (IsHeater(thermoMachine))
+            switch (thermoMachine.Mode)
             {
                 // 593.15K with stock parts.
-                thermoMachine.MaxTemperature = thermoMachine.BaseMaxTemperature + thermoMachine.MaxTemperatureDelta * temperatureRangePartRating;
-                thermoMachine.MinTemperature = Atmospherics.T20C;
-            }
-            else {
+                case ThermoMachineMode.Heater:
+                    thermoMachine.MaxTemperature = thermoMachine.BaseMaxTemperature + thermoMachine.MaxTemperatureDelta * temperatureRangePartRating;
+                    thermoMachine.MinTemperature = Atmospherics.T20C;
+                    break;
                 // 73.15K with stock parts.
-                thermoMachine.MinTemperature = MathF.Max(
-                    thermoMachine.BaseMinTemperature - thermoMachine.MinTemperatureDelta * temperatureRangePartRating, Atmospherics.TCMB);
-                thermoMachine.MaxTemperature = Atmospherics.T20C;
+                case ThermoMachineMode.Freezer:
+                    thermoMachine.MinTemperature = MathF.Max(
+                        thermoMachine.BaseMinTemperature - thermoMachine.MinTemperatureDelta * temperatureRangePartRating, Atmospherics.TCMB);
+                    thermoMachine.MaxTemperature = Atmospherics.T20C;
+                    break;
             }
 
             DirtyUI(uid, thermoMachine);
@@ -123,13 +98,14 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
 
         private void OnGasThermoUpgradeExamine(EntityUid uid, GasThermoMachineComponent thermoMachine, UpgradeExamineEvent args)
         {
-            if (IsHeater(thermoMachine))
+            switch (thermoMachine.Mode)
             {
-                args.AddPercentageUpgrade("gas-thermo-component-upgrade-heating", thermoMachine.MaxTemperature / (thermoMachine.BaseMaxTemperature + thermoMachine.MaxTemperatureDelta));
-            }
-            else
-            {
-                args.AddPercentageUpgrade("gas-thermo-component-upgrade-cooling", thermoMachine.MinTemperature / (thermoMachine.BaseMinTemperature - thermoMachine.MinTemperatureDelta));
+                case ThermoMachineMode.Heater:
+                    args.AddPercentageUpgrade("gas-thermo-component-upgrade-heating", thermoMachine.MaxTemperature / (thermoMachine.BaseMaxTemperature + thermoMachine.MaxTemperatureDelta));
+                    break;
+                case ThermoMachineMode.Freezer:
+                    args.AddPercentageUpgrade("gas-thermo-component-upgrade-cooling", thermoMachine.MinTemperature / (thermoMachine.BaseMinTemperature - thermoMachine.MinTemperatureDelta));
+                    break;
             }
             args.AddPercentageUpgrade("gas-thermo-component-upgrade-heat-capacity", thermoMachine.HeatCapacity / thermoMachine.BaseHeatCapacity);
         }
@@ -142,11 +118,9 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
 
         private void OnChangeTemperature(EntityUid uid, GasThermoMachineComponent thermoMachine, GasThermomachineChangeTemperatureMessage args)
         {
-            if (IsHeater(thermoMachine))
-                thermoMachine.TargetTemperature = MathF.Min(args.Temperature, thermoMachine.MaxTemperature);
-            else
-                thermoMachine.TargetTemperature = MathF.Max(args.Temperature, thermoMachine.MinTemperature);
-            thermoMachine.TargetTemperature = MathF.Max(thermoMachine.TargetTemperature, Atmospherics.TCMB);
+            thermoMachine.TargetTemperature =
+                Math.Clamp(args.Temperature, thermoMachine.MinTemperature, thermoMachine.MaxTemperature);
+
             DirtyUI(uid, thermoMachine);
         }
 
@@ -160,7 +134,7 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
                 return;
 
             _userInterfaceSystem.TrySetUiState(uid, ThermomachineUiKey.Key,
-                new GasThermomachineBoundUserInterfaceState(thermoMachine.MinTemperature, thermoMachine.MaxTemperature, thermoMachine.TargetTemperature, !powerReceiver.PowerDisabled, IsHeater(thermoMachine)), null, ui);
+                new GasThermomachineBoundUserInterfaceState(thermoMachine.MinTemperature, thermoMachine.MaxTemperature, thermoMachine.TargetTemperature, !powerReceiver.PowerDisabled, thermoMachine.Mode), null, ui);
         }
 
         private void OnExamined(EntityUid uid, GasThermoMachineComponent thermoMachine, ExaminedEvent args)
@@ -169,8 +143,8 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
                 return;
 
             if (Loc.TryGetString("gas-thermomachine-system-examined", out var str,
-                        ("machineName", !IsHeater(thermoMachine) ? "freezer" : "heater"),
-                        ("tempColor", !IsHeater(thermoMachine) ? "deepskyblue" : "red"),
+                        ("machineName", thermoMachine.Mode == ThermoMachineMode.Freezer ? "freezer" : "heater"),
+                        ("tempColor", thermoMachine.Mode == ThermoMachineMode.Freezer ? "deepskyblue" : "red"),
                         ("temp", Math.Round(thermoMachine.TargetTemperature,2))
                ))
 

@@ -11,6 +11,9 @@ namespace Content.Client.Radiation.Systems;
 
 public sealed class GeigerSystem : SharedGeigerSystem
 {
+    [Dependency] private readonly AudioSystem _audio = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!;
+
     public override void Initialize()
     {
         base.Initialize();

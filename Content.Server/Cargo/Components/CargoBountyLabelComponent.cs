@@ -5,7 +5,7 @@
 /// containing goods for fulfilling bounties.
 /// </summary>
 [RegisterComponent]
-public sealed partial class CargoBountyLabelComponent : Component
+public sealed class CargoBountyLabelComponent : Component
 {
     /// <summary>
     /// The ID for the bounty this label corresponds to.

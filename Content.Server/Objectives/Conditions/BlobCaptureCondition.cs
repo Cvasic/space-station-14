@@ -8,7 +8,7 @@ namespace Content.Server.Objectives.Conditions;
 
 [UsedImplicitly]
 [DataDefinition]
-public sealed partial class BlobCaptureCondition : IObjectiveCondition
+public sealed class BlobCaptureCondition : IObjectiveCondition
 {
     private Mind.Mind? _mind;
     private int _target;

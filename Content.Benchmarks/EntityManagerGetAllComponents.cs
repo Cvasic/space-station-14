@@ -11,7 +11,7 @@ using Robust.Shared.Reflection;
 namespace Content.Benchmarks
 {
     [Virtual]
-    public partial class EntityManagerGetAllComponents
+    public class EntityManagerGetAllComponents
     {
         private IEntityManager _entityManager;
 
@@ -87,7 +87,7 @@ namespace Content.Benchmarks
             return count;
         }
 
-        private sealed partial class DummyComponent : Component
+        private sealed class DummyComponent : Component
         {
         }
     }

@@ -14,7 +14,7 @@
       - BackmenVendingMachineCigs
       - BackmenVendingMachineCoffee
       - BackmenVendingMachineCola
-      - BackmenVendingMachineColaRed
+      - VendingMachineColaRed
       - BackmenVendingMachineColaBlack
       - BackmenVendingMachineDiscount
       - BackmenVendingMachineSnack
@@ -25,11 +25,12 @@
       - BackmenVendingMachineSovietSoda
       - BackmenVendingMachineChang
       - BackmenVendingMachineDonut
-      - BackmenVendingMachineShamblersJuice
-      - BackmenVendingMachinePwrGame
+      - VendingMachineShamblersJuice
+      - VendingMachinePwrGame
       - BackmenVendingMachineSoda
-      - BackmenVendingMachineDrGibb
-      - BackmenVendingMachineStarkist
-      - BackmenVendingMachineSpaceUp
+      - VendingMachineDrGibb
+      - VendingMachineSoda
+      - VendingMachineStarkist
+      - VendingMachineSpaceUp
       - BackmenVendingLootBox
     chance: 1

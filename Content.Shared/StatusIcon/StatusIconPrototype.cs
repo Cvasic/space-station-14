@@ -10,7 +10,7 @@ namespace Content.Shared.StatusIcon;
 /// information for status icons.
 /// </summary>
 [Virtual, DataDefinition]
-public partial class StatusIconData : IComparable<StatusIconData>
+public class StatusIconData : IComparable<StatusIconData>
 {
     /// <summary>
     /// The icon that's displayed on the entity.
@@ -53,7 +53,7 @@ public sealed class StatusIconPrototype : StatusIconData, IPrototype, IInheritin
 
     /// <inheritdoc/>
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 }
 
 [Serializable, NetSerializable]

@@ -4,7 +4,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.Tools.Components;
 
 [RegisterComponent]
-public sealed partial class LatticeCuttingComponent : Component
+public sealed class LatticeCuttingComponent : Component
 {
     [DataField("qualityNeeded", customTypeSerializer:typeof(PrototypeIdSerializer<ToolQualityPrototype>))]
     public string QualityNeeded = "Cutting";

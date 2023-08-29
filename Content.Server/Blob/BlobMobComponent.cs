@@ -4,7 +4,7 @@ using Content.Shared.FixedPoint;
 namespace Content.Server.Blob;
 
 [RegisterComponent]
-public sealed partial class BlobMobComponent : Component
+public sealed class BlobMobComponent : Component
 {
     [ViewVariables(VVAccess.ReadOnly), DataField("healthOfPulse")]
     public DamageSpecifier HealthOfPulse = new()

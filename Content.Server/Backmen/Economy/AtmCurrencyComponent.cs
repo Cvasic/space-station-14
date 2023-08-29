@@ -1,7 +1,7 @@
 ﻿namespace Content.Server.Backmen.Economy;
 
 [RegisterComponent]
-public sealed partial class AtmCurrencyComponent : Component
+public sealed class AtmCurrencyComponent : Component
 {
 
 }

@@ -3,7 +3,7 @@
 namespace Content.Server.StationEvents.Components;
 
 [RegisterComponent, Access(typeof(RandomSentienceRule))]
-public sealed partial class RandomSentienceRuleComponent : Component
+public sealed class RandomSentienceRuleComponent : Component
 {
 
 }

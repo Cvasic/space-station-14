@@ -12,13 +12,13 @@ public sealed class WorldgenConfigPrototype : IPrototype
 {
     /// <inheritdoc />
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     /// <summary>
     ///     The components that get added to the target map.
     /// </summary>
     [DataField("components", required: true)]
-    public ComponentRegistry Components { get; private set; } = default!;
+    public ComponentRegistry Components { get; } = default!;
 
     //TODO: Get someone to make this a method on componentregistry that does it Correctly.
     /// <summary>

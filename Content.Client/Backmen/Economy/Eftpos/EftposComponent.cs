@@ -3,7 +3,8 @@
 namespace Content.Client.Backmen.Economy.Eftpos;
 
 [RegisterComponent]
+[ComponentReference(typeof(SharedEftposComponent))]
 [Access(typeof(EftposSystem))]
-public sealed partial class EftposComponent : SharedEftposComponent
+public sealed class EftposComponent : SharedEftposComponent
 {
 }

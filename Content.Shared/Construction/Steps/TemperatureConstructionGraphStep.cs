@@ -6,7 +6,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Shared.Construction.Steps
 {
     [DataDefinition]
-    public sealed partial class TemperatureConstructionGraphStep : ConstructionGraphStep
+    public sealed class TemperatureConstructionGraphStep : ConstructionGraphStep
     {
         [DataField("minTemperature")]
         public float? MinTemperature;

@@ -146,7 +146,7 @@ namespace Content.IntegrationTests.Tests.Commands
             Assert.That(sPlayerManager.Sessions.Count(), Is.EqualTo(0));
             client.SetConnectTarget(server);
             await client.WaitPost(() => netMan.ClientConnect(null!, 0, null!));
-            await pairTracker.RunTicksSync(5);
+            await PoolManager.ReallyBeIdle(pairTracker.Pair);
             Assert.That(sPlayerManager.Sessions.Count(), Is.EqualTo(1));
 
             await pairTracker.CleanReturnAsync();

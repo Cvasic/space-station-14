@@ -248,22 +248,22 @@ namespace Content.Server.Polymorph.Systems
         /// </summary>
         /// <param name="uid">The entityuid of the entity being reverted</param>
         /// <param name="component"></param>
-        public EntityUid? Revert(EntityUid uid, PolymorphedEntityComponent? component = null)
+        public void Revert(EntityUid uid, PolymorphedEntityComponent? component = null)
         {
             if (Deleted(uid))
-                return null;
+                return;
 
             if (!Resolve(uid, ref component))
-                return null;
+                return;
 
             var parent = component.Parent;
             if (Deleted(parent))
-                return null;
+                return;
 
             if (!_proto.TryIndex(component.Prototype, out PolymorphPrototype? proto))
             {
                 _sawmill.Error($"{nameof(PolymorphSystem)} encountered an improperly initialized polymorph component while reverting. Entity {ToPrettyString(uid)}. Prototype: {component.Prototype}");
-                return null;
+                return;
             }
 
             var uidXform = Transform(uid);
@@ -317,8 +317,6 @@ namespace Content.Server.Polymorph.Systems
                 ("child", Identity.Entity(parent, EntityManager))),
                 parent);
             QueueDel(uid);
-
-            return parent;
         }
 
         /// <summary>
@@ -404,7 +402,7 @@ namespace Content.Server.Polymorph.Systems
         }
     }
 
-    public sealed partial class PolymorphActionEvent : InstantActionEvent
+    public sealed class PolymorphActionEvent : InstantActionEvent
     {
         /// <summary>
         /// The polymorph prototype containing all the information about
@@ -413,7 +411,7 @@ namespace Content.Server.Polymorph.Systems
         public PolymorphPrototype Prototype = default!;
     }
 
-    public sealed partial class RevertPolymorphActionEvent : InstantActionEvent
+    public sealed class RevertPolymorphActionEvent : InstantActionEvent
     {
 
     }

@@ -3,7 +3,7 @@
 namespace Content.Client.Blob;
 
 [RegisterComponent]
-public sealed partial class BlobTileComponent : SharedBlobTileComponent
+public sealed class BlobTileComponent : SharedBlobTileComponent
 {
 
 }

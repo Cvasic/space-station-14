@@ -12,7 +12,7 @@ namespace Content.Server.Construction.NodeEntities;
 /// </summary>
 [UsedImplicitly]
 [DataDefinition]
-public sealed partial class BoardNodeEntity : IGraphNodeEntity
+public sealed class BoardNodeEntity : IGraphNodeEntity
 {
     [DataField("container")] public string Container { get; private set; } = string.Empty;
 

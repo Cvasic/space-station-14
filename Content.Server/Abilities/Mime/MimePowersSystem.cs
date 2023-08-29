@@ -143,7 +143,7 @@ namespace Content.Server.Abilities.Mime
         }
     }
 
-    public sealed partial class InvisibleWallActionEvent : InstantActionEvent
+    public sealed class InvisibleWallActionEvent : InstantActionEvent
     {
     }
 }

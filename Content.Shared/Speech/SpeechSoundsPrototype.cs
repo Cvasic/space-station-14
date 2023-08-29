@@ -8,7 +8,7 @@ namespace Content.Shared.Speech
     {
         [ViewVariables]
         [IdDataField]
-        public string ID { get; private set; } = default!;
+        public string ID { get; } = default!;
 
         //Variation is here instead of in SharedSpeechComponent since some sets of
         //sounds may require more fine tuned pitch variation than others.

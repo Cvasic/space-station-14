@@ -6,14 +6,15 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Server.Atmos.Piping.Unary.Components
 {
     [RegisterComponent]
-    public sealed partial class GasThermoMachineComponent : Component
+    public sealed class GasThermoMachineComponent : Component
     {
         [DataField("inlet")]
         public string InletName = "pipe";
 
         /// <summary>
-        ///     Current electrical power consumption, in watts. Increasing power increases the ability of the
-        ///     thermomachine to heat or cool air.
+        ///     Current maximum temperature, calculated from <see cref="BaseHeatCapacity"/> and the quality of matter
+        ///     bins. The heat capacity effectively determines the rate at which the thermo machine can add or remove
+        ///     heat from a pipenet.
         /// </summary>
         [ViewVariables(VVAccess.ReadWrite)]
         public float HeatCapacity = 10000;
@@ -29,31 +30,12 @@ namespace Content.Server.Atmos.Piping.Unary.Components
         [ViewVariables(VVAccess.ReadWrite)]
         public float TargetTemperature = Atmospherics.T20C;
 
-        /// <summary>
-        ///     Tolerance for temperature setpoint hysteresis.
-        /// </summary>
-        [ViewVariables(VVAccess.ReadOnly)]
-        public float TemperatureTolerance = 2f;
-
-        /// <summary>
-        ///     Implements setpoint hysteresis to prevent heater from rapidly cycling on and off at setpoint.
-        ///     If true, add Sign(Cp)*TemperatureTolerance to the temperature setpoint.
-        /// </summary>
-        [ViewVariables(VVAccess.ReadOnly)]
-        public bool HysteresisState = false;
-
-        /// <summary>
-        ///     Coefficient of performance. Output power / input power.
-        ///     Positive for heaters, negative for freezers.
-        /// </summary>
-        [DataField("coefficientOfPerformance")]
-        [ViewVariables(VVAccess.ReadWrite)]
-        public float Cp = 0.9f; // output power / input power, positive is heat
+        [DataField("mode")]
+        public ThermoMachineMode Mode = ThermoMachineMode.Freezer;
 
         /// <summary>
         ///     Current minimum temperature, calculated from <see cref="InitialMinTemperature"/> and <see
         ///     cref="MinTemperatureDelta"/>.
-        ///     Ignored if heater.
         /// </summary>
         [ViewVariables(VVAccess.ReadWrite)]
         public float MinTemperature;
@@ -61,7 +43,6 @@ namespace Content.Server.Atmos.Piping.Unary.Components
         /// <summary>
         ///     Current maximum temperature, calculated from <see cref="InitialMaxTemperature"/> and <see
         ///     cref="MaxTemperatureDelta"/>.
-        ///     Ignored if freezer.
         /// </summary>
         [ViewVariables(VVAccess.ReadWrite)]
         public float MaxTemperature;

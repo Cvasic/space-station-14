@@ -5,7 +5,7 @@
 ///     Kill everybody else to win.
 /// </summary>
 [RegisterComponent, Access(typeof(DeathMatchRuleSystem))]
-public sealed partial class DeathMatchRuleComponent : Component
+public sealed class DeathMatchRuleComponent : Component
 {
     /// <summary>
     /// How long until the round restarts

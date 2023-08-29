@@ -1,5 +1,4 @@
-﻿using Content.Shared.Atmos;
-using Content.Shared.Atmos.Piping.Unary.Components;
+﻿using Content.Shared.Atmos.Piping.Unary.Components;
 using JetBrains.Annotations;
 using Robust.Client.GameObjects;
 
@@ -19,9 +18,6 @@ namespace Content.Client.Atmos.UI
 
         [ViewVariables]
         private float _maxTemp = 0.0f;
-        
-        [ViewVariables]
-        private bool _isHeater = true;
 
         public GasThermomachineBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
         {
@@ -54,12 +50,7 @@ namespace Content.Client.Atmos.UI
 
         private void OnTemperatureChanged(float value)
         {
-            var actual = 0f;
-            if (_isHeater)
-                actual = Math.Min(value, _maxTemp);
-            else
-                actual = Math.Max(value, _minTemp);
-            actual = Math.Max(actual, Atmospherics.TCMB);
+            var actual = Math.Clamp(value, _minTemp, _maxTemp);
             if (!MathHelper.CloseTo(actual, value, 0.09))
             {
                 _window?.SetTemperature(actual);
@@ -81,14 +72,14 @@ namespace Content.Client.Atmos.UI
 
             _minTemp = cast.MinTemperature;
             _maxTemp = cast.MaxTemperature;
-            _isHeater = cast.IsHeater;
 
             _window.SetTemperature(cast.Temperature);
             _window.SetActive(cast.Enabled);
-            _window.Title = _isHeater switch
+            _window.Title = cast.Mode switch
             {
-                false => Loc.GetString("comp-gas-thermomachine-ui-title-freezer"),
-                true => Loc.GetString("comp-gas-thermomachine-ui-title-heater")
+                ThermoMachineMode.Freezer => Loc.GetString("comp-gas-thermomachine-ui-title-freezer"),
+                ThermoMachineMode.Heater => Loc.GetString("comp-gas-thermomachine-ui-title-heater"),
+                _ => string.Empty
             };
         }
 

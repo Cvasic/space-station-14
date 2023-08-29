@@ -4,6 +4,6 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Internals;
 
 [Serializable, NetSerializable]
-public sealed partial class InternalsDoAfterEvent : SimpleDoAfterEvent
+public sealed class InternalsDoAfterEvent : SimpleDoAfterEvent
 {
 }

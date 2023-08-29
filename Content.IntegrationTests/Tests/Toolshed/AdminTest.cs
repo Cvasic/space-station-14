@@ -13,7 +13,8 @@ public sealed class AdminTest : ToolshedTest
         await Server.WaitAssertion(() =>
         {
             Assert.That(InvokeCommand("cmd:list where { acmd:perms isnull }", out var res));
-            Assert.That((IEnumerable<CommandSpec>) res, Is.Empty, "All commands must have admin permissions set up.");
+            var list = ((IEnumerable<CommandSpec>) res).ToList();
+            Assert.That(list, Is.Empty, "All commands must have admin permissions set up.");
         });
     }
 }

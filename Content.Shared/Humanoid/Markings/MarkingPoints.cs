@@ -6,7 +6,7 @@ namespace Content.Shared.Humanoid.Markings;
 
 [DataDefinition]
 [Serializable, NetSerializable]
-public sealed partial class MarkingPoints
+public sealed class MarkingPoints
 {
     [DataField("points", required: true)]
     public int Points = 0;
@@ -47,5 +47,5 @@ public sealed class MarkingPointsPrototype : IPrototype
     [DataField("onlyWhitelisted")] public bool OnlyWhitelisted;
 
     [DataField("points", required: true)]
-    public Dictionary<MarkingCategories, MarkingPoints> Points { get; private set; } = default!;
+    public Dictionary<MarkingCategories, MarkingPoints> Points { get; } = default!;
 }

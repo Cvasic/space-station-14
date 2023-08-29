@@ -485,7 +485,7 @@ public abstract class SharedMechSystem : EntitySystem
 ///     on both success and failure
 /// </summary>
 [Serializable, NetSerializable]
-public sealed partial class RemoveBatteryEvent : SimpleDoAfterEvent
+public sealed class RemoveBatteryEvent : SimpleDoAfterEvent
 {
 }
 
@@ -494,7 +494,7 @@ public sealed partial class RemoveBatteryEvent : SimpleDoAfterEvent
 ///     on both success and failure
 /// </summary>
 [Serializable, NetSerializable]
-public sealed partial class MechExitEvent : SimpleDoAfterEvent
+public sealed class MechExitEvent : SimpleDoAfterEvent
 {
 }
 
@@ -502,6 +502,6 @@ public sealed partial class MechExitEvent : SimpleDoAfterEvent
 ///     Event raised when a person enters a mech, on both success and failure
 /// </summary>
 [Serializable, NetSerializable]
-public sealed partial class MechEntryEvent : SimpleDoAfterEvent
+public sealed class MechEntryEvent : SimpleDoAfterEvent
 {
 }

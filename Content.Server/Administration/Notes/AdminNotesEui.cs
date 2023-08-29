@@ -16,6 +16,7 @@ public sealed class AdminNotesEui : BaseEui
     [Dependency] private readonly IAdminManager _admins = default!;
     [Dependency] private readonly IAdminNotesManager _notesMan = default!;
     [Dependency] private readonly IPlayerLocator _locator = default!;
+    [Dependency] private readonly IServerDbManager _db = default!;
 
     public AdminNotesEui()
     {

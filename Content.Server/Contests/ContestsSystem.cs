@@ -18,6 +18,7 @@ namespace Content.Server.Contests
     ///
     public sealed class ContestsSystem : EntitySystem
     {
+        [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
         [Dependency] private readonly MobThresholdSystem _mobThresholdSystem = default!;
         /// <summary>
         /// Returns the roller's mass divided by the target's.

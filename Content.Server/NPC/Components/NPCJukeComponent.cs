@@ -4,7 +4,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 namespace Content.Server.NPC.Components;
 
 [RegisterComponent]
-public sealed partial class NPCJukeComponent : Component
+public sealed class NPCJukeComponent : Component
 {
     [DataField("jukeType")]
     public JukeType JukeType = JukeType.Away;

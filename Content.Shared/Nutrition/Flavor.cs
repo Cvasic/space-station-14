@@ -6,13 +6,13 @@ namespace Content.Shared.Nutrition;
 public sealed class FlavorPrototype : IPrototype
 {
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     [DataField("flavorType")]
-    public FlavorType FlavorType { get; private set; } = FlavorType.Base;
+    public FlavorType FlavorType { get; } = FlavorType.Base;
 
     [DataField("description")]
-    public string FlavorDescription { get; private set; } = default!;
+    public string FlavorDescription { get; } = default!;
 }
 
 public enum FlavorType : byte

@@ -6,7 +6,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Shared.Blob;
 
 [RegisterComponent, NetworkedComponent]
-public sealed partial class BlobCarrierComponent : Component
+public sealed class BlobCarrierComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite), DataField("transformationDelay")]
     public float TransformationDelay = 240;
@@ -32,7 +32,7 @@ public sealed partial class BlobCarrierComponent : Component
     public string CoreBlobGhostRolePrototype = "CoreBlobTileGhostRole";
 }
 
-public sealed partial class TransformToBlobActionEvent : InstantActionEvent
+public sealed class TransformToBlobActionEvent : InstantActionEvent
 {
 
 }

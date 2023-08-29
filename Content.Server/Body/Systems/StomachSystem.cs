@@ -9,6 +9,7 @@ namespace Content.Server.Body.Systems
 {
     public sealed class StomachSystem : EntitySystem
     {
+        [Dependency] private readonly BodySystem _bodySystem = default!;
         [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
 
         public const string DefaultSolutionName = "stomach";

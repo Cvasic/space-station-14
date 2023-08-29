@@ -1,11 +1,11 @@
 namespace Content.Client.Rotation;
 
 [RegisterComponent]
-public sealed partial class RotationVisualsComponent : Component
+public sealed class RotationVisualsComponent : Component
 {
     [DataField("defaultRotation")]
     [ViewVariables(VVAccess.ReadOnly)]
-    public Angle DefaultRotation = Angle.FromDegrees(90);
+    public readonly Angle DefaultRotation = Angle.FromDegrees(90);
 
     [ViewVariables(VVAccess.ReadWrite)]
     public Angle VerticalRotation = 0;

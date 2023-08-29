@@ -10,11 +10,11 @@ namespace Content.Shared.Xenoarchaeology.XenoArtifacts;
 /// </summary>
 [Prototype("artifactEffect")]
 [DataDefinition]
-public sealed partial class ArtifactEffectPrototype : IPrototype
+public sealed class ArtifactEffectPrototype : IPrototype
 {
     /// <inheritdoc/>
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     /// <summary>
     /// Components that are added to the artifact when the specfic effect is active.

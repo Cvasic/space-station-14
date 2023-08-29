@@ -5,7 +5,7 @@ namespace Content.Server.Emp;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(EmpSystem))]
-public sealed partial class EmpOnTriggerComponent : Component
+public sealed class EmpOnTriggerComponent : Component
 {
     [DataField("range"), ViewVariables(VVAccess.ReadWrite)]
     public float Range = 1.0f;

@@ -8,7 +8,7 @@ namespace Content.Client.Singularity.Visualizers;
 /// </summary>
 [RegisterComponent]
 [Access(typeof(RadiationCollectorSystem))]
-public sealed partial class RadiationCollectorComponent : Component
+public sealed class RadiationCollectorComponent : Component
 {
     /// <summary>
     /// The key used to index the (de)activation animations played when turning a radiation collector on/off.

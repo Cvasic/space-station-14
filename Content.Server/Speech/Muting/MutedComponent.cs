@@ -1,6 +1,6 @@
 namespace Content.Server.Speech.Muting
 {
     [RegisterComponent]
-    public sealed partial class MutedComponent : Component
+    public sealed class MutedComponent : Component
     {}
 }

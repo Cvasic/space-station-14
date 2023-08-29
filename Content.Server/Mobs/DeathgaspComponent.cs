@@ -8,7 +8,7 @@ namespace Content.Server.Mobs;
 /// </summary>
 /// <see cref="DeathgaspSystem"/>
 [RegisterComponent]
-public sealed partial class DeathgaspComponent : Component
+public sealed class DeathgaspComponent : Component
 {
     /// <summary>
     ///     The emote prototype to use.

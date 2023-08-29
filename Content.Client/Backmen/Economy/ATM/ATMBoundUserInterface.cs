@@ -20,7 +20,7 @@ public sealed class ATMBoundUserInterface : BoundUserInterface
         base.Open();
         _menu = new ATMMenu { Title = IoCManager.Resolve<IEntityManager>().GetComponent<MetaDataComponent>(Owner).EntityName };
 
-        _menu.IdCardButton.OnPressed += _ => SendMessage(new ItemSlotButtonPressedEvent(SharedAtmComponent.IdCardSlotId));
+        _menu.IdCardButton.OnPressed += _ => SendMessage(new ItemSlotButtonPressedEvent(SharedATMComponent.IdCardSlotId));
         _menu.OnWithdrawAttempt += OnWithdrawAttempt;
 
         _menu.OnClose += Close;
@@ -35,18 +35,8 @@ public sealed class ATMBoundUserInterface : BoundUserInterface
     protected override void UpdateState(BoundUserInterfaceState state)
     {
         base.UpdateState(state);
-
-        if (_menu == null)
-            return;
-
-        if (state is AtmBoundUserInterfaceState cast)
-        {
-            _menu.UpdateState(cast);
-        }
-        else if (state is AtmBoundUserInterfaceBalanceState cast2)
-        {
-            _menu.UpdateBalanceState(cast2);
-        }
+        var castState = (SharedATMComponent.ATMBoundUserInterfaceState) state;
+        _menu?.UpdateState(castState);
     }
     protected override void Dispose(bool disposing)
     {

@@ -8,7 +8,7 @@ public sealed class AutoEmotePrototype : IPrototype
 {
     /// <inheritdoc/>
     [IdDataField]
-    public string ID { get; private set; } = default!;
+    public string ID { get; } = default!;
 
     /// <summary>
     /// The ID of the emote prototype.

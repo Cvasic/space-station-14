@@ -13,7 +13,7 @@ namespace Content.Shared.Traits
     {
         [ViewVariables]
         [IdDataField]
-        public string ID { get; private set; } = default!;
+        public string ID { get; } = default!;
 
         /// <summary>
         ///     The name of this trait.
@@ -43,7 +43,7 @@ namespace Content.Shared.Traits
         ///     The components that get added to the player, when they pick this trait.
         /// </summary>
         [DataField("components")]
-        public ComponentRegistry Components { get; private set; } = default!;
+        public ComponentRegistry Components { get; } = default!;
 
         /// <summary>
         ///     Gear that is given to the player, when they pick this trait.

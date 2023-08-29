@@ -9,26 +9,26 @@ namespace Content.Shared.Cargo;
 /// A data structure for storing currently available bounties.
 /// </summary>
 [DataDefinition, NetSerializable, Serializable]
-public readonly partial record struct CargoBountyData(int Id, string Bounty, TimeSpan EndTime)
+public readonly record struct CargoBountyData(int Id, string Bounty, TimeSpan EndTime)
 {
     /// <summary>
     /// A numeric id used to identify the bounty
     /// </summary>
     [DataField("id"), ViewVariables(VVAccess.ReadWrite)]
-    public int Id { get; init; } = Id;
+    public readonly int Id = Id;
 
     /// <summary>
     /// The prototype containing information about the bounty.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("bounty", customTypeSerializer: typeof(PrototypeIdSerializer<CargoBountyPrototype>), required:true)]
-    public string Bounty { get; init; } = Bounty;
+    public readonly string Bounty = Bounty;
 
     /// <summary>
     /// The time at which the bounty is closed and no longer is available.
     /// </summary>
     [DataField("endTime", customTypeSerializer: typeof(TimeOffsetSerializer))]
-    public TimeSpan EndTime { get; init; } = EndTime;
+    public readonly TimeSpan EndTime = EndTime;
 
     public CargoBountyData() : this(default, string.Empty, default)
     {

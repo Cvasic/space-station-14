@@ -20,7 +20,7 @@ namespace Content.Shared.Radio.EntitySystems;
 /// <summary>
 ///     This system manages encryption keys & key holders for use with radio channels.
 /// </summary>
-public sealed partial class EncryptionKeySystem : EntitySystem
+public sealed class EncryptionKeySystem : EntitySystem
 {
     [Dependency] private readonly IPrototypeManager _protoManager = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
@@ -245,7 +245,7 @@ public sealed partial class EncryptionKeySystem : EntitySystem
     }
 
     [Serializable, NetSerializable]
-    public sealed partial class EncryptionRemovalFinishedEvent : SimpleDoAfterEvent
+    public sealed class EncryptionRemovalFinishedEvent : SimpleDoAfterEvent
     {
     }
 }

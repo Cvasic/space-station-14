@@ -9,7 +9,7 @@ namespace Content.Shared.CartridgeLoader;
 /// </summary>
 [NetworkedComponent]
 [RegisterComponent]
-public sealed partial class CartridgeComponent : Component
+public sealed class CartridgeComponent : Component
 {
     [DataField("programName", required: true)]
     public string ProgramName = "default-program-name";

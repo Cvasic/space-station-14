@@ -7,7 +7,7 @@ namespace Content.Shared.HotPotato;
 /// </summary>
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedHotPotatoSystem))]
-public sealed partial class ActiveHotPotatoComponent : Component
+public sealed class ActiveHotPotatoComponent : Component
 {
     /// <summary>
     /// Hot potato effect spawn cooldown in seconds

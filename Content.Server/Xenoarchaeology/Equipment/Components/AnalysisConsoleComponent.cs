@@ -9,7 +9,7 @@ namespace Content.Server.Xenoarchaeology.Equipment.Components;
 /// The console that is used for artifact analysis
 /// </summary>
 [RegisterComponent]
-public sealed partial class AnalysisConsoleComponent : Component
+public sealed class AnalysisConsoleComponent : Component
 {
     /// <summary>
     /// The analyzer entity the console is linked.
@@ -22,7 +22,7 @@ public sealed partial class AnalysisConsoleComponent : Component
     /// The machine linking port for the analyzer
     /// </summary>
     [DataField("linkingPort", customTypeSerializer: typeof(PrototypeIdSerializer<SourcePortPrototype>))]
-    public string LinkingPort = "ArtifactAnalyzerSender";
+    public readonly string LinkingPort = "ArtifactAnalyzerSender";
 
     /// <summary>
     /// The sound played when an artifact has points extracted.

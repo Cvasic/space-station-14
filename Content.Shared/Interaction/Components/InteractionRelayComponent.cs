@@ -12,7 +12,7 @@ namespace Content.Shared.Interaction.Components;
 /// </summary>
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedInteractionSystem))]
-public sealed partial class InteractionRelayComponent : Component
+public sealed class InteractionRelayComponent : Component
 {
     /// <summary>
     /// The entity the interactions are being relayed to.

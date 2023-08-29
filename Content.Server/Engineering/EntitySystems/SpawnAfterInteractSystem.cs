@@ -58,7 +58,7 @@ namespace Content.Server.Engineering.EntitySystems
             if (component.Deleted || !IsTileClear())
                 return;
 
-            if (EntityManager.TryGetComponent(component.Owner, out StackComponent? stackComp)
+            if (EntityManager.TryGetComponent<StackComponent?>(component.Owner, out var stackComp)
                 && component.RemoveOnInteract && !_stackSystem.Use(uid, 1, stackComp))
             {
                 return;

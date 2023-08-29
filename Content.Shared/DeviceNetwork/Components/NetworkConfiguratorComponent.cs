@@ -10,7 +10,7 @@ namespace Content.Shared.DeviceNetwork.Components;
 [RegisterComponent]
 [NetworkedComponent]
 [Access(typeof(SharedNetworkConfiguratorSystem))]
-public sealed partial class NetworkConfiguratorComponent : Component
+public sealed class NetworkConfiguratorComponent : Component
 {
     /// <summary>
     /// Determines whether the configurator is in linking mode or list mode

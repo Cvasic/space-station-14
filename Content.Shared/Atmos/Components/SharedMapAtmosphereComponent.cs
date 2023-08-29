@@ -5,7 +5,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Atmos.Components;
 
 [NetworkedComponent]
-public abstract partial class SharedMapAtmosphereComponent : Component
+public abstract class SharedMapAtmosphereComponent : Component
 {
     [ViewVariables] public SharedGasTileOverlaySystem.GasOverlayData OverlayData;
 }

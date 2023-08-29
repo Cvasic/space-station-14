@@ -12,6 +12,7 @@ namespace Content.Client.Atmos.EntitySystems;
 [UsedImplicitly]
 public sealed class AtmosPipeAppearanceSystem : EntitySystem
 {
+    [Dependency] private readonly IResourceCache _resCache = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
 
     public override void Initialize()

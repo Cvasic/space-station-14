@@ -1,7 +1,7 @@
 namespace Content.Server.Atmos.Components;
 
 [RegisterComponent]
-public sealed partial class HeatExchangerComponent : Component
+public sealed class HeatExchangerComponent : Component
 {
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("inlet")]
@@ -31,6 +31,6 @@ public sealed partial class HeatExchangerComponent : Component
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("radiationCoefficient")]
-    public float alpha { get; set; } = 140f;
+    public float alpha { get; set; } = 400f;
 }
 

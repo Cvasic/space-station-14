@@ -2,7 +2,7 @@
 
 namespace Content.Server.Backmen.Drone.Actions;
 
-public sealed partial class brutepackCraftActionEvent: InstantActionEvent
+public sealed class brutepackCraftActionEvent: InstantActionEvent
 {
-
+    
 }
