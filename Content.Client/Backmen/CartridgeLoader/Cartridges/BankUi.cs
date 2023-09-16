@@ -7,17 +7,16 @@ namespace Content.Client.Backmen.CartridgeLoader.Cartridges;
 
 public sealed partial class BankUi : UIFragment
 {
-    public BankUiFragment? Fragment;
+    private BankUiFragment? _fragment;
 
     public override Control GetUIFragmentRoot()
     {
-        return Fragment!;
+        return _fragment!;
     }
 
     public override void Setup(BoundUserInterface userInterface, EntityUid? fragmentOwner)
     {
-        Fragment = new BankUiFragment();
-        Fragment.UpdateEntity(fragmentOwner);
+        _fragment = new BankUiFragment();
     }
 
     public override void UpdateState(BoundUserInterfaceState state)
@@ -25,6 +24,6 @@ public sealed partial class BankUi : UIFragment
         if (state is not BankUiState bankState)
             return;
 
-        Fragment?.UpdateState(bankState);
+        _fragment?.UpdateState(bankState);
     }
 }

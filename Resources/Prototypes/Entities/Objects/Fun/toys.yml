@@ -281,9 +281,6 @@
     state: blue
   - type: Item
     heldPrefix: blue
-  - type: Tag
-    tags:
-      - PlushieSharkBlue
 
 - type: entity
   parent: PlushieSharkBlue
@@ -296,9 +293,6 @@
     state: pink
   - type: Item
     heldPrefix: pink
-  - type: Tag
-    tags:
-      - PlushieSharkPink
 
 - type: entity
   parent: PlushieSharkBlue
@@ -311,9 +305,6 @@
     state: grey
   - type: Item
     heldPrefix: grey
-  - type: Tag
-    tags:
-      - PlushieSharkGrey
 
 - type: entity
   parent: BasePlushie

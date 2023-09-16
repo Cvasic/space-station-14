@@ -293,7 +293,7 @@
       - id: BoxSurvivalSyndicate
       - id: WeaponPistolViper
       - id: PinpointerNuclear
-      - id: MicroBombImplanter
+      - id: MicroBombImplant
 
 
 - type: entity
@@ -312,7 +312,7 @@
       - id: PinpointerNuclear
       - id: HandheldHealthAnalyzer
       - id: CombatMedipen
-      - id: MicroBombImplanter
+      - id: MicroBombImplant
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateMedicalBundle

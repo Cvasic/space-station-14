@@ -23,21 +23,15 @@ public sealed class SetBankCurrencyCommand : IConsoleCommand
     {
         var bankManagerSystem = _entityManager.System<BankManagerSystem>();
 
-        if (args.Length == 0)
+        if (args.Length != 2)
         {
             shell.WriteError(Help);
             return;
         }
 
-        if (!bankManagerSystem.TryGetBankAccount(args[0], out var bankAccountOwner, out var bankAccount))
+        if (!bankManagerSystem.IsBankAccountExists(args[0]))
         {
             shell.WriteError("Банковский счет не найден!");
-            return;
-        }
-
-        if (args.Length == 1)
-        {
-            shell.WriteLine($"Банковский баланс({bankAccount.AccountName}): {bankAccount.Balance} {bankAccount.CurrencyType}");
             return;
         }
 
@@ -47,14 +41,16 @@ public sealed class SetBankCurrencyCommand : IConsoleCommand
             return;
         }
 
+        var account = bankManagerSystem.GetBankAccount(args[0])!;
+
         switch (balance)
         {
             case > 0:
             {
-                if (!bankManagerSystem.TryInsertToBankAccount(bankAccountOwner,
-                        new KeyValuePair<string, FixedPoint2>(bankAccount.CurrencyType, FixedPoint2.New(balance)), bankAccount))
+                if (!bankManagerSystem.TryInsertToBankAccount(account.AccountNumber,
+                        new KeyValuePair<string, FixedPoint2>(account.CurrencyType, FixedPoint2.New(balance))))
                 {
-                    shell.WriteError($"Добавить на счет не удалось! Баланс аккаунта: {bankAccount.Balance}");
+                    shell.WriteError($"Добавить на счет не удалось! Баланс аккаунта: {account.Balance}");
                     return;
                 }
 
@@ -62,22 +58,24 @@ public sealed class SetBankCurrencyCommand : IConsoleCommand
             }
             case < 0:
             {
-                if (!bankManagerSystem.TryWithdrawFromBankAccount(bankAccountOwner,
-                        new KeyValuePair<string, FixedPoint2>(bankAccount.CurrencyType, FixedPoint2.New(Math.Abs(balance))), bankAccount))
+                if (!bankManagerSystem.TryWithdrawFromBankAccount(account.AccountNumber, account.AccountPin,
+                        new KeyValuePair<string, FixedPoint2>(account.CurrencyType, FixedPoint2.New(Math.Abs(balance)))))
                 {
-                    shell.WriteError($"Списать со счета не удалось! Баланс аккаунта: {bankAccount.Balance}");
+                    shell.WriteError($"Списать со счета не удалось! Баланс аккаунта: {account.Balance}");
                     return;
                 }
 
                 break;
             }
             default:
-                bankManagerSystem.TrySetBalance(bankAccountOwner,balance);
+                bankManagerSystem.TrySetBalance(account.Owner,account.Balance);
                 return;
         }
 
+
+
         _adminLogger.Add(LogType.AdminMessage, LogImpact.Extreme,
-            $"Admin {(shell.Player != null ? shell.Player.Name : "An administrator")} SetBankCurrency {bankAccount.AccountName} #{bankAccount.AccountNumber} changed by: {balance}, new balance: {bankAccount.Balance}");
+            $"Admin {(shell.Player != null ? shell.Player.Name : "An administrator")} SetBankCurrency {account.AccountName} #{account.AccountNumber} changed by: {balance}, new balance: {account.Balance}");
     }
 
     public CompletionResult GetCompletion(IConsoleShell shell, string[] args)
@@ -86,7 +84,7 @@ public sealed class SetBankCurrencyCommand : IConsoleCommand
         {
             1 => CompletionResult.FromHintOptions(
                 _entityManager.System<BankManagerSystem>().ActiveBankAccounts
-                    .Select(x => new CompletionOption(x.Value.account.AccountNumber, x.Value.account.AccountName))
+                    .Select(x => new CompletionOption(x.Value.AccountNumber, x.Value.AccountName))
                 , "Аккаунт №"),
             _ => CompletionResult.Empty
         };

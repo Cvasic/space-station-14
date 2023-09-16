@@ -30,7 +30,7 @@ namespace Content.IntegrationTests.Tests.Preferences
   - Aaliyah
 
 - type: dataset
-  id: sqlite_test_names_last_male
+  id: sqlite_test_names_last
   values:
   - Ackerley
 

@@ -28,4 +28,3 @@ id-card-access-level-chapel = Церковь
 id-card-access-level-maintenance = Техобслуживание
 id-card-access-level-external = Внешний
 id-card-access-level-nuclear-operative = Ядерные оперативники
-id-card-access-level-syndicate-agent = Syndicate Agent

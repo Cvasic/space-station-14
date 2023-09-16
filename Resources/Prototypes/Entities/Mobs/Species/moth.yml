@@ -1,7 +1,7 @@
 - type: entity
   save: false
   name: Urist McFluff
-  parent: BaseMobSpeciesOrganic
+  parent: BaseMobOrganic
   id: BaseMobMoth
   abstract: true
   components:
@@ -113,9 +113,12 @@
         visible: false
 
 - type: entity
-  parent: BaseSpeciesDummy
+  save: false
+  name: Urist McFluff
+  parent: MobHumanDummy
   id: MobMothDummy
   noSpawn: true
+  description: A dummy moth meant to be used in character setup.
   components:
   - type: HumanoidAppearance
     species: Moth

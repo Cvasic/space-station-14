@@ -105,12 +105,6 @@ public partial class GunComponent : Component
     public float FireRate = 8f;
 
     /// <summary>
-    /// Starts fire cooldown when equipped if true.
-    /// </summary>
-    [ViewVariables(VVAccess.ReadWrite), DataField("resetOnHandSelected")]
-    public bool ResetOnHandSelected = true;
-
-    /// <summary>
     /// How fast the projectile moves.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("projectileSpeed")]

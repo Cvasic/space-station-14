@@ -67,7 +67,6 @@
     enabled: false
     usesApcPower: true
   - type: WiresPanel
-    securityLevel: Level5
   - type: Wires
     BoardName: wires-board-name-highsec
     LayoutId: HighSec
@@ -93,6 +92,3 @@
   - type: IconSmooth
     key: walls
     mode: NoSprite
-  - type: Construction
-    graph: HighSecDoor
-    node: maxSecurity

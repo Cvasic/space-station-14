@@ -1,11 +1,10 @@
-using Content.Client.Gameplay;
 using Content.Client.Storage.Systems;
 using Content.Shared.Storage;
 using Robust.Client.UserInterface.Controllers;
 
 namespace Content.Client.Storage.UI;
 
-public sealed class StorageUIController : UIController, IOnSystemChanged<StorageSystem>, IOnStateExited<GameplayState>
+public sealed class StorageUIController : UIController, IOnSystemChanged<StorageSystem>
 {
     // This is mainly to keep legacy functionality for now.
     private readonly Dictionary<EntityUid, StorageWindow> _storageWindows = new();
@@ -57,15 +56,5 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
     public void OnSystemUnloaded(StorageSystem system)
     {
         system.StorageUpdated -= OnStorageUpdate;
-    }
-
-    public void OnStateExited(GameplayState state)
-    {
-        foreach (var window in _storageWindows.Values)
-        {
-            window.Dispose();
-        }
-
-        _storageWindows.Clear();
     }
 }

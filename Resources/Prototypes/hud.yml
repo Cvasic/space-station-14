@@ -1,14 +1,14 @@
 ﻿- type: hudTheme
-  id: SS14DefaultTheme
+  id: 0
   name: ui-options-hud-theme-default
   path: Default
 
 - type: hudTheme
-  id: SS14ModernizedTheme
+  id: 1
   name: ui-options-hud-theme-modernized
   path: Modernized
 
 - type: hudTheme
-  id: SS14ClassicTheme
+  id: 2
   name: ui-options-hud-theme-classic
   path: Classic

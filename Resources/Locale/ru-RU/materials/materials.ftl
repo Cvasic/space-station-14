@@ -10,7 +10,6 @@ materials-silver = серебро
 materials-plasteel = пласталь
 # Other
 materials-biomass = биомасса
-materials-cardboard = cardboard
 materials-cloth = ткань
 materials-durathread = дюраткань
 materials-plasma = плазма
@@ -19,6 +18,5 @@ materials-wood = дерево
 materials-uranium = уран
 materials-bananium = бананиум
 materials-meat = мясо
-materials-web = silk
 # Material Reclaimer
 material-reclaimer-upgrade-process-rate = скорость переработки

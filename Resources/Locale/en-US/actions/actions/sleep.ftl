@@ -1,5 +1,3 @@
-action-name-wake = Wake up
-
 sleep-onomatopoeia = Zzz...
 sleep-examined = [color=lightblue]{CAPITALIZE(SUBJECT($target))} {CONJUGATE-BE($target)} asleep.[/color]
 

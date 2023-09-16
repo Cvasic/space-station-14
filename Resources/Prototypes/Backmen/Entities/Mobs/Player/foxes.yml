@@ -1,5 +1,7 @@
 - type: entity
   save: false
   name: Urist McHands The Fox
-  parent: BaseMobHumanoidFox
+  parent: [BaseMobHumanoidFox, BaseMob]
   id: MobHumanoidFox
+  components:
+    - type: PotentialPsionic

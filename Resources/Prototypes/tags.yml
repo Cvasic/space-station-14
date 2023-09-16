@@ -798,14 +798,6 @@
 - type: Tag
   id: PlushieGhost
 
-- type: Tag
-  id: PlushieSharkBlue
-
-- type: Tag
-  id: PlushieSharkPink
-
-- type: Tag
-  id: PlushieSharkGrey
 
 - type: Tag
   id: PowerCellSmall

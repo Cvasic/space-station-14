@@ -207,6 +207,7 @@ public abstract partial class SharedDoAfterSystem : EntitySystem
         var doAfter = new DoAfter(id.Value.Index, args, GameTiming.CurTime);
 
         // Networking yay
+        doAfter.NetUserPosition = GetNetCoordinates(doAfter.UserPosition);
         doAfter.NetInitialItem = GetNetEntity(doAfter.InitialItem);
 
         // Networking yay
@@ -224,8 +225,6 @@ public abstract partial class SharedDoAfterSystem : EntitySystem
             var targetPosition = Transform(args.Target.Value).Coordinates;
             doAfter.UserPosition.TryDistance(EntityManager, targetPosition, out doAfter.TargetDistance);
         }
-
-        doAfter.NetUserPosition = GetNetCoordinates(doAfter.UserPosition);
 
         // For this we need to stay on the same hand slot and need the same item in that hand slot
         // (or if there is no item there we need to keep it free).
