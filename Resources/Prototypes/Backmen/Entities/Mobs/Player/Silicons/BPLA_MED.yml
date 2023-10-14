@@ -29,8 +29,6 @@
 - type: entity
   parent: HandheldHealthAnalyzer
   id: HandheldHealthAnalyzerINF
-  name: health analyzer
-  description: A hand-held body scanner capable of distinguishing vital signs of the subject.
   suffix: Backmen, INF
   components:
     - type: PowerCellDraw
@@ -106,6 +104,12 @@
     allowMovement: true # backmen
     name: Блюспейс Дрон Меда #ghost-role-information-drone-name # backmen
     description: ghost-role-information-drone-description # backmen
+    requirements:
+      - !type:OverallPlaytimeRequirement
+        time: 36000
+      - !type:RoleTimeRequirement
+        role: JobChiefMedicalOfficer
+        time: 24000
     rules: | # backmen
      Вы обязаны подчиняться законам, которые будут доступны вам после вселения, если вам не скажут иное в Ahelp.
   - type: GhostTakeoverAvailable
@@ -190,10 +194,3 @@
       - ShoesRequiredStepTriggerImmune
       - CannotSuicide
   - type: SpecForce
-    whitelistRequired: true
-    requirements:
-    - !type:OverallPlaytimeRequirement
-      time: 36000
-    - !type:RoleTimeRequirement
-      role: JobChiefMedicalOfficer
-      time: 24000

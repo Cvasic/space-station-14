@@ -12,10 +12,10 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Events;
 using Robust.Shared.Network;
-using Robust.Shared.Utility;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Serialization;
+using Robust.Shared.Utility;
 
 namespace Content.Shared.Follower;
 
@@ -35,6 +35,8 @@ public sealed class FollowerSystem : EntitySystem
         SubscribeLocalEvent<GetVerbsEvent<AlternativeVerb>>(OnGetAlternativeVerbs);
         SubscribeLocalEvent<FollowerComponent, MoveInputEvent>(OnFollowerMove);
         SubscribeLocalEvent<FollowerComponent, PullStartedMessage>(OnPullStarted);
+        SubscribeLocalEvent<FollowerComponent, EntityTerminatingEvent>(OnFollowerTerminating);
+
         SubscribeLocalEvent<FollowerComponent, GotEquippedHandEvent>(OnGotEquippedHand);
         SubscribeLocalEvent<FollowedComponent, EntityTerminatingEvent>(OnFollowedTerminating);
         SubscribeLocalEvent<BeforeSaveEvent>(OnBeforeSave);
@@ -43,8 +45,15 @@ public sealed class FollowerSystem : EntitySystem
         SubscribeLocalEvent<FollowedComponent, ComponentHandleState>(OnFollowedHandleState);
     }
 
+    [Serializable, NetSerializable]
+    private sealed class FollowedComponentState : ComponentState
+    {
+        public HashSet<NetEntity> Following = new();
+    }
+
     private void OnFollowedGetState(EntityUid uid, FollowedComponent component, ref ComponentGetState args)
     {
+        component.Following.RemoveWhere(x => TerminatingOrDeleted(x));
         args.State = new FollowedComponentState()
         {
             Following = GetNetEntitySet(component.Following),
@@ -128,6 +137,11 @@ public sealed class FollowerSystem : EntitySystem
         StopFollowingEntity(uid, component.Following, deparent:false);
     }
 
+    private void OnFollowerTerminating(EntityUid uid, FollowerComponent component, ref EntityTerminatingEvent args)
+    {
+        StopFollowingEntity(uid, component.Following, deparent: false);
+    }
+
     // Since we parent our observer to the followed entity, we need to detach
     // before they get deleted so that we don't get recursively deleted too.
     private void OnFollowedTerminating(EntityUid uid, FollowedComponent component, ref EntityTerminatingEvent args)
@@ -207,7 +221,7 @@ public sealed class FollowerSystem : EntitySystem
 
         RaiseLocalEvent(uid, uidEv, true);
         RaiseLocalEvent(target, targetEv, false);
-        Dirty(followed);
+        Dirty(target, followed);
         RaiseLocalEvent(uid, uidEv);
         RaiseLocalEvent(target, targetEv);
 
@@ -241,12 +255,6 @@ public sealed class FollowerSystem : EntitySystem
         {
             StopFollowingEntity(player, uid, followed);
         }
-    }
-
-    [Serializable, NetSerializable]
-    private sealed class FollowedComponentState : ComponentState
-    {
-        public HashSet<NetEntity> Following = new();
     }
 }
 
