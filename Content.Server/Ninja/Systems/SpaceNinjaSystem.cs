@@ -170,10 +170,12 @@ public sealed class SpaceNinjaSystem : SharedSpaceNinjaSystem
 
         // choose spider charge detonation point
         var warps = new List<EntityUid>();
-        var query = EntityQueryEnumerator<BombingTargetComponent, WarpPointComponent>();
-        while (query.MoveNext(out var warpUid, out _, out var warp))
+        var query = EntityQueryEnumerator<BombingTargetComponent, WarpPointComponent, TransformComponent>();
+        var map = Transform(uid).MapID;
+        while (query.MoveNext(out var warpUid, out _, out var warp, out var xform))
         {
-            warps.Add(warpUid);
+            if (warp.Location != null)
+                warps.Add(warpUid);
         }
 
         if (warps.Count > 0)

@@ -166,20 +166,7 @@ public sealed class FollowerSystem : EntitySystem
             targetXform = Transform(targetXform.ParentUid);
         }
 
-        // Cleanup old following.
-        if (TryComp<FollowerComponent>(follower, out var followerComp))
-        {
-            // Already following you goob
-            if (followerComp.Following == entity)
-                return;
-
-            StopFollowingEntity(follower, followerComp.Following, deparent: false, removeComp: false);
-        }
-        else
-        {
-            followerComp = AddComp<FollowerComponent>(follower);
-        }
-        
+        var followerComp = EnsureComp<FollowerComponent>(follower);
         followerComp.Following = entity;
 
         var followedComp = EnsureComp<FollowedComponent>(entity);
@@ -208,14 +195,14 @@ public sealed class FollowerSystem : EntitySystem
 
         RaiseLocalEvent(follower, followerEv);
         RaiseLocalEvent(entity, entityEv);
-        Dirty(entity, followedComp);
+        Dirty(followedComp);
     }
 
     /// <summary>
     ///     Forces an entity to stop following another entity, if it is doing so.
     /// </summary>
     /// <param name="deparent">Should the entity deparent itself</param>
-    public void StopFollowingEntity(EntityUid uid, EntityUid target, FollowedComponent? followed = null, bool deparent = true, bool removeComp = true)
+    public void StopFollowingEntity(EntityUid uid, EntityUid target, FollowedComponent? followed = null, bool deparent = true)
     {
         if (!Resolve(target, ref followed, false))
             return;
@@ -227,12 +214,8 @@ public sealed class FollowerSystem : EntitySystem
         if (followed.Following.Count == 0)
             RemComp<FollowedComponent>(target);
 
-        if (removeComp)
-        {
-            RemComp<FollowerComponent>(uid);
-            RemComp<OrbitVisualsComponent>(uid);
-        }
-
+        RemComp<FollowerComponent>(uid);
+        RemComp<OrbitVisualsComponent>(uid);
         var uidEv = new StoppedFollowingEntityEvent(target, uid);
         var targetEv = new EntityStoppedFollowingEvent(target, uid);
 

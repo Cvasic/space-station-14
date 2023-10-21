@@ -62,7 +62,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 25
+        maxvol: 25
         reagents:
         - ReagentId: Nutriment
           Quantity: 12
@@ -85,7 +85,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 15
+        maxvol: 15
         reagents:
         - ReagentId: Nutriment
           Quantity: 8
@@ -111,7 +111,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 15
+        maxvol: 15
         reagents:
         - ReagentId: Nutriment
           Quantity: 8
@@ -136,7 +136,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 15
+        maxvol: 15
         reagents:
         - ReagentId: Nutriment
           Quantity: 7
@@ -159,7 +159,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 15
+        maxvol: 15
         reagents:
         - ReagentId: Nutriment
           Quantity: 8

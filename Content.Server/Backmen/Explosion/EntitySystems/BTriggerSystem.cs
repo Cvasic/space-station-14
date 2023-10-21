@@ -3,7 +3,6 @@ using Content.Server.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Components;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.Fluids.EntitySystems;
-using Content.Shared.Chemistry.EntitySystems;
 
 namespace Content.Server.Backmen.Explosion.EntitySystems;
 

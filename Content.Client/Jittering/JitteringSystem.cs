@@ -25,20 +25,20 @@ namespace Content.Client.Jittering
 
         private void OnStartup(EntityUid uid, JitteringComponent jittering, ComponentStartup args)
         {
-            if (!TryComp(uid, out SpriteComponent? sprite))
+            if (!EntityManager.TryGetComponent(uid, out SpriteComponent? sprite))
                 return;
 
-            var animationPlayer = EnsureComp<AnimationPlayerComponent>(uid);
+            var animationPlayer = EntityManager.EnsureComponent<AnimationPlayerComponent>(uid);
 
-            _animationPlayer.Play(uid, animationPlayer, GetAnimation(jittering, sprite), _jitterAnimationKey);
+            _animationPlayer.Play(animationPlayer, GetAnimation(jittering, sprite), _jitterAnimationKey);
         }
 
         private void OnShutdown(EntityUid uid, JitteringComponent jittering, ComponentShutdown args)
         {
-            if (TryComp(uid, out AnimationPlayerComponent? animationPlayer))
-                _animationPlayer.Stop(uid, animationPlayer, _jitterAnimationKey);
+            if (EntityManager.TryGetComponent(uid, out AnimationPlayerComponent? animationPlayer))
+                _animationPlayer.Stop(animationPlayer, _jitterAnimationKey);
 
-            if (TryComp(uid, out SpriteComponent? sprite))
+            if (EntityManager.TryGetComponent(uid, out SpriteComponent? sprite))
                 sprite.Offset = Vector2.Zero;
         }
 
@@ -47,9 +47,9 @@ namespace Content.Client.Jittering
             if(args.Key != _jitterAnimationKey)
                 return;
 
-            if (TryComp(uid, out AnimationPlayerComponent? animationPlayer)
-                && TryComp(uid, out SpriteComponent? sprite))
-                _animationPlayer.Play(uid, animationPlayer, GetAnimation(jittering, sprite), _jitterAnimationKey);
+            if (EntityManager.TryGetComponent(uid, out AnimationPlayerComponent? animationPlayer)
+            && EntityManager.TryGetComponent(uid, out SpriteComponent? sprite))
+                _animationPlayer.Play(animationPlayer, GetAnimation(jittering, sprite), _jitterAnimationKey);
         }
 
         private Animation GetAnimation(JitteringComponent jittering, SpriteComponent sprite)

@@ -35,7 +35,6 @@ public class IdentitySystem : SharedIdentitySystem
         SubscribeLocalEvent<IdentityComponent, DidEquipHandEvent>((uid, _, _) => QueueIdentityUpdate(uid));
         SubscribeLocalEvent<IdentityComponent, DidUnequipEvent>((uid, _, _) => QueueIdentityUpdate(uid));
         SubscribeLocalEvent<IdentityComponent, DidUnequipHandEvent>((uid, _, _) => QueueIdentityUpdate(uid));
-        SubscribeLocalEvent<IdentityComponent, MapInitEvent>(OnMapInit);
     }
 
     public override void Update(float frameTime)
@@ -54,8 +53,10 @@ public class IdentitySystem : SharedIdentitySystem
     }
 
     // This is where the magic happens
-    private void OnMapInit(EntityUid uid, IdentityComponent component, MapInitEvent args)
+    protected override void OnComponentInit(EntityUid uid, IdentityComponent component, ComponentInit args)
     {
+        base.OnComponentInit(uid, component, args);
+
         var ident = Spawn(null, Transform(uid).Coordinates);
 
         QueueIdentityUpdate(uid);

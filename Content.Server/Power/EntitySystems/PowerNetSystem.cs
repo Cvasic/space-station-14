@@ -3,8 +3,8 @@ using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.Power.Components;
 using Content.Server.Power.NodeGroups;
 using Content.Server.Power.Pow3r;
-using Content.Shared.Power;
 using JetBrains.Annotations;
+using Content.Shared.Power;
 using Robust.Server.GameObjects;
 using Robust.Shared.Threading;
 
@@ -34,7 +34,6 @@ namespace Content.Server.Power.EntitySystems
 
             SubscribeLocalEvent<ApcPowerReceiverComponent, ComponentInit>(ApcPowerReceiverInit);
             SubscribeLocalEvent<ApcPowerReceiverComponent, ComponentShutdown>(ApcPowerReceiverShutdown);
-            SubscribeLocalEvent<ApcPowerReceiverComponent, ComponentRemove>(ApcPowerReceiverRemove);
             SubscribeLocalEvent<ApcPowerReceiverComponent, EntityPausedEvent>(ApcPowerReceiverPaused);
             SubscribeLocalEvent<ApcPowerReceiverComponent, EntityUnpausedEvent>(ApcPowerReceiverUnpaused);
 
@@ -63,11 +62,6 @@ namespace Content.Server.Power.EntitySystems
             ComponentShutdown args)
         {
             _powerState.Loads.Free(component.NetworkLoad.Id);
-        }
-
-        private void ApcPowerReceiverRemove(EntityUid uid, ApcPowerReceiverComponent component, ComponentRemove args)
-        {
-            component.Provider?.RemoveReceiver(component);
         }
 
         private static void ApcPowerReceiverPaused(

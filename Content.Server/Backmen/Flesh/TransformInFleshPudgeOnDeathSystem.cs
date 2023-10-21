@@ -10,7 +10,6 @@ using Content.Shared.Humanoid;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Popups;
-using Content.Shared.Random;
 using Content.Shared.Random.Helpers;
 using Content.Shared.Zombies;
 using Robust.Shared.Audio;
@@ -26,7 +25,6 @@ namespace Content.Server.Backmen.Flesh
         [Dependency] private readonly SharedAudioSystem _audio = default!;
         [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
         [Dependency] private readonly PuddleSystem _puddleSystem = default!;
-        [Dependency] private readonly RandomHelperSystem _randomHelper = default!;
 
         public override void Initialize()
         {
@@ -74,7 +72,7 @@ namespace Content.Server.Backmen.Flesh
                                     continue;
                                 cont.Remove(ent, EntityManager, force: true);
                                 Transform(ent).Coordinates = coordinates;
-                                _randomHelper.RandomOffset(ent, 0.25f);
+                                ent.RandomOffset(0.25f);
                             }
                         }
                     }

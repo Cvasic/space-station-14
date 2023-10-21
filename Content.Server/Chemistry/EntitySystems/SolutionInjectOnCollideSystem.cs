@@ -1,8 +1,7 @@
 using Content.Server.Body.Components;
 using Content.Server.Body.Systems;
 using Content.Server.Chemistry.Components;
-using Content.Shared.Chemistry.Components.SolutionManager;
-using Content.Shared.Chemistry.EntitySystems;
+using Content.Server.Chemistry.Components.SolutionManager;
 using Content.Shared.Inventory;
 using JetBrains.Annotations;
 using Robust.Shared.Physics.Dynamics;

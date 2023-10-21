@@ -292,7 +292,7 @@ public abstract class SharedMindSystem : EntitySystem
         return true;
     }
 
-    public bool TryGetObjectiveComp<T>(EntityUid uid, [NotNullWhen(true)] out T? objective) where T : IComponent
+    public bool TryGetObjectiveComp<T>(EntityUid uid, [NotNullWhen(true)] out T? objective) where T : Component
     {
         if (TryGetMind(uid, out var mindId, out var mind) && TryGetObjectiveComp(mindId, out objective, mind))
         {
@@ -302,7 +302,7 @@ public abstract class SharedMindSystem : EntitySystem
         return false;
     }
 
-    public bool TryGetObjectiveComp<T>(EntityUid mindId, [NotNullWhen(true)] out T? objective, MindComponent? mind = null) where T : IComponent
+    public bool TryGetObjectiveComp<T>(EntityUid mindId, [NotNullWhen(true)] out T? objective, MindComponent? mind = null) where T : Component
     {
         if (Resolve(mindId, ref mind))
         {
@@ -382,9 +382,9 @@ public abstract class SharedMindSystem : EntitySystem
     /// Gets a role component from a player's mind.
     /// </summary>
     /// <returns>Whether a role was found</returns>
-    public bool TryGetRole<T>(EntityUid user, [NotNullWhen(true)] out T? role) where T : IComponent
+    public bool TryGetRole<T>(EntityUid user, [NotNullWhen(true)] out T? role) where T : Component
     {
-        role = default;
+        role = null;
         if (!TryComp<MindContainerComponent>(user, out var mindContainer) || mindContainer.Mind == null)
             return false;
 

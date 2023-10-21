@@ -37,7 +37,6 @@ namespace Content.Server.Atmos.EntitySystems
         [Dependency] private readonly EntityLookupSystem _lookup = default!;
         [Dependency] private readonly IAdminLogManager _adminLogger = default!;
         [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
-        [Dependency] private readonly SharedPopupSystem _popup = default!;
 
         public const float MinimumFireStacks = -10f;
         public const float MaximumFireStacks = 20f;
@@ -46,7 +45,7 @@ namespace Content.Server.Atmos.EntitySystems
         public const float MinIgnitionTemperature = 373.15f;
         public const string FlammableFixtureID = "flammable";
 
-        private float _timer;
+        private float _timer = 0f;
 
         private Dictionary<FlammableComponent, float> _fireEvents = new();
 
@@ -192,7 +191,8 @@ namespace Content.Server.Atmos.EntitySystems
         {
             var tempDelta = args.Temperature - MinIgnitionTemperature;
 
-            _fireEvents.TryGetValue(flammable, out var maxTemp);
+            var maxTemp = 0f;
+            _fireEvents.TryGetValue(flammable, out maxTemp);
 
             if (tempDelta > maxTemp)
                 _fireEvents[flammable] = tempDelta;
@@ -233,7 +233,7 @@ namespace Content.Server.Atmos.EntitySystems
             if (!flammable.OnFire || !flammable.CanExtinguish)
                 return;
 
-            _adminLogger.Add(LogType.Flammable, $"{ToPrettyString(uid):entity} stopped being on fire damage");
+            _adminLogger.Add(LogType.Flammable, $"{ToPrettyString(flammable.Owner):entity} stopped being on fire damage");
             flammable.OnFire = false;
             flammable.FireStacks = 0;
 
@@ -271,16 +271,16 @@ namespace Content.Server.Atmos.EntitySystems
             if (!Resolve(uid, ref flammable))
                 return;
 
-            if (!flammable.OnFire || !_actionBlockerSystem.CanInteract(uid, null) || flammable.Resisting)
+            if (!flammable.OnFire || !_actionBlockerSystem.CanInteract(flammable.Owner, null) || flammable.Resisting)
                 return;
 
             flammable.Resisting = true;
 
-            _popup.PopupEntity(Loc.GetString("flammable-component-resist-message"), uid, uid);
+            flammable.Owner.PopupMessage(Loc.GetString("flammable-component-resist-message"));
             _stunSystem.TryParalyze(uid, TimeSpan.FromSeconds(2f), true);
 
             // TODO FLAMMABLE: Make this not use TimerComponent...
-            uid.SpawnTimer(2000, () =>
+            flammable.Owner.SpawnTimer(2000, () =>
             {
                 flammable.Resisting = false;
                 flammable.FireStacks -= 1f;
@@ -329,7 +329,7 @@ namespace Content.Server.Atmos.EntitySystems
                     continue;
                 }
 
-                _alertsSystem.ShowAlert(uid, AlertType.Fire);
+                _alertsSystem.ShowAlert(uid, AlertType.Fire, null, null);
 
                 if (flammable.FireStacks > 0)
                 {

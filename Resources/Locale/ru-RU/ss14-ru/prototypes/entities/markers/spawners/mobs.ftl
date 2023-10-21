@@ -100,5 +100,3 @@ ent-SpawnMobGorilla = спавнер горилла
     .desc = { ent-MarkerBase.desc }
 ent-SpawnMobPenguin = спавнер пингвин
     .desc = { ent-MarkerBase.desc }
-ent-SpawnMobOreCrab = спавнер рудный краб
-    .desc = { ent-MarkerBase.desc }

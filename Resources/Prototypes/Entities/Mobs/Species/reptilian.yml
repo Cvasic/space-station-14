@@ -21,9 +21,9 @@
   - type: Body
     prototype: Reptilian
     requiredLegs: 2
-  - type: Inventory # Corvax-Digitigrade
-    speciesId: digi
   - type: Perishable
+  - type: Inventory
+    speciesId: digi
   - type: Butcherable
     butcheringType: Spike
     spawned:
@@ -42,6 +42,7 @@
     damageContainer: Biological
     damageModifierSet: Scale
   - type: MeleeWeapon
+    hidden: true
     soundHit:
       path: /Audio/Weapons/pierce.ogg
     angle: 30
@@ -69,7 +70,7 @@
   components:
   - type: HumanoidAppearance
     species: Reptilian
-  - type: Inventory # Corvax-Digitigrade
+  - type: Inventory
     speciesId: digi
 
 #Weh

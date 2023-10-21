@@ -48,6 +48,6 @@
     ears: ClothingHeadsetSecurity
     mask: ClothingMaskSterile
     belt: ClothingBeltMedicalFilled
-  innerClothingSkirt: ClothingUniformJumpskirtBrigmedic
+  innerclothingskirt: ClothingUniformJumpskirtBrigmedic
   satchel: ClothingBackpackSatchelSecurityFilled
   duffelbag: ClothingBackpackDuffelSecurityFilled

@@ -52,7 +52,7 @@
     id: CCOperatorPDA
     ears: ClothingHeadsetCentCom
     pocket1: ClothingMaskGasCentcom
-  innerClothingSkirt: ClothingUniformJumpskirttCentcomVeryOfficial
+  innerclothingskirt: ClothingUniformJumpskirttCentcomVeryOfficial
   satchel: ClothingBackpackSatchelFilled
   duffelbag: ClothingBackpackDuffelFilled
 

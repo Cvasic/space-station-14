@@ -28,7 +28,7 @@
   - type: SolutionContainerManager
     solutions:
       ectoplasm:
-        maxVol: 50
+        maxvol: 50
         reagents:
         - ReagentId: Ectoplasm
           Quantity: 50

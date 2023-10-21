@@ -265,7 +265,6 @@
     state: overpriced_pen
   - type: ItemCooldown
   - type: MeleeWeapon
-    wideAnimationRotation: -45
     damage:
       types:
         Piercing: 15
@@ -465,7 +464,7 @@
         whitelist:
           tags:
             - Write
-        insertOnInteract: false
+        insertOnInteract: false 
   - type: Item
     sprite: Objects/Misc/clipboard.rsi
     size: 10
@@ -489,7 +488,6 @@
           tags:
           - Write
   - type: MeleeWeapon
-    wideAnimationRotation: 180
     damage:
       types:
         Blunt: 6

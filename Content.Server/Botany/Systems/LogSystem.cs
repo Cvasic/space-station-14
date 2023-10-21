@@ -2,7 +2,6 @@ using Content.Server.Botany.Components;
 using Content.Server.Kitchen.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
-using Content.Shared.Random;
 using Content.Shared.Random.Helpers;
 using Robust.Shared.Containers;
 
@@ -12,7 +11,6 @@ public sealed class LogSystem : EntitySystem
 {
     [Dependency] private readonly SharedHandsSystem _handsSystem = default!;
     [Dependency] private readonly SharedContainerSystem _containerSystem = default!;
-    [Dependency] private readonly RandomHelperSystem _randomHelper = default!;
 
     public override void Initialize()
     {
@@ -41,7 +39,7 @@ public sealed class LogSystem : EntitySystem
                 var xform = Transform(plank);
                 _containerSystem.AttachParentToContainerOrGrid(xform);
                 xform.LocalRotation = 0;
-                _randomHelper.RandomOffset(plank, 0.25f);
+                plank.RandomOffset(0.25f);
             }
         }
 

@@ -48,7 +48,7 @@ public sealed partial class TTSSystem
         if (soundData is null)
             return;
 
-        RaiseNetworkEvent(new PlayTTSEvent(soundData), Filter.SinglePlayer(args.SenderSession), false); // not record for replay
+        RaiseNetworkEvent(new PlayTTSEvent(soundData), Filter.SinglePlayer(args.SenderSession));
 
         await SaveVoiceCache(cacheId, soundData);
     }

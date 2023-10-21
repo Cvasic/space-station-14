@@ -13,7 +13,7 @@
     belt: ClothingBeltUtilityFilledUnremoveable
     pocket1: Bible
     pocket2: BibleNecronomicon
-  innerClothingSkirt: ClothingUniformJumpskirtColorBlack
+  innerclothingskirt: ClothingUniformJumpskirtColorBlack
   satchel: ClothingBackpackSatchelPlagueDoctorFilled
   duffelbag: ClothingBackpackDuffelPlagueDoctorFilled
 

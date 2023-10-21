@@ -1,6 +1,6 @@
+using Content.Server.Chemistry.EntitySystems;
 using Content.Server.Popups;
 using Content.Shared.Chemistry.Components;
-using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.FixedPoint;
 using Content.Shared.Fluids;
@@ -207,6 +207,9 @@ public sealed class AbsorbentSystem : SharedAbsorbentSystem
         _audio.PlayPvs(component.TransferSound, target);
         _useDelay.BeginDelay(used);
         return true;
+        _audio.PlayPvs(component.TransferSound, target);
+        _useDelay.BeginDelay(used);
+        return true;
     }
 
     /// <summary>
@@ -256,7 +259,7 @@ public sealed class AbsorbentSystem : SharedAbsorbentSystem
         var localPos = _transform.GetInvWorldMatrix(userXform).Transform(targetPos);
         localPos = userXform.LocalRotation.RotateVec(localPos);
 
-        _melee.DoLunge(user, used, Angle.Zero, localPos, null, false);
+        _melee.DoLunge(user, Angle.Zero, localPos, null, false);
 
         return true;
     }

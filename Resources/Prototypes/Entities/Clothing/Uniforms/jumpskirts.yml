@@ -539,9 +539,9 @@
 
 - type: entity
   parent: ClothingUniformSkirtBase
-  id: ClothingUniformJumpskirtLibrarian
+  id: ClothingUniformJumpskirtLibrarianOLD
   name: librarian jumpskirt
-  description: A cosy red jumper fit for a curator of books. # Corvax-Resprite
+  description: A cosy green jumper fit for a curator of books.
   components:
   - type: Sprite
     sprite: Clothing/Uniforms/Jumpskirt/librarian.rsi
