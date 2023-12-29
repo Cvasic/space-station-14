@@ -6,6 +6,7 @@
     components:
       - BSSDrone # backmen: bssdrone
       - StationAI # backmen: AI
+      - BorgChassis
   components:
     - type: PirateAccent
 
@@ -17,6 +18,7 @@
     components:
       - BSSDrone #backmen: bssdrone
       - StationAI # backmen: AI
+      - BorgChassis
   components:
     - type: ArchaicAccent
 
@@ -28,10 +30,12 @@
     components:
       - BSSDrone #backmen: bssdrone
       - StationAI # backmen: AI
+      - BorgChassis
   components:
   - type: Accentless
     removes:
     - type: LizardAccent
+    - type: MothAccent
     - type: ReplacementAccent
       accent: dwarf
 
@@ -43,6 +47,7 @@
     components:
     - BSSDrone #backmen: bssdrone
     - StationAI # backmen: AI
+    - BorgChassis
   whitelist:
     components:
       - Felinid

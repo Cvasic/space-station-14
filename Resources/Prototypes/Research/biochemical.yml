@@ -46,6 +46,7 @@
   recipeUnlocks:
   - CryostasisBeaker
   - StasisBedMachineCircuitboard
+  - SyringeCryostasis
 
 - type: technology
   id: MechanizedTreatment
@@ -129,6 +130,7 @@
   recipeUnlocks:
   - BluespaceBeaker
   - SyringeBluespace
+  - BluespacePillCanister
 
 # look into revisiting this later once medical isn't a hellhole
 #- type: technology

@@ -1,7 +1,6 @@
 using Content.Server.Body.Components;
 using Content.Server.Chemistry.ReactionEffects;
 using Content.Server.Fluids.EntitySystems;
-using Content.Server.Forensics;
 using Content.Server.HealthExaminable;
 using Content.Server.Popups;
 using Content.Shared.Alert;
@@ -20,6 +19,10 @@ using Content.Shared.Speech.EntitySystems;
 using Robust.Server.GameObjects;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Shared.Speech.EntitySystems;
+using Robust.Server.Audio;
+using Robust.Shared.GameObjects;
+using Content.Server.Forensics;
 
 namespace Content.Server.Body.Systems;
 
@@ -36,6 +39,7 @@ public sealed class BloodstreamSystem : EntitySystem
     [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
     [Dependency] private readonly SharedStutteringSystem _stutteringSystem = default!;
     [Dependency] private readonly AlertsSystem _alertsSystem = default!;
+    [Dependency] private readonly ForensicsSystem _forensicsSystem = default!;
 
     public override void Initialize()
     {
@@ -90,6 +94,9 @@ public sealed class BloodstreamSystem : EntitySystem
                 continue;
 
             bloodstream.AccumulatedFrametime -= bloodstream.UpdateInterval;
+
+            if (bloodstream.BloodSolution == null)
+                continue;
 
             // Adds blood to their blood level if it is below the maximum; Blood regeneration. Must be alive.
             if (bloodstream.BloodSolution.Volume < bloodstream.BloodSolution.MaxVolume && !_mobStateSystem.IsDead(uid))
@@ -320,11 +327,7 @@ public sealed class BloodstreamSystem : EntitySystem
             component.BloodTemporarySolution.AddSolution(temp, _prototypeManager);
             if (_puddleSystem.TrySpillAt(uid, component.BloodTemporarySolution, out var puddleUid, false))
             {
-                if (TryComp<DnaComponent>(uid, out var dna))
-                {
-                    var comp = EnsureComp<ForensicsComponent>(puddleUid);
-                    comp.DNAs.Add(dna.DNA);
-                }
+                _forensicsSystem.TransferDna(puddleUid, uid, false);
             }
 
             component.BloodTemporarySolution.RemoveAllSolution();
@@ -376,11 +379,7 @@ public sealed class BloodstreamSystem : EntitySystem
 
         if (_puddleSystem.TrySpillAt(uid, tempSol, out var puddleUid))
         {
-            if (TryComp<DnaComponent>(uid, out var dna))
-            {
-                var comp = EnsureComp<ForensicsComponent>(puddleUid);
-                comp.DNAs.Add(dna.DNA);
-            }
+            _forensicsSystem.TransferDna(puddleUid, uid, false);
         }
     }
 

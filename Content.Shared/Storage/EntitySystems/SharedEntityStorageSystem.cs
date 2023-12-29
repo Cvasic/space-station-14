@@ -15,6 +15,8 @@ using Content.Shared.Storage.Components;
 using Content.Shared.Tools.Systems;
 using Content.Shared.Verbs;
 using Content.Shared.Wall;
+using Robust.Shared.Audio;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
@@ -256,7 +258,7 @@ public abstract class SharedEntityStorageSystem : EntitySystem
 
         if (component.Open)
         {
-            TransformSystem.SetWorldPosition(toInsert, TransformSystem.GetWorldPosition(container));
+            TransformSystem.DropNextTo(toInsert, container);
             return true;
         }
 
