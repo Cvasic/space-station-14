@@ -10,6 +10,19 @@
     - WageScheduler #backmen: currency
 
 - type: gamePreset
+  id: AllAtOnce
+  name: all-at-once-title
+  description: all-at-once-description
+  showInVote: false
+  rules:
+    - Nukeops
+    - Traitor
+    - Revolutionary
+    - Zombie
+    - RampingStationEventScheduler
+    - WageScheduler #backmen: currency
+
+- type: gamePreset
   id: Extended
   alias:
   - extended
