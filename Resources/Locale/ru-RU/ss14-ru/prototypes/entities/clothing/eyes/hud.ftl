@@ -1,5 +1,5 @@
 ent-ClothingEyesHudDiagnostic = диагностический визор
-    .desc = Окуляр с индикатором на стекле, способный анализировать целостность и состояние роботов и экзокостюмов.
+    .desc = Окуляр с индикатором на стекле, способный анализировать целостность и состояние роботов и экзокостюмов. Сделан из си-боргия.
 ent-ClothingEyesHudMedical = медицинский визор
     .desc = Окуляр с индикатором на стекле, который сканирует гуманоидов в поле зрения и предоставляет точные данные о состоянии их здоровья.
 ent-ClothingEyesHudSecurity = визор охраны
@@ -20,14 +20,19 @@ ent-ClothingEyesHudMultiversal = multiversal hud
     .desc = Filler
 ent-ClothingEyesHudOmni = omni hud
     .desc = Filler
-ent-ClothingEyesHudSyndicate = синди-визор
-    .desc = Профессиональный визор Синдиката с индикатором на стекле, предназначенный для более точного обнаружения гуманоидов с их последующим уничтожением.
+# Corvax-HiddenDesc-Start
+ent-ClothingEyesHudSyndicate = визор оперативника
+    .suffix = синди-визор
+    .desc = Профессиональный визор со встроенной индикацией "свой-чужой", предназначенный для обнаружения и идентификации гуманоидных целей для их последующего уничтожения.
+# Corvax-HiddenDesc-End
 ent-ClothingEyesGlassesHiddenSecurity = { ent-ClothingEyesGlassesSunglasses }
     .desc = { ent-ClothingEyesGlassesSunglasses.desc }
     .suffix = Синдикат
-ent-ClothingEyesEyepatchHudMedical = medical hud eyepatch
-    .desc = A heads-up display that scans the humanoids in view and provides accurate data about their health status. For true patriots.
-ent-ClothingEyesEyepatchHudSecurity = security hud eyepatch
-    .desc = A heads-up display that scans the humanoids in view and provides accurate data about their ID status and security records. For true patriots.
-ent-ClothingEyesEyepatchHudBeer = beer hud eyepatch
-    .desc = A pair of sunHud outfitted with apparatus to scan reagents, as well as providing an innate understanding of liquid viscosity while in motion. For true patriots.
+ent-ClothingEyesEyepatchHudMedical = медицинский моновизор
+    .desc = Окуляр с индикатором на стекле, который сканирует гуманоидов в поле зрения и предоставляет точные данные о состоянии их здоровья. Для настоящих патриотов.
+ent-ClothingEyesEyepatchHudSecurity = моновизор охраны
+    .desc = Окуляр с индикатором на стекле, который сканирует гуманоидов в поле зрения и предоставляет точные данные об их идентификационном статусе и записях в системе безопасности. Для настоящих патриотов.
+ent-ClothingEyesEyepatchHudBeer = пивной монокуляр
+    .desc = Пара солнцезащитных очков, оснащенных сканером реагентов, а также дающих понимание вязкости жидкости во время движения. Для настоящих патриотов.
+ent-ClothingEyesEyepatchHudDiag = диагностический моновизор
+    .desc = Окуляр с индикатором на стекле, способный анализировать целостность и состояние роботов и экзокостюмов. Сделан из си-боргия.

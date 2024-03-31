@@ -6,6 +6,7 @@
   noSpawn: true
   components:
   - type: CargoSellBlacklist
+  - type: GhostVisRoller
   - type: Sprite
     overrideContainerOcclusion: true # Ghosts always show up regardless of where they're contained.
     drawdepth: Ghosts
@@ -73,6 +74,7 @@
     - Flesh
     - Freelance
     globalReceive: true
+    receiveAllChannels: true
   - type: Physics
     bodyType: KinematicController
     bodyStatus: InAir

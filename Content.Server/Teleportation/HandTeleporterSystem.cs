@@ -56,7 +56,7 @@ public sealed class HandTeleporterSystem : EntitySystem
                 return;
 
             // start-backmen: protected grid
-            if (HasComp<Content.Shared.Tiles.ProtectedGridComponent>(xform.GridUid) || HasComp<Backmen.Arrivals.ArrivalsProtectGridComponent>(xform.GridUid))
+            if (HasComp<Content.Shared.Tiles.ProtectedGridComponent>(xform.GridUid) || HasComp<Shared.Backmen.Arrivals.ArrivalsProtectGridComponent>(xform.GridUid))
             {
                 return;
             }
@@ -65,7 +65,7 @@ public sealed class HandTeleporterSystem : EntitySystem
             var doafterArgs = new DoAfterArgs(EntityManager, args.User, component.PortalCreationDelay, new TeleporterDoAfterEvent(), uid, used: uid)
             {
                 BreakOnDamage = true,
-                BreakOnUserMove = true,
+                BreakOnMove = true,
                 MovementThreshold = 0.5f,
             };
 

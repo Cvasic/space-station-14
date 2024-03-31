@@ -1,31 +1,35 @@
 using System.Linq;
 using System.Numerics;
+using Content.Server.Backmen.Blob.Components;
 using Content.Server.Construction.Components;
 using Content.Server.Destructible;
 using Content.Server.Emp;
 using Content.Server.Flash;
 using Content.Shared.Backmen.Blob;
+using Content.Shared.Backmen.Blob.Components;
 using Content.Shared.Damage;
 using Content.Shared.Destructible;
 using Content.Shared.FixedPoint;
 using Content.Shared.Popups;
 using Content.Shared.Verbs;
 using Robust.Server.Audio;
+using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 
 namespace Content.Server.Backmen.Blob;
 
 public sealed class BlobTileSystem : SharedBlobTileSystem
 {
-    [Dependency] private readonly IMapManager _map = default!;
     [Dependency] private readonly DamageableSystem _damageableSystem = default!;
     [Dependency] private readonly BlobCoreSystem _blobCoreSystem = default!;
     [Dependency] private readonly AudioSystem _audioSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly EmpSystem _empSystem = default!;
-
+    [Dependency] private readonly MapSystem _mapSystem = default!;
+    [Dependency] private readonly TransformSystem _transform = default!;
 
     public override void Initialize()
     {
@@ -34,9 +38,6 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
         // SubscribeLocalEvent<BlobTileComponent, ComponentStartup>(OnStartup);
         SubscribeLocalEvent<BlobTileComponent, DestructionEventArgs>(OnDestruction);
         SubscribeLocalEvent<BlobTileComponent, BlobTileGetPulseEvent>(OnPulsed);
-        SubscribeLocalEvent<BlobTileComponent, GetVerbsEvent<AlternativeVerb>>(AddUpgradeVerb);
-        SubscribeLocalEvent<BlobTileComponent, GetVerbsEvent<Verb>>(AddRemoveVerb);
-        SubscribeLocalEvent<BlobTileComponent, ComponentGetState>(OnGetState);
         SubscribeLocalEvent<BlobTileComponent, FlashAttemptEvent>(OnFlashAttempt);
     }
 
@@ -55,41 +56,13 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
         if (component.Core == null || !TryComp<BlobCoreComponent>(component.Core.Value, out var blobCoreComponent))
             return;
 
-        var xform = Transform(uid);
-
         if (blobCoreComponent.CurrentChem == BlobChemType.ElectromagneticWeb)
         {
-            _empSystem.EmpPulse(xform.MapPosition, 3f, 50f, 3f);
+            _empSystem.EmpPulse(_transform.GetMapCoordinates(uid), 3f, 50f, 3f);
         }
     }
 
-    private void AddRemoveVerb(EntityUid uid, BlobTileComponent component, GetVerbsEvent<Verb> args)
-    {
-        if (!TryComp<BlobObserverComponent>(args.User, out var ghostBlobComponent))
-            return;
-
-        if (ghostBlobComponent.Core == null ||
-            !TryComp<BlobCoreComponent>(ghostBlobComponent.Core.Value, out var blobCoreComponent))
-            return;
-
-        if (ghostBlobComponent.Core.Value != component.Core)
-            return;
-
-        if (TryComp<TransformComponent>(uid, out var transformComponent) && !transformComponent.Anchored)
-            return;
-
-        if (HasComp<BlobCoreComponent>(uid))
-            return;
-
-        Verb verb = new()
-        {
-            Act = () => TryRemove(uid, ghostBlobComponent.Core.Value, component, blobCoreComponent),
-            Text = Loc.GetString("blob-verb-remove-blob-tile"),
-        };
-        args.Verbs.Add(verb);
-    }
-
-    private void TryRemove(EntityUid target, EntityUid coreUid, BlobTileComponent tile, BlobCoreComponent core)
+    protected override  void TryRemove(EntityUid target, EntityUid coreUid, BlobTileComponent tile, BlobCoreComponent core)
     {
         var xform = Transform(target);
         if (!_blobCoreSystem.RemoveBlobTile(target, coreUid, core))
@@ -149,14 +122,6 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
         }
     }
 
-    private void OnGetState(EntityUid uid, BlobTileComponent component, ref ComponentGetState args)
-    {
-        args.State = new BlobTileComponentState()
-        {
-            Color = component.Color
-        };
-    }
-
     private void OnPulsed(EntityUid uid, BlobTileComponent component, BlobTileGetPulseEvent args)
     {
 
@@ -183,12 +148,12 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
 
         var xform = Transform(uid);
 
-        if (!_map.TryGetGrid(xform.GridUid, out var grid))
+        if (!TryComp<MapGridComponent>(xform.GridUid, out var grid))
         {
             return;
         }
 
-        var mobTile = grid.GetTileRef(xform.Coordinates);
+        var mobTile = _mapSystem.GetTileRef(xform.GridUid.Value, grid, xform.Coordinates);
 
         var mobAdjacentTiles = new[]
         {
@@ -202,7 +167,7 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
 
         var radius = 1.0f;
 
-        var innerTiles = grid.GetLocalTilesIntersecting(
+        var innerTiles = _mapSystem.GetLocalTilesIntersecting(xform.GridUid.Value, grid,
             new Box2(localPos + new Vector2(-radius, -radius), localPos + new Vector2(radius, radius))).ToArray();
 
         foreach (var innerTile in innerTiles)
@@ -212,7 +177,7 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
                 continue;
             }
 
-            foreach (var ent in grid.GetAnchoredEntities(innerTile.GridIndices))
+            foreach (var ent in _mapSystem.GetAnchoredEntities(xform.GridUid.Value, grid, innerTile.GridIndices))
             {
                 if (!HasComp<DestructibleComponent>(ent) || !HasComp<ConstructionComponent>(ent))
                     continue;
@@ -222,7 +187,7 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
                 return;
             }
             var spawn = true;
-            foreach (var ent in grid.GetAnchoredEntities(innerTile.GridIndices))
+            foreach (var ent in _mapSystem.GetAnchoredEntities(xform.GridUid.Value, grid, innerTile.GridIndices))
             {
                 if (!HasComp<BlobTileComponent>(ent))
                     continue;
@@ -233,7 +198,7 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
             if (!spawn)
                 continue;
 
-            var location = innerTile.GridIndices.ToEntityCoordinates(xform.GridUid.Value, _map);
+            var location = _mapSystem.ToCoordinates(xform.GridUid.Value, innerTile.GridIndices, grid);
 
             if (_blobCoreSystem.TransformBlobTile(null,
                     blobTileComponent.Core.Value,
@@ -245,34 +210,7 @@ public sealed class BlobTileSystem : SharedBlobTileSystem
         }
     }
 
-    private void AddUpgradeVerb(EntityUid uid, BlobTileComponent component, GetVerbsEvent<AlternativeVerb> args)
-    {
-        if (!TryComp<BlobObserverComponent>(args.User, out var ghostBlobComponent))
-            return;
-
-        if (ghostBlobComponent.Core == null ||
-            !TryComp<BlobCoreComponent>(ghostBlobComponent.Core.Value, out var blobCoreComponent))
-            return;
-
-        if (TryComp<TransformComponent>(uid, out var transformComponent) && !transformComponent.Anchored)
-            return;
-
-        var verbName = component.BlobTileType switch
-        {
-            BlobTileType.Normal => Loc.GetString("blob-verb-upgrade-to-strong"),
-            BlobTileType.Strong => Loc.GetString("blob-verb-upgrade-to-reflective"),
-            _ => "Upgrade"
-        };
-
-        AlternativeVerb verb = new()
-        {
-            Act = () => TryUpgrade(uid, args.User, ghostBlobComponent.Core.Value, component, blobCoreComponent),
-            Text = verbName
-        };
-        args.Verbs.Add(verb);
-    }
-
-    private void TryUpgrade(EntityUid target, EntityUid user, EntityUid coreUid, BlobTileComponent tile, BlobCoreComponent core)
+    protected override void TryUpgrade(EntityUid target, EntityUid user, EntityUid coreUid, BlobTileComponent tile, BlobCoreComponent core)
     {
         var xform = Transform(target);
         if (tile.BlobTileType == BlobTileType.Normal)

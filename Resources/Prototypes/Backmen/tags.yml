@@ -11,6 +11,9 @@
   id: ForensicBeltEquip
 
 - type: Tag
+  id: FleshBlocker
+
+- type: Tag
   id: CoreSilver
 
 - type: Tag
@@ -98,5 +101,7 @@
   id: SwordSquadRO
 
 - type: Tag
-  id: CartridgeAntitank
+  id: CartridgeRifleHeavy
 
+- type: Tag
+  id: CartridgeAntitank

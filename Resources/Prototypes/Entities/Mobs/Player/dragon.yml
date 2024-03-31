@@ -6,6 +6,8 @@
   description: A flying leviathan, loosely related to space carps.
   abstract: true
   components:
+  - type: Bloodstream
+    bloodMaxVolume: 650
   - type: GhostRole
     allowMovement: true
     allowSpeech: true
@@ -123,9 +125,11 @@
   - type: Tag
     tags:
     - CannotSuicide
+    - DoorBumpOpener
   - type: NightVision
     isToggle: true
     color: "#808080"
+
 
 - type: entity
   parent: BaseMobDragon

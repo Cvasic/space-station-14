@@ -18,27 +18,24 @@
       - id: ClothingHeadsetService
       - id: CrayonMime
 
-# Demoman's syndicate belt 
 - type: entity
-  parent: ClothingBeltDemoman
-  id: ClothingBeltDemomanFilled
-  suffix: syndicate
+  parent: ClothingBackpackDuffelSyndicateBundle
+  id: ClothingBackpackDuffelSyndicatePsiGrenadeBundle
+  name: syndicate psi-grenade bundle
+  description: "full of psi gas grenades!."
   components:
-  - type: Tag
-    tags: [] # ignore "WhitelistChameleon" tag
-  - type: StorageFill
-    contents:
-      - id: ChemicalPayload
-        amount: 2
-      - id: FlashPayload
-        amount: 1
-      - id: ExplosivePayload
-        amount: 2
-      - id: SignalTrigger
-        amount: 1
-      - id: VoiceTrigger
-        amount: 1
-      - id: TimerTrigger
-        amount: 2
-      - id: ProximitySensor
-      - id: RemoteSignaller
+    - type: StorageFill
+      contents:
+        - id: PsiGrenade
+          amount: 20
+          
+- type: entity
+  parent: ClothingBackpackDuffelSyndicateBundle
+  id: ClothingBackpackDuffelSyndicateAntiPsiGrenadeBundle
+  name: syndicate anti psi-grenade bundle
+  description: "contains a lot of anti-psi gas grenades!."
+  components:
+    - type: StorageFill
+      contents:
+        - id: AntiPsiGrenade
+          amount: 20

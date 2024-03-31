@@ -1,5 +1,4 @@
 using Content.Shared.Roles;
-using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
@@ -32,15 +31,6 @@ public sealed partial class RevolutionaryRuleComponent : Component
     [DataField]
     public ProtoId<AntagPrototype> HeadRevPrototypeId = "HeadRev";
 
-    [DataField]
-    public ProtoId<AntagPrototype> RevPrototypeId = "Rev";
-
-    /// <summary>
-    /// Sound that plays when you are chosen as Rev. (Placeholder until I find something cool I guess)
-    /// </summary>
-    [DataField]
-    public SoundSpecifier HeadRevStartSound = new SoundPathSpecifier("/Audio/Ambience/Antag/headrev_start.ogg");
-
     /// <summary>
     /// Min players needed for Revolutionary gamemode to start.
     /// </summary>
@@ -66,7 +56,11 @@ public sealed partial class RevolutionaryRuleComponent : Component
     public List<EntProtoId> StartingGear = new()
     {
         "Flash",
-        "ClothingEyesGlassesSunglasses"
+        "ClothingEyesGlassesSunglasses",
+        "WeaponPistolMakarovsssp",
+        "MagazinePistol",
+        "ClothingNeckNKVDBagde",
+        "CombatKnifeSpetsnaz"
     };
 
     /// <summary>

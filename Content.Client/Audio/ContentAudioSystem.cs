@@ -1,18 +1,11 @@
 using Content.Shared.Audio;
 using Content.Shared.GameTicking;
-using Robust.Client.Audio;
-using Robust.Client.ResourceManagement;
-using Robust.Client.UserInterface;
 using AudioComponent = Robust.Shared.Audio.Components.AudioComponent;
 
 namespace Content.Client.Audio;
 
 public sealed partial class ContentAudioSystem : SharedContentAudioSystem
 {
-    [Dependency] private readonly IAudioManager _audioManager = default!;
-    [Dependency] private readonly IResourceCache _cache = default!;
-    [Dependency] private readonly IUserInterfaceManager _uiManager = default!;
-
     // Need how much volume to change per tick and just remove it when it drops below "0"
     private readonly Dictionary<EntityUid, float> _fadingOut = new();
 
@@ -36,13 +29,17 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
     public const float AmbientMusicMultiplier = 3f;
     public const float LobbyMultiplier = 3f;
     public const float InterfaceMultiplier = 2f;
-    public const float TtsMultiplier = 3f; // Corvax-TTS
+    public const float TtsMultiplier = 5f; // Corvax-TTS
+    public const float TtsAnnounceMultiplier = 2f; // Corvax-TTS
+
 
     public override void Initialize()
     {
         base.Initialize();
+
         UpdatesOutsidePrediction = true;
         InitializeAmbientMusic();
+        InitializeLobbyMusic();
         SubscribeNetworkEvent<RoundRestartCleanupEvent>(OnRoundCleanup);
     }
 
@@ -51,22 +48,33 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
         _fadingOut.Clear();
 
         // Preserve lobby music but everything else should get dumped.
-        var lobbyStream = EntityManager.System<BackgroundAudioSystem>().LobbyStream;
-        TryComp(lobbyStream, out AudioComponent? audioComp);
-        var oldGain = audioComp?.Gain;
+        var lobbyMusic = _lobbySoundtrackInfo?.MusicStreamEntityUid;
+        TryComp(lobbyMusic, out AudioComponent? lobbyMusicComp);
+        var oldMusicGain = lobbyMusicComp?.Gain;
+
+        var restartAudio = _lobbyRoundRestartAudioStream;
+        TryComp(restartAudio, out AudioComponent? restartComp);
+        var oldAudioGain = restartComp?.Gain;
 
         SilenceAudio();
 
-        if (oldGain != null)
+        if (oldMusicGain != null)
         {
-            Audio.SetGain(lobbyStream, oldGain.Value, audioComp);
+            Audio.SetGain(lobbyMusic, oldMusicGain.Value, lobbyMusicComp);
         }
+
+        if (oldAudioGain != null)
+        {
+            Audio.SetGain(restartAudio, oldAudioGain.Value, restartComp);
+        }
+        PlayRestartSound(ev);
     }
 
     public override void Shutdown()
     {
         base.Shutdown();
         ShutdownAmbientMusic();
+        ShutdownLobbyMusic();
     }
 
     public override void Update(float frameTime)
@@ -77,6 +85,7 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
             return;
 
         UpdateAmbientMusic();
+        UpdateLobbyMusic();
         UpdateFades(frameTime);
     }
 
@@ -101,7 +110,7 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
 
         _fadingOut.Remove(stream.Value);
         var curVolume = component.Volume;
-        var change = (curVolume - MinVolume) / duration;
+        var change = (MinVolume - curVolume) / duration;
         _fadingIn.Add(stream.Value, (change, component.Volume));
         component.Volume = MinVolume;
     }
@@ -145,8 +154,8 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
                 continue;
             }
 
-            var volume = component.Volume + change * frameTime;
-            volume = MathF.Max(target, volume);
+            var volume = component.Volume - change * frameTime;
+            volume = MathF.Min(target, volume);
             _audio.SetVolume(stream, volume, component);
 
             if (component.Volume.Equals(target))

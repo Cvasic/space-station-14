@@ -39,6 +39,7 @@ namespace Content.Server.Ghost.Roles
         [Dependency] private readonly TransformSystem _transform = default!;
         [Dependency] private readonly SharedMindSystem _mindSystem = default!;
         [Dependency] private readonly Backmen.RoleWhitelist.WhitelistSystem _roleWhitelist = default!; // backmen: whitelist
+        [Dependency] private readonly Backmen.Ghost.Roles.GhostRoleRollerSystem _roleRoller = default!; // backmen: ghost roller
         [Dependency] private readonly SharedRoleSystem _roleSystem = default!;
 
         private uint _nextRoleIdentifier;
@@ -59,7 +60,8 @@ namespace Content.Server.Ghost.Roles
             SubscribeLocalEvent<GhostTakeoverAvailableComponent, MindAddedMessage>(OnMindAdded);
             SubscribeLocalEvent<GhostTakeoverAvailableComponent, MindRemovedMessage>(OnMindRemoved);
             SubscribeLocalEvent<GhostTakeoverAvailableComponent, MobStateChangedEvent>(OnMobStateChanged);
-            SubscribeLocalEvent<GhostRoleComponent, ComponentInit>(OnInit);
+            SubscribeLocalEvent<GhostRoleComponent, MapInitEvent>(OnMapInit);
+            SubscribeLocalEvent<GhostRoleComponent, ComponentStartup>(OnStartup);
             SubscribeLocalEvent<GhostRoleComponent, ComponentShutdown>(OnShutdown);
             SubscribeLocalEvent<GhostRoleComponent, EntityPausedEvent>(OnPaused);
             SubscribeLocalEvent<GhostRoleComponent, EntityUnpausedEvent>(OnUnpaused);
@@ -186,6 +188,7 @@ namespace Content.Server.Ghost.Roles
                 return;
 
             _ghostRoles[role.Comp.Identifier = GetNextRoleIdentifier()] = role;
+            _roleRoller.RegisterGhostRole(role); // backmen: ghost roller
             UpdateAllEui();
         }
 
@@ -196,6 +199,7 @@ namespace Content.Server.Ghost.Roles
                 return;
 
             _ghostRoles.Remove(comp.Identifier);
+            _roleRoller.UnregisterGhostRole(role); // backmen: ghost roller
             UpdateAllEui();
         }
 
@@ -210,6 +214,11 @@ namespace Content.Server.Ghost.Roles
             // end-backmen: whitelist
 
             var ev = new TakeGhostRoleEvent(player);
+            // start-backmen: ghost roller
+            _roleRoller.Takeover(role, ref ev);
+            if(ev.TookRole)
+                return;
+            // end-backmen: ghost roller
             RaiseLocalEvent(role, ref ev);
 
             if (!ev.TookRole)
@@ -325,17 +334,14 @@ namespace Content.Server.Ghost.Roles
             UpdateAllEui();
         }
 
-        private void OnInit(Entity<GhostRoleComponent> ent, ref ComponentInit args)
+        private void OnMapInit(Entity<GhostRoleComponent> ent, ref MapInitEvent args)
         {
-            var role = ent.Comp;
-            if (role.Probability < 1f && !_random.Prob(role.Probability))
-            {
-                RemComp<GhostRoleComponent>(ent);
-                return;
-            }
+            if (ent.Comp.Probability < 1f && !_random.Prob(ent.Comp.Probability))
+                RemCompDeferred<GhostRoleComponent>(ent);
+        }
 
-            if (role.RoleRules == "")
-                role.RoleRules = Loc.GetString("ghost-role-component-default-rules");
+        private void OnStartup(Entity<GhostRoleComponent> ent, ref ComponentStartup args)
+        {
             RegisterGhostRole(ent);
         }
 

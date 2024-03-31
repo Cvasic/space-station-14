@@ -124,8 +124,8 @@ public abstract partial class SharedToolSystem : EntitySystem
         var doAfterArgs = new DoAfterArgs(EntityManager, user, delay / toolComponent.SpeedModifier, toolEvent, tool, target: target, used: tool)
         {
             BreakOnDamage = true,
-            BreakOnTargetMove = true,
-            BreakOnUserMove = true,
+            BreakOnMove = true,
+            BreakOnWeightlessMove = false,
             NeedHand = tool != user,
             AttemptFrequency = IsWelder(tool) ? AttemptFrequency.EveryTick : AttemptFrequency.Never
         };
@@ -196,7 +196,7 @@ public abstract partial class SharedToolSystem : EntitySystem
 
         // check if the user allows using the tool
         var ev = new ToolUserAttemptUseEvent(target);
-        RaiseLocalEvent(user, ref ev);
+        RaiseLocalEvent(user, ref ev, true); // backmen: protect system
         if (ev.Cancelled)
             return false;
 
