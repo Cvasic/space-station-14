@@ -231,6 +231,16 @@
   - !type:DiseaseSnough
     probability: 0.025
     emote: Yawn
+  cures:
+  - !type:DiseaseReagentCure
+    reagent:
+      ReagentId: Coffee
+    min: 10
+  - !type:DiseaseReagentCure
+    reagent:
+      ReagentId: IrishCoffee
+  - !type:DiseaseJustWaitCure
+    maxLength: 900
 
 - type: disease
   id: BleedersBite

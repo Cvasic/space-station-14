@@ -92,7 +92,7 @@ public sealed class ShadowkinTeleportSystem : EntitySystem
 
             // Resume pulling
             // TODO: This does nothing? // This does things sometimes, but the client never knows
-            _pulling.TryStartPull(args.Performer, puller.Pulling.Value, null, puller, pullable);
+            _pulling.TryStartPull(args.Performer, puller.Pulling.Value, puller, pullable);
         }
 
 
@@ -104,7 +104,7 @@ public sealed class ShadowkinTeleportSystem : EntitySystem
         _stamina.TakeStaminaDamage(args.Performer, args.StaminaCost);
 
         // Speak
-        _magic.Speak(args, false);
+        _magic.Speak(args);
 
         args.Handled = true;
     }

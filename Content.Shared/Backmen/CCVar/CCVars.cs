@@ -71,7 +71,7 @@ public sealed class CCVars
         CVarDef.Create("sponsor.api_url", "", CVar.SERVERONLY);
 
     public static readonly CVarDef<string> SponsorsSelectedGhost =
-        CVarDef.Create("sponsor.ghost", "", CVar.REPLICATED | CVar.CLIENT);
+        CVarDef.Create("sponsor.ghost", "", CVar.REPLICATED | CVar.CLIENT | CVar.ARCHIVE);
 
 
     public static readonly CVarDef<bool>
@@ -153,6 +153,12 @@ public sealed class CCVars
 
     public static readonly CVarDef<int> BlobPlayersPer =
         CVarDef.Create("blob.players_per", 20, CVar.SERVERONLY);
+
+    /*
+     * SpecForces
+     */
+    public static readonly CVarDef<int> SpecForceDelay =
+        CVarDef.Create("specforce.delay", 2, CVar.SERVERONLY);
 
 
     /*

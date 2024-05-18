@@ -7,12 +7,13 @@ using Robust.Client;
 using Robust.Client.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Network;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
 namespace Content.Client.Players.PlayTimeTracking;
 
-public sealed class JobRequirementsManager
+public sealed class JobRequirementsManager : ISharedPlaytimeManager
 {
     [Dependency] private readonly IBaseClient _client = default!;
     [Dependency] private readonly IClientNetManager _net = default!;
@@ -20,6 +21,8 @@ public sealed class JobRequirementsManager
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypes = default!;
+
+    [Dependency] private readonly Content.Corvax.Interfaces.Shared.ISharedSponsorsManager _sponsorsManager = default!; // backmen: allRoles
 
     private readonly Dictionary<string, TimeSpan> _roles = new();
     private readonly List<string> _roleBans = new();
@@ -94,6 +97,11 @@ public sealed class JobRequirementsManager
             return false;
         }
 
+        //start-backmen: allRoles
+        if (_sponsorsManager.IsClientAllRoles())
+            return true;
+        //end-backmen
+
         var player = _playerManager.LocalSession;
         if (player == null)
             return true;
@@ -101,7 +109,8 @@ public sealed class JobRequirementsManager
         //start-backmen: whitelist
         var isOk = CheckRoleTime(job.Requirements, out reason);
 
-        if (job.WhitelistRequired && _cfg.GetCVar(Shared.Backmen.CCVar.CCVars.WhitelistRolesEnabled) && !IsWhitelisted())
+        if (job.WhitelistRequired && _cfg.GetCVar(Shared.Backmen.CCVar.CCVars.WhitelistRolesEnabled) &&
+            !IsWhitelisted())
         {
             isOk = false;
             if (reason == null)
@@ -110,9 +119,10 @@ public sealed class JobRequirementsManager
             }
             else
             {
-                reason.AddMarkup("\n"+Loc.GetString("playtime-deny-reason-not-whitelisted"));
+                reason.AddMarkup("\n" + Loc.GetString("playtime-deny-reason-not-whitelisted"));
             }
         }
+
         return isOk;
         //end-backmen: whitelist
     }
@@ -123,6 +133,11 @@ public sealed class JobRequirementsManager
 
         if (requirements == null || !_cfg.GetCVar(CCVars.GameRoleTimers))
             return true;
+
+        //start-backmen: allRoles
+        if (_sponsorsManager.IsClientAllRoles())
+            return true;
+        //end-backmen
 
         var reasons = new List<string>();
         foreach (var requirement in requirements)
@@ -155,5 +170,13 @@ public sealed class JobRequirementsManager
         }
     }
 
+    public IReadOnlyDictionary<string, TimeSpan> GetPlayTimes(ICommonSession session)
+    {
+        if (session != _playerManager.LocalSession)
+        {
+            return new Dictionary<string, TimeSpan>();
+        }
 
+        return _roles;
+    }
 }

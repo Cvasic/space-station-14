@@ -78,9 +78,8 @@
     malus: 0
   - type: Reflect
     enabled: false
-  - type: Tag
-    tags:
-      - NoPaint
+    reflectProb: 0.5
+    minReflectProb: 0.25
   - type: IgnitionSource
     temperature: 700
 # Corvax-HiddenDesc-Start
@@ -98,6 +97,7 @@
         - SecurityCadet
         - SecurityOfficer
         - Warden
+        - Captain
     - label: corvax-hidden-desc-EnergySword-cargo
       jobRequired:
         - SalvageSpecialist
@@ -178,7 +178,6 @@
   - type: Tag
     tags:
     - Write
-    - NoPaint
   - type: DisarmMalus
     malus: 0
 # Corvax-HiddenDesc-Start
@@ -263,6 +262,7 @@
         - SecurityCadet
         - SecurityOfficer
         - Warden
+        - Captain
     - label: corvax-hidden-desc-EnergyCutlass-cargo
       jobRequired:
         - SalvageSpecialist
@@ -272,7 +272,7 @@
   name: double-bladed energy sword
   parent: EnergySword
   id: EnergySwordDouble
-  description: Syndicate Command Interns thought that having one blade on the energy sword was not enough. This can be stored in pockets.
+  description: Syndicate Command's intern thought that having only one blade on energy swords was not cool enough. This can be stored in pockets.
   components:
   - type: EnergySword
   - type: ItemToggle
@@ -323,7 +323,8 @@
     size: Small
     sprite: Objects/Weapons/Melee/e_sword_double-inhands.rsi
   - type: Reflect
-    reflectProb: .75
+    reflectProb: .80
+    minReflectProb: .65
     spread: 75
   - type: UseDelay
     delay: 1
@@ -351,6 +352,7 @@
         - SecurityCadet
         - SecurityOfficer
         - Warden
+        - Captain
     - label: corvax-hidden-desc-EnergySword-cargo
       jobRequired:
         - SalvageSpecialist

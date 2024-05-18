@@ -5,6 +5,7 @@ using Content.Server.Administration.Managers;
 using Content.Server.Afk;
 using Content.Server.Chat.Managers;
 using Content.Server.Connection;
+using Content.Server.Corvax.GuideGenerator;
 using Content.Server.Corvax.TTS;
 using Content.Server.Database;
 using Content.Server.EUI;
@@ -104,11 +105,13 @@ namespace Content.Server.Entry
                 IoCManager.Resolve<GhostKickManager>().Initialize();
                 IoCManager.Resolve<TTSManager>().Initialize(); // Corvax-TTS
                 IoCManager.Resolve<ServerInfoManager>().Initialize();
+                IoCManager.Resolve<ServerApi>().Initialize();
 
                 // start-backmen: IoC
-                IoCManager.Resolve<Content.Corvax.Interfaces.Server.IServerSponsorsManager>().Initialize();
+                IoCManager.Resolve<Content.Corvax.Interfaces.Shared.ISharedSponsorsManager>().Initialize();
                 IoCManager.Resolve<Content.Corvax.Interfaces.Server.IServerDiscordAuthManager>().Initialize();
                 IoCManager.Resolve<Content.Corvax.Interfaces.Server.IServerJoinQueueManager>().Initialize();
+                IoCManager.Resolve<Content.Corvax.Interfaces.Shared.ISharedLoadoutsManager>().Initialize();
                 // end-backmen: IoC
 
                 _voteManager.Initialize();
@@ -141,6 +144,9 @@ namespace Content.Server.Entry
                 file.Flush();
                 file = resourceManager.UserData.OpenWriteText(resPath.WithName("mealrecipes_" + dest));
                 MealsRecipesJsonGenerator.PublishJson(file);
+                file.Flush();
+                file = resourceManager.UserData.OpenWriteText(resPath.WithName("healthchangereagents_" + dest));
+                HealthChangeReagentsJsonGenerator.PublishJson(file);
                 file.Flush();
                 // Corvax-Wiki-End
                 IoCManager.Resolve<IBaseServer>().Shutdown("Data generation done");
@@ -186,6 +192,7 @@ namespace Content.Server.Entry
         {
             _playTimeTracking?.Shutdown();
             _dbManager?.Shutdown();
+            IoCManager.Resolve<ServerApi>().Shutdown();
         }
 
         private static void LoadConfigPresets(IConfigurationManager cfg, IResourceManager res, ISawmill sawmill)

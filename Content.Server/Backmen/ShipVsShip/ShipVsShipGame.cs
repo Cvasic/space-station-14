@@ -3,6 +3,7 @@ using Content.Server.Backmen.Arrivals;
 using Content.Server.Backmen.RoleWhitelist;
 using Content.Server.Backmen.ShipVsShip.Components;
 using Content.Server.GameTicking;
+using Content.Server.GameTicking.Components;
 using Content.Server.GameTicking.Rules;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.KillTracking;
@@ -11,6 +12,7 @@ using Content.Server.RoundEnd;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Events;
 using Content.Server.Shuttles.Systems;
+using Content.Server.Spawners.Components;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
 using Content.Shared.Backmen.ShipVsShip;
@@ -22,18 +24,20 @@ using Content.Shared.Mobs;
 using Content.Shared.Players;
 using Content.Shared.Roles;
 using Content.Shared.Roles.Jobs;
+using Content.Shared.Timing;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
 namespace Content.Server.Backmen.ShipVsShip;
 
 public sealed class ShipVsShipGame : GameRuleSystem<ShipVsShipGameComponent>
 {
-    private ISawmill _sawmill = default!;
-    [Dependency] private readonly StationSystem _stationSystem = default!;
+    //private ISawmill _sawmill = default!;
+    //[Dependency] private readonly StationSystem _stationSystem = default!;
     [Dependency] private readonly WhitelistSystem _whitelistSystem = default!;
     [Dependency] private readonly StationJobsSystem _stationJobs = default!;
     [Dependency] private readonly ISharedPlayerManager _playerManager = default!;
@@ -42,13 +46,12 @@ public sealed class ShipVsShipGame : GameRuleSystem<ShipVsShipGameComponent>
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly ShuttleConsoleSystem _console = default!;
     [Dependency] private readonly RoundEndSystem _endSystem = default!;
+    [Dependency] private readonly IGameTiming _gameTiming = default!;
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
 
     public override void Initialize()
     {
         base.Initialize();
-        _sawmill = Logger.GetSawmill("preset");
-
-        SubscribeLocalEvent<RoundStartAttemptEvent>(OnStartAttempt);
 
         SubscribeLocalEvent<RulePlayerSpawningEvent>(OnPlayersSpawned);
         SubscribeLocalEvent<PlayerBeforeSpawnEvent>(OnBeforeSpawn);
@@ -57,37 +60,90 @@ public sealed class ShipVsShipGame : GameRuleSystem<ShipVsShipGameComponent>
         SubscribeLocalEvent<LoadingMapsEvent>(OnLoadMap);
         SubscribeLocalEvent<FTLCompletedEvent>(OnAfterFtl);
         SubscribeLocalEvent<RoundStartedEvent>(OnStartRound);
-        SubscribeLocalEvent<RoundEndTextAppendEvent>(OnRoundEndText);
         SubscribeLocalEvent<CanHandleWithArrival>(CanUseArrivals);
+        SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnAfterSpawning);
+    }
+
+    protected override void AppendRoundEndText(EntityUid uid, ShipVsShipGameComponent rule, GameRuleComponent gameRule,
+        ref RoundEndTextAppendEvent args)
+    {
+        args.AddLine(Loc.GetString($"svs-team-{rule.Winner ?? StationTeamMarker.Neutral}-lose", ("target",rule.WinnerTarget ?? EntityUid.Invalid)));
+    }
+
+    private void SetFlag(EntityUid ent, StationTeamMarker team)
+    {
+        var teamFlag = EnsureComp<SVSTeamMemberComponent>(ent);
+        teamFlag.Team = team;
+        teamFlag.StatusIcon = team switch
+        {
+            StationTeamMarker.TeamA => "TeamAFaction",
+            StationTeamMarker.TeamB => "TeamBFaction",
+            _ => "Team0Faction"
+        };
+        Dirty(ent, teamFlag);
+    }
+
+    private void OnAfterSpawning(PlayerSpawnCompleteEvent ev)
+    {
+        var activeRules = QueryActiveRules();
+
+        while (activeRules.MoveNext(out _, out var rule, out _))
+        {
+            var xform = Transform(ev.Mob);
+            var team = rule.Players.FirstOrNull(x => x.Value.Contains(ev.Player.UserId))?.Key;
+
+            if (team == null)
+            {
+                var weakTeam = rule.Players.MinBy(x => x.Value.Count);
+                team = weakTeam.Key;
+                rule.Players[team.Value].Add(ev.Player.UserId);
+            }
+
+
+            Log.Info($"Validate player spawning station {ev.Mob:entity} on {xform.GridUid:entity} (team: {team})");
+
+
+            SetFlag(ev.Mob, team.Value);
+            if (!TryComp<StationDataComponent>(rule.Team[team.Value], out var stationDataComponent) ||
+                !rule.Team.ContainsKey(team.Value))
+                continue;
+
+            var stationGrids = stationDataComponent.Grids;
+            if (xform.GridUid == null || stationGrids.Contains(xform.GridUid.Value))
+            {
+                return;
+            }
+            var latejoin = (from s in EntityQuery<SpawnPointComponent, TransformComponent>()
+                where s.Item1.SpawnType == SpawnPointType.LateJoin && s.Item2.GridUid.HasValue && stationGrids.Contains(s.Item2.GridUid.Value)
+                select s.Item2.Coordinates).ToList();
+            if (latejoin.Count == 0)
+            {
+                Log.Error($"not found late join for {team}");
+                return;
+            }
+
+            var point = RobustRandom.Pick(latejoin);
+            _transform.SetCoordinates(ev.Mob, point);
+            Log.Warning($"Invalid spawning station {ev.Mob:entity} on {xform.GridUid:entity} (team: {team}) do fixing, new grid = {point.EntityId:entity}");
+
+        }
     }
 
     private void CanUseArrivals(CanHandleWithArrival ev)
     {
         var activeRules = QueryActiveRules();
 
-        while (activeRules.MoveNext(out var ruleUid, out var r1, out var rule, out var r3))
+        while (activeRules.MoveNext(out _, out _, out _))
         {
             ev.Cancel();
         }
-    }
-
-    private void OnRoundEndText(RoundEndTextAppendEvent ev)
-    {
-        var activeRules = QueryActiveRules();
-
-        while (activeRules.MoveNext(out var ruleUid, out var r1, out var rule, out var r3))
-        {
-            ev.AddLine(Loc.GetString($"svs-team-{rule.Winner ?? StationTeamMarker.Neutral}-lose", ("target",rule.WinnerTarget ?? EntityUid.Invalid)));
-        }
-
-
     }
 
     private void OnStartRound(RoundStartedEvent ev)
     {
         var activeRules = QueryActiveRules();
 
-        while (activeRules.MoveNext(out var ruleUid, out var r1, out var rule, out var r3))
+        while (activeRules.MoveNext(out _, out var rule, out _))
         {
             ScanForObjects(rule);
         }
@@ -133,9 +189,9 @@ public sealed class ShipVsShipGame : GameRuleSystem<ShipVsShipGameComponent>
     {
         var activeRules = QueryActiveRules();
 
-        while (activeRules.MoveNext(out var ruleUid, out var r1, out var rule, out var r3))
+        while (activeRules.MoveNext(out _, out _, out _))
         {
-            EnsureComp<FTLComponent>(ev.Entity).Accumulator += 60 * 5;
+            EnsureComp<FTLComponent>(ev.Entity).StateTime = StartEndTime.FromCurTime(_gameTiming, 60 * 5);
             _console.RefreshShuttleConsoles(ev.Entity);
         }
     }
@@ -234,12 +290,10 @@ public sealed class ShipVsShipGame : GameRuleSystem<ShipVsShipGameComponent>
                 var mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(rule.Team[team], job, ev.Profile);
                 DebugTools.AssertNotNull(mobMaybe);
                 var mob = mobMaybe!.Value;
-
+                SetFlag(mob, team);
                 _mind.TransferTo(newMind, mob);
                 return; // invalid team? skip
             }
-
-
         }
     }
 
@@ -375,11 +429,6 @@ public sealed class ShipVsShipGame : GameRuleSystem<ShipVsShipGameComponent>
             GameTicker.SpawnPlayer(sess, ev.Profiles[player], station, job, false);
             // continue in OnBeforeSpawn
         }
-    }
-
-    private void OnStartAttempt(RoundStartAttemptEvent ev)
-    {
-        TryRoundStartAttempt(ev, Loc.GetString("svs-title"));
     }
 
     protected override void Started(EntityUid uid, ShipVsShipGameComponent rule, GameRuleComponent ruleGame, GameRuleStartedEvent args)

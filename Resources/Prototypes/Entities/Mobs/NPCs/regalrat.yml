@@ -90,6 +90,8 @@
     name: ghost-role-information-rat-king-name
     description: ghost-role-information-rat-king-description
     rules: ghost-role-information-rat-king-rules
+    raffle:
+      settings: default
   - type: GhostTakeoverAvailable
   - type: Tag
     tags:
@@ -286,6 +288,9 @@
     guides:
     - MinorAntagonists
   - type: FelinidFood
+  - type: FireVisuals
+    sprite: Mobs/Effects/onfire.rsi
+    normalState: Mouse_burning
 
 - type: weightedRandomEntity
   id: RatKingLoot
