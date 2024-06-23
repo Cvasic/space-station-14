@@ -1,7 +1,7 @@
 - type: gameMap
-  id: Tortuga
+  id: BackmenTortuga
   mapName: 'Tortuga'
-  mapPath: /Maps/Backmen/tortuga.yml
+  mapPath: /Maps/Backmen/backmen_tortuga.yml
   minPlayers: 50
   stations:
     Tortuga:
@@ -15,8 +15,6 @@
         - type: StationEmergencyShuttle
           emergencyShuttlePath: /Maps/Shuttles/NTES_Seal.yml
         - type: StationJobs
-          overflowJobs:
-            - Passenger
           availableJobs:
           #civilian
             Passenger: [ -1, -1 ]

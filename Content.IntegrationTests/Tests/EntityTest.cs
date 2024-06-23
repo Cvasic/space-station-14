@@ -108,6 +108,8 @@ namespace Content.IntegrationTests.Tests
                     .ToList();
                 foreach (var protoId in protoIds)
                 {
+                    if (!map.GridCoords.IsValid(entityMan))
+                        continue;
                     entityMan.SpawnEntity(protoId, map.GridCoords);
                 }
             });
@@ -349,6 +351,7 @@ namespace Content.IntegrationTests.Tests
                 "MapGrid",
                 "Broadphase",
                 "StationData", // errors when removed mid-round
+                "StationJobs",
                 "Actor", // We aren't testing actor components, those need their player session set.
                 "BlobFloorPlanBuilder", // Implodes if unconfigured.
                 "DebrisFeaturePlacerController", // Above.

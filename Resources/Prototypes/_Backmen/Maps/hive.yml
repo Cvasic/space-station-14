@@ -1,7 +1,7 @@
 - type: gameMap
-  id: TheHive
+  id: BackmenHive
   mapName: 'The Hive'
-  mapPath: /Maps/Backmen/hive.yml
+  mapPath: /Maps/Backmen/backmen_hive.yml
   minPlayers: 30
   maxPlayers: 80
   stations:
@@ -16,8 +16,6 @@
         - type: StationEmergencyShuttle
           emergencyShuttlePath: /Maps/Shuttles/NTES_Seal.yml
         - type: StationJobs
-          overflowJobs:
-            - Passenger
           availableJobs:
           #civilian
             Passenger: [ -1, -1 ]
