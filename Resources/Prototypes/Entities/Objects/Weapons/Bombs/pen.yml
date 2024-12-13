@@ -25,9 +25,9 @@
     entries:
     - label: corvax-hidden-desc-PenExploding-syndicate
       whitelistMind:
-        components:
-          - TraitorRole
-          - NukeOperative
+        mindRoles:
+        - TraitorRole
+        - NukeopsRole
     - label: corvax-hidden-desc-PenExploding-research
       jobRequired:
         - ResearchAssistant
@@ -35,9 +35,11 @@
         - Scientist
         - Borg
 # Corvax-HiddenDesc-End
+  - type: EmitSoundOnUse
+    handle: false # don't want the sound to stop the explosion from triggering
 
 - type: entity
-  parent: BaseItem
+  parent: [BaseItem, BaseSyndicateContraband]
   id: PenExplodingBox
   name: exploding pen box
   description: A small box containing an exploding pen. Packaging disintegrates when opened, leaving no evidence behind.

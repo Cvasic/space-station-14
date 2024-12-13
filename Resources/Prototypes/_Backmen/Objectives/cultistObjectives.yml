@@ -1,7 +1,7 @@
 ﻿- type: entity
   parent: BaseObjective
   id: CreateFleshHeartObjective
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: objective-condition-create-flesh-heart-title
   description: objective-condition-create-flesh-heart-description
   components:
@@ -11,14 +11,14 @@
       icon: Interface/Actions/fleshCultistFleshHeart.png
     - type: RoleRequirement
       roles:
-        components:
-          - FleshCultistRole
+        mindRoles:
+        - FleshCultistRole
     - type: CreateFleshHeartCondition
 
 - type: entity
   parent: BaseObjective
   id: FleshCultistSurvivalObjective
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: objective-condition-flesh-cultist-survival-title
   description: objective-condition-flesh-cultist-survival-description
   components:
@@ -28,6 +28,6 @@
       icon: Interface/Actions/fleshCultistSurvivalObjective.png
     - type: RoleRequirement
       roles:
-        components:
-          - FleshCultistRole
+        mindRoles:
+        - FleshCultistRole
     - type: FleshCultistSurvivalCondition

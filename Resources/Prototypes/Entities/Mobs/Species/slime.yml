@@ -28,12 +28,14 @@
     interfaces:
       enum.StorageUiKey.Key:
         type: StorageBoundUserInterface
-      enum.VoiceMaskUIKey.Key:
-        type: VoiceMaskBoundUserInterface
       enum.HumanoidMarkingModifierKey.Key:
         type: HumanoidMarkingModifierBoundUserInterface
       enum.StrippingUiKey.Key:
         type: StrippableBoundUserInterface
+      enum.StoreUiKey.Key:
+        type: StoreBoundUserInterface
+      enum.SurgeryUIKey.Key: # backmen: surgery
+        type: SurgeryBui 
   # to prevent bag open/honk spam
   - type: UseDelay
     delay: 0.5
@@ -67,6 +69,8 @@
       Brute:
         sprite: Mobs/Effects/brute_damage.rsi
         color: "#2cf274"
+      Burn:
+        sprite: Mobs/Effects/burn_damage.rsi
   - type: Bloodstream
     bloodReagent: Slime # TODO Color slime blood based on their slime color or smth
   - type: Barotrauma
@@ -116,11 +120,20 @@
           32:
             sprite: Mobs/Species/Human/displacement.rsi
             state: jumpsuit-female
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - TauCetiBasic
+    - Slime
+    understands:
+    - TauCetiBasic
+    - Slime
 
 - type: entity
   parent: MobHumanDummy
   id: MobSlimePersonDummy
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: HumanoidAppearance
     species: SlimePerson

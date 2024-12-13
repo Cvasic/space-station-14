@@ -42,24 +42,10 @@
 
 - type: entity
   abstract: true
-  parent: Clothing
-  id: HatBase
-  components:
-  - type: Clothing
-    slots:
-    - HEAD
-  - type: Sprite
-    state: icon
-  - type: Tag
-    tags:
-      - WhitelistChameleon
-
-- type: entity
-  abstract: true
   parent: ClothingHeadBase
   id: ClothingHeadLightBase
   name: base helmet with light
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     layers:
@@ -126,7 +112,8 @@
     highPressureMultiplier: 0.6
     lowPressureMultiplier: 1000
   - type: TemperatureProtection
-    coefficient: 0.2
+    heatingCoefficient: 0.2
+    coolingCoefficient: 0.2
   - type: IngestionBlocker
   - type: Clothing
     #Copies ClothingHeadHardsuitBase behavior
@@ -145,13 +132,15 @@
     - Snout
     - HeadTop
     - HeadSide
+  - type: DiseaseProtection #Backmen & Ataraxia anti viral
+    protection: 0.2
 
 - type: entity
   abstract: true
   # No parent since we aren't actually an item.
   id: ClothingHeadHardsuitBase
   name: base hardsuit helmet
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: BreathMask
   - type: Sprite
@@ -168,7 +157,8 @@
     highPressureMultiplier: 0.3
     lowPressureMultiplier: 1000
   - type: TemperatureProtection
-    coefficient: 0.1
+    heatingCoefficient: 0.1
+    coolingCoefficient: 0.1
   - type: Armor
     modifiers:
       coefficients:
@@ -189,13 +179,15 @@
     - Snout
     - HeadTop
     - HeadSide
+  - type: DiseaseProtection #Backmen & Ataraxia anti viral
+    protection: 0.2
 
 - type: entity
   abstract: true
   parent: ClothingHeadHardsuitBase
   id: ClothingHeadHardsuitWithLightBase
   name: base hardsuit helmet with light
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     layers:
@@ -241,13 +233,15 @@
   - type: BatterySelfRecharger
     autoRecharge: true
     autoRechargeRate: 2 #recharge of 2 makes total drain 1w / s so max charge is 1:1 with time. Time to fully charge should be 5 minutes. Having recharge gives light an extended flicker period which gives you some warning to return to light area.
+  - type: DiseaseProtection #Backmen & Ataraxia anti viral
+    protection: 0.2
 
 - type: entity
   abstract: true
   id: ClothingHeadHatHoodWinterBase
   name: base winter coat hood
   description: A hood, made to keep your head warm.
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     state: icon
@@ -258,7 +252,8 @@
     quickEquip: false
     slots: [ HEAD ]
   - type: TemperatureProtection
-    coefficient: 0.7
+    heatingCoefficient: 1.05
+    coolingCoefficient: 0.7
   - type: GroupExamine
   - type: HideLayerClothing
     slots:

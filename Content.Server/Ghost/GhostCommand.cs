@@ -1,8 +1,10 @@
 using Content.Server.GameTicking;
 using Content.Server.Popups;
 using Content.Shared.Administration;
+using Content.Shared.GameTicking;
 using Content.Shared.Mind;
 using Robust.Shared.Console;
+using Content.Server.GameTicking;
 
 namespace Content.Server.Ghost
 {
@@ -21,6 +23,14 @@ namespace Content.Server.Ghost
             if (player == null)
             {
                 shell.WriteLine(Loc.GetString("ghost-command-no-session"));
+                return;
+            }
+
+            var gameTicker = _entities.System<GameTicker>();
+            if (!gameTicker.PlayerGameStatuses.TryGetValue(player.UserId, out var playerStatus) ||
+                playerStatus is not PlayerGameStatus.JoinedGame)
+            {
+                shell.WriteLine("ghost-command-error-lobby");
                 return;
             }
 
@@ -47,7 +57,7 @@ namespace Content.Server.Ghost
                 mind = _entities.GetComponent<MindComponent>(mindId);
             }
 
-            if (!_entities.System<GameTicker>().OnGhostAttempt(mindId, true, true, mind))
+            if (!_entities.System<GhostSystem>().OnGhostAttempt(mindId, true, true, mind))
             {
                 shell.WriteLine(Loc.GetString("ghost-command-denied"));
             }

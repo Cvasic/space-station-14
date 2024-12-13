@@ -1,5 +1,5 @@
 - type: entity
-  parent: BaseItem
+  parent: [BaseItem, BaseSyndicateContraband]
   abstract: true
   id: ReinforcementRadio
   name: syndicate reinforcement radio
@@ -24,7 +24,7 @@
   components:
   - type: GhostRole
     name: ghost-role-information-syndicate-reinforcement-spy-name
-    description: ghost-role-information-syndicate-reinforcement-description
+    description: ghost-role-information-syndicate-reinforcement-spy-description
     rules: ghost-role-information-syndicate-reinforcement-rules
     raffle:
       settings: default
@@ -40,32 +40,36 @@
     entries:
     - label: corvax-hidden-desc-ReinforcementRadioSyndicate-syndicate
       whitelistMind:
-        components:
-          - TraitorRole
-          - NukeOperative
+        mindRoles:
+        - TraitorRole
+        - NukeopsRole
     - label: corvax-hidden-desc-ReinforcementRadio-engineering
       jobRequired:
-        - ChiefEngineer
-        - AtmosphericTechnician
-        - StationEngineer
-        - TechnicalAssistant
+      - ChiefEngineer
+      - AtmosphericTechnician
+      - StationEngineer
+      - TechnicalAssistant
     - label: corvax-hidden-desc-ReinforcementRadio-research
       jobRequired:
-        - ResearchAssistant
-        - ResearchDirector
-        - Scientist
-        - Borg
+      - ResearchAssistant
+      - ResearchDirector
+      - Scientist
+      - Borg
 # Corvax-HiddenDesc-End
 
 - type: entity
   parent: ReinforcementRadio
   id: ReinforcementRadioSyndicateNukeops # Reinforcement radio exclusive to nukeops uplink
+  name: nuclear operative radio
+  description: Call in a nuclear operative of questionable quality, instantly! Basic nukeop equipment provided.
   suffix: NukeOps
   components:
   - type: GhostRole
-    name: ghost-role-information-syndicate-reinforcement-name
-    description: ghost-role-information-syndicate-reinforcement-description
-    rules: ghost-role-information-syndicate-reinforcement-rules
+    name: ghost-role-information-nukeop-reinforcement-name
+    description: ghost-role-information-nukeop-reinforcement-description
+    rules: ghost-role-information-nukeop-reinforcement-rules
+    raffle:
+      settings: default
   - type: GhostRoleMobSpawner
     prototype: MobHumanSyndicateAgentNukeops
 
@@ -78,7 +82,7 @@
   - type: GhostRole
     name: ghost-role-information-syndicate-monkey-reinforcement-name
     description: ghost-role-information-syndicate-monkey-reinforcement-description
-    rules: ghost-role-information-syndicate-monkey-reinforcement-rules
+    rules: ghost-role-information-syndicate-reinforcement-rules
     raffle:
       settings: default
   - type: GhostRoleMobSpawner
@@ -89,9 +93,9 @@
     entries:
     - label: corvax-hidden-desc-ReinforcementRadioSyndicateMonkey-syndicate
       whitelistMind:
-        components:
-          - TraitorRole
-          - NukeOperative
+        mindRoles:
+        - TraitorRole
+        - NukeopsRole
     - label: corvax-hidden-desc-ReinforcementRadio-engineering
       jobRequired:
         - ChiefEngineer
@@ -112,6 +116,8 @@
   id: ReinforcementRadioSyndicateAncestorNukeops # Reinforcement radio exclusive to nukeops uplink
   suffix: NukeOps
   components:
+  - type: GhostRole
+    rules: ghost-role-information-nukeop-reinforcement-rules
   - type: GhostRoleMobSpawner
     prototype: MobMonkeySyndicateAgentNukeops
     selectablePrototypes: ["SyndicateMonkeyNukeops", "SyndicateKoboldNukeops"]
@@ -125,7 +131,7 @@
   - type: GhostRole
     name: ghost-role-information-SyndiCat-name
     description: ghost-role-information-SyndiCat-description
-    rules: ghost-role-information-SyndiCat-rules
+    rules: ghost-role-information-syndicate-reinforcement-rules
     raffle:
       settings: default
   - type: GhostRoleMobSpawner
@@ -141,8 +147,8 @@
   suffix: NukeOps
   components:
     - type: GhostRole
-      name: ghost-role-information-syndie-assaultborg-name
-      description: ghost-role-information-syndie-assaultborg-description
+      name: ghost-role-information-syndicate-cyborg-assault-name
+      description: ghost-role-information-syndicate-cyborg-description
       rules: ghost-role-information-silicon-rules
       raffle:
         settings: default
@@ -153,9 +159,9 @@
       entries:
       - label: corvax-hidden-desc-ReinforcementRadioSyndicateCyborgAssault-syndicate
         whitelistMind:
-          components:
-            - TraitorRole
-            - NukeOperative
+          mindRoles:
+          - TraitorRole
+          - NukeopsRole
       - label: corvax-hidden-desc-ReinforcementRadio-engineering
         jobRequired:
           - ChiefEngineer

@@ -23,10 +23,10 @@
     - BaseStationAlertLevels
     - BaseStationMagnet
     - BaseStationExpeditions
-    - BaseStationSiliconLawCrewsimov
+    - BaseStationSiliconLawNTDefault # Corvax-NTDefault
     - BaseStationAllEventsEligible
     - BaseStationNanotrasen
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: Transform
 
@@ -42,9 +42,19 @@
     - BaseStationShuttles #Backmen
     - BaseStationExpeditions #Backmen
     - BaseStationMagnet #Backmen
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: Transform
+    - type: StationCentCommDirector
+      eventSchedule: # 10min = 600sec
+      - 0: Noop # init event prevent from missfire
+      - 600: AddWorker #10min
+      - 600: AddWorker #20min
+      - 600: AddWorker #30min
+      - 600: AddOperator #40min
+      - 1: AddSecurity
+      - 1: AddSecurity
+      - 600: AddCargo
 
 - type: entity
   id: StandardStationArena
@@ -53,6 +63,6 @@
   - BaseStationJobsSpawning
   - BaseStationRecords
   - BaseStationNanotrasen
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: Transform

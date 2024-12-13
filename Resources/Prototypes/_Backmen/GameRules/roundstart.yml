@@ -1,61 +1,164 @@
-﻿- type: entity
+﻿# Flesh Cult
+- type: entity
   id: FleshCult
   parent: BaseGameRule
-  noSpawn: true
-  components:
-    - type: GameRule
-      minPlayers: 15
-    - type: FleshCultRule
-      faction: Flesh
-
-- type: entity
-  id: BlobGameMode
-  parent: BaseGameRule
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: GameRule
-    minPlayers: 15
-  - type: BlobGameRule
+    minPlayers: 20
+  - type: FleshCultRule
+    faction: Flesh
+# Перенести в прототипы культ сложно из-за наличия Лидера,
+# так что пусть пока вот тут полежит заготовка
+#
+#  - type: AntagSelection
+#    selectionTime: PrePlayerSpawn
+#    definitions:
+#    - prefRoles: [ FleshCultistLeader ]
+#      fallbackRoles: [ FleshCultist ]
+#      max: 1
+#      components:
+#      - type: FleshCultist
+#      - type: NpcFactionMember
+#        factions:
+#        - Flesh
+#      mindRoles:
+#      - MindRoleFleshLeader
+#    - prefRoles: [ FleshCultist ]
+#      fallbackRoles: [ FleshCultistLeader ]
+#      max: 6
+#      playerRatio: 10
+#      components:
+#      - type: FleshCultist
+#      - type: NpcFactionMember
+#        factions:
+#        - Flesh
+#      lateJoinAdditional: true
+#      mindRoles:
+#      - MindRoleFlesh
+#      briefing:
+#        text: flesh-cult-role-greeting
+#        color: Plum
+#        #sound: #TODO: Flesh Cultist briefing TTS
 
+# Blob
 - type: entity
-  id: Blob
+  id: BlobRule
   parent: BaseGameRule
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: BlobRule
 
 - type: entity
-  id: VampiresGameRule
+  id: BlobGameMode
   parent: BaseGameRule
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: GameRule
     minPlayers: 15
-  - type: BloodsuckerRule
+    delay: # 7-10 minutes
+      min: 420
+      max: 600
+  - type: AntagSelection
+    definitions:
+    - prefRoles: [ Blob ]
+      min: 1
+      max: 2
+      playerRatio: 40 #players = 2 blobs
+      allowNonHumans: true
+      components:
+      - type: BlobCarrier
+      blacklist:
+        components:
+        - AntagImmune
+      briefing:
+        text: blob-carrier-role-greeting
+        color: Plum
+        sound: /Audio/Backmen/Ambience/Antag/blob_start.ogg
+      mindRoles:
+      - MindRoleBlob
 
 - type: entity
-  id: VampireObjective
+  id: BlobSpawn
   parent: BaseGameRule
-  noSpawn: true
-  components:
-  - type: BloodsuckerObjective
-
-- type: entity
-  id: VampireOutbreak
-  parent: BaseGameRule
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: StationEvent
+    weight: 15
+    duration: 1
     earliestStart: 50
+    minimumPlayers: 20
+    maxOccurrences: 2
+  - type: BlobSpawnRule
+    carrierBlobProtos:
+    - SpawnPointGhostBlobRat
+    playersPerCarrierBlob: 30
+    maxCarrierBlob: 2
+
+# Vampire
+- type: entity
+  id: BaseVampiresGameRule
+  abstract: true
+  parent: BaseGameRule
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: BloodsuckerRule
+  - type: AntagObjectives
+    objectives:
+    - EscapeShuttleObjectiveBloodsucker
+    - BloodsuckerDrinkObjective
+    - BloodsuckerConvertObjective
+  - type: AntagSelection
+    definitions:
+    - prefRoles: [ Bloodsucker ]
+      min: 2
+      max: 8
+      playerRatio: 10
+      blacklist:
+        components:
+        - AntagImmune
+      lateJoinAdditional: true
+      briefing:
+        text: vampire-role-greeting
+        color: Plum
+        sound: /Audio/Backmen/Ambience/Antag/vampier_start.ogg
+      mindRoles:
+      - MindRoleBloodsucker
+
+## Vampire Gamemode
+- type: entity
+  id: VampiresGameRule
+  parent: BaseVampiresGameRule
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: GameRule
+    minPlayers: 1
+    delay:
+      min: 30
+      max: 60
+
+## Vampire Outbreak
+- type: entity
+  id: VampireOutbreak
+  parent: BaseVampiresGameRule
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: StationEvent
+    earliestStart: 20
     minimumPlayers: 15
     weight: 5
-    duration: 1
-  - type: BloodsuckerRule
+    maxOccurrences: 1 # can only happen once per round
+    startAnnouncement: station-event-communication-interception
+    startAudio:
+      path: /Audio/Announcements/intercept.ogg
+    duration: null # the rule has to last the whole round not 1 second
+    occursDuringRoundEnd: false
 
+# Shipwrecked
 - type: entity
   id: Shipwrecked
   parent: BaseGameRule
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: GameRule
       minPlayers: 1
@@ -96,3 +199,128 @@
     - ShwrAdventurer
     - ShwrBig
     - shwrDust
+
+- type: entity
+  parent: BaseGameRule
+  id: Changeling
+  components:
+  - type: ChangelingRule
+  - type: GameRule
+    minPlayers: 10
+    delay:
+      min: 30
+      max: 60
+  - type: AntagSelection
+    agentName: changeling-roundend-name
+    definitions:
+    - prefRoles: [ Changeling ]
+      max: 8
+      playerRatio: 10
+      lateJoinAdditional: true
+      mindRoles:
+      - MindRoleChangeling
+
+- type: entity
+  parent: BaseGameRule
+  id: ExtendedThief
+  components:
+  - type: ThiefRule
+  - type: AntagObjectives
+    objectives:
+    - EscapeThiefShuttleObjective
+  - type: AntagRandomObjectives
+    sets:
+    - groups: ThiefObjectiveGroups
+      maxPicks: 10
+    - groups: ThiefBigObjectiveGroups
+      prob: 0.4
+      maxPicks: 2
+    maxDifficulty: 3.5
+  - type: AntagSelection
+    agentName: thief-round-end-agent-name
+    definitions:
+    - prefRoles: [ Thief ]
+      max: 10
+      playerRatio: 7
+      blacklist:
+        components:
+        - AntagImmune
+      lateJoinAdditional: true
+      allowNonHumans: true
+      multiAntagSetting: NotExclusive
+      startingGear: ThiefGear
+#      components: # Corvax-MRP
+#      - type: Pacified
+      mindRoles:
+      - MindRoleThief
+      briefing:
+        sound: "/Audio/Misc/thief_greeting.ogg"
+
+- type: entity
+  id: CalmStationEventScheduler
+  parent: BaseGameRule
+  components:
+  - type: BasicStationEventScheduler
+    minimumTimeUntilFirstEvent: 360 # 6 min
+    minMaxEventTiming:
+      min: 480 # 8 min
+      max: 960 # 16 min
+    scheduledGameRules: !type:NestedSelector
+      tableId: CalmGameRulesTable
+
+- type: entityTable
+  id: CalmGameRulesTable
+  table: !type:AllSelector # we need to pass a list of rules, since rules have further restrictions to consider via StationEventComp
+    children:
+    - !type:NestedSelector
+      tableId: BasicCalmEventsTable
+    - !type:NestedSelector
+      tableId: CargoGiftsTable
+    - !type:NestedSelector
+      tableId: CalmPestEventsTable
+    - !type:NestedSelector
+      tableId: SpicyPestEventsTable
+    - !type:NestedSelector
+      tableId: CalmBackmenEventsTable
+#    - id: ClosetSkeleton
+#    - id: NinjaSpawn
+#    - id: RevenantSpawn
+#    - id: SleeperAgents
+
+- type: entity
+  parent: BaseGameRule
+  id: BabelTower
+  components:
+  - type: GameRule
+  - type: BabelTowerRule
+
+#xeno
+- type: entity
+  id: XenoAgentGameMode
+  parent: BaseGameRule
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: GameRule
+    minPlayers: 15
+    #delay: # 7-10 minutes
+    #  min: 420
+    #  max: 600
+  - type: AntagSelection
+    definitions:
+    - prefRoles: [ XenoAgent ]
+      min: 1
+      max: 2
+      playerRatio: 40 #players = 2 blobs
+      allowNonHumans: true
+      components:
+      - type: XenoAgent
+      - type: NpcFactionMember
+        factions:
+        - Xeno
+        - NanoTrasen
+      - type: XenoAcidSpiller
+      blacklist:
+        components:
+        - AntagImmune
+      mindRoles:
+      - MindRoleXenoAgent

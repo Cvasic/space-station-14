@@ -8,15 +8,15 @@
       difficulty: 1
     - type: RoleRequirement
       roles:
-        components:
+        mindRoles:
           - EvilTwinRole
 
 - type: entity
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: [BaseEvilTwinObjective, BaseKillObjective]
   id: KillObjectiveEvilTwin
   name: Убить оригинал и заменить!
-  description: Вы долджны скрытно заменить оригинал, и избавится от трупа так чтобы не было подозрений на вас!
+  description: Вы должны скрытно заменить оригинал, и избавится от трупа так чтобы не было подозрений на вас!
   components:
     - type: Objective
       unique: true
@@ -26,7 +26,7 @@
     - type: PickEvilTwinPerson
 
 - type: entity
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: [BaseEvilTwinObjective, BaseLivingObjective]
   id: EscapeShuttleObjectiveEvilTwin
   name: Выживите до конца смены и улетите в Центком живым и свободным.
@@ -40,7 +40,7 @@
     - type: EscapeShuttleCondition
 
 - type: entity
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: BaseObjective
   id: BankNote
   components:

@@ -49,7 +49,6 @@
     - state: mag-0
       map: ["enum.GunVisualLayers.Mag"]
   - type: Gun
-    fireRate: 3
     cameraRecoilScalar: 2
   - type: Item
     sprite: Backmen/Objects/Weapons/Gunsx64/Shotguns/zauer/tiny.rsi
@@ -83,7 +82,7 @@
     delay: 1.3
   - type: GunRequiresWield
   - type: Gun
-    fireRate: 4
+    fireRate: 3
     cameraRecoilScalar: 2
   - type: ItemSlots
     slots:
@@ -117,6 +116,7 @@
     soundInsert:
       path: /Audio/Weapons/Guns64/Shotguns/shotgun_cmb_insert.ogg
   - type: Wieldable
+  - type: PumpAction
   - type: UseDelay
     delay: 0.1
   - type: GunRequiresWield
@@ -127,6 +127,9 @@
       path: /Audio/Weapons/Guns64/Shotguns/shotgun_cmb.ogg
       params:
         volume: -2
+  - type: Tag
+    tags:
+    - WeaponShotgunKammerer
 
 - type: entity
   name: L-4034 trenchgun
@@ -148,6 +151,8 @@
     soundInsert:
       path: /Audio/Weapons/Guns64/Shotguns/shotgun_cmb_insert.ogg
   - type: Wieldable
+  - type: PumpAction
+    sound: /Audio/Weapons/Guns64/Shotguns/trenchgun_pump.ogg
   - type: UseDelay
     delay: 0.8
   - type: GunRequiresWield
@@ -174,11 +179,37 @@
   - type: BallisticAmmoProvider
     capacity: 13
   - type: Wieldable
+  - type: PumpAction
   - type: UseDelay
     delay: 1.3
   - type: GunRequiresWield
   - type: Gun
-    fireRate: 1
+    fireRate: 1.5
     cameraRecoilScalar: 2
     soundGunshot:
       path: /Audio/Weapons/Guns64/Shotguns/t35.ogg
+
+- type: entity
+  name: Guardian-17
+  parent: BaseWeaponShotgun
+  id: WeaponShotgunGuardian
+  suffix: Дробовик
+  description: Дробовик Guardian модели U-Type производства "Interdyne", сплав корпуса сделан из передовых материалов, что придает легкость в обращении, .
+  components:
+  - type: Sprite
+    sprite: Backmen/Objects/Weapons/Gunsx64/Shotguns/guard-17/big.rsi
+  - type: Item
+    sprite: Backmen/Objects/Weapons/Gunsx64/Shotguns/guard-17/tiny.rsi
+  - type: Clothing
+    sprite: Backmen/Objects/Weapons/Gunsx64/Shotguns/guard-17/tiny.rsi
+  - type: BallisticAmmoProvider
+    capacity: 12
+  - type: Wieldable
+  - type: UseDelay
+    delay: 0.4
+  - type: GunRequiresWield
+  - type: Gun
+    fireRate: 2
+    cameraRecoilScalar: 1
+    soundGunshot:
+      collection: GuardianShot

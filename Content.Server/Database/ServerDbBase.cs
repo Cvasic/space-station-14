@@ -28,6 +28,8 @@ namespace Content.Server.Database
     {
         private readonly ISawmill _opsLog;
 
+        public event Action<DatabaseNotification>? OnNotificationReceived;
+
         /// <param name="opsLog">Sawmill to trace log database operations to.</param>
         public ServerDbBase(ISawmill opsLog)
         {
@@ -50,7 +52,7 @@ namespace Content.Server.Database
                     .ThenInclude(h => h.Loadouts)
                     .ThenInclude(l => l.Groups)
                     .ThenInclude(group => group.Loadouts)
-                .AsSingleQuery()
+                .AsSplitQuery()
                 .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
 
             if (prefs is null)
@@ -224,7 +226,9 @@ namespace Content.Server.Database
 
             foreach (var role in profile.Loadouts)
             {
-                var loadout = new RoleLoadout(role.RoleName);
+                var loadout = new RoleLoadout(role.RoleName)
+                {
+                };
 
                 foreach (var group in role.Groups)
                 {
@@ -392,12 +396,14 @@ namespace Content.Server.Database
         /// </summary>
         /// <param name="address">The ip address of the user.</param>
         /// <param name="userId">The id of the user.</param>
-        /// <param name="hwId">The HWId of the user.</param>
+        /// <param name="hwId">The legacy HWId of the user.</param>
+        /// <param name="modernHWIds">The modern HWIDs of the user.</param>
         /// <returns>The user's latest received un-pardoned ban, or null if none exist.</returns>
         public abstract Task<ServerBanDef?> GetServerBanAsync(
             IPAddress? address,
             NetUserId? userId,
-            ImmutableArray<byte>? hwId);
+            ImmutableArray<byte>? hwId,
+            ImmutableArray<ImmutableArray<byte>>? modernHWIds);
 
         /// <summary>
         ///     Looks up an user's ban history.
@@ -406,13 +412,15 @@ namespace Content.Server.Database
         /// </summary>
         /// <param name="address">The ip address of the user.</param>
         /// <param name="userId">The id of the user.</param>
-        /// <param name="hwId">The HWId of the user.</param>
+        /// <param name="hwId">The legacy HWId of the user.</param>
+        /// <param name="modernHWIds">The modern HWIDs of the user.</param>
         /// <param name="includeUnbanned">Include pardoned and expired bans.</param>
         /// <returns>The user's ban history.</returns>
         public abstract Task<List<ServerBanDef>> GetServerBansAsync(
             IPAddress? address,
             NetUserId? userId,
             ImmutableArray<byte>? hwId,
+            ImmutableArray<ImmutableArray<byte>>? modernHWIds,
             bool includeUnbanned);
 
         public abstract Task AddServerBanAsync(ServerBanDef serverBan);
@@ -433,13 +441,16 @@ namespace Content.Server.Database
             await db.DbContext.SaveChangesAsync();
         }
 
-        protected static async Task<ServerBanExemptFlags?> GetBanExemptionCore(DbGuard db, NetUserId? userId)
+        protected static async Task<ServerBanExemptFlags?> GetBanExemptionCore(
+            DbGuard db,
+            NetUserId? userId,
+            CancellationToken cancel = default)
         {
             if (userId == null)
                 return null;
 
             var exemption = await db.DbContext.BanExemption
-                .SingleOrDefaultAsync(e => e.UserId == userId.Value.UserId);
+                .SingleOrDefaultAsync(e => e.UserId == userId.Value.UserId, cancellationToken: cancel);
 
             return exemption?.Flags;
         }
@@ -470,11 +481,11 @@ namespace Content.Server.Database
             await db.DbContext.SaveChangesAsync();
         }
 
-        public async Task<ServerBanExemptFlags> GetBanExemption(NetUserId userId)
+        public async Task<ServerBanExemptFlags> GetBanExemption(NetUserId userId, CancellationToken cancel)
         {
-            await using var db = await GetDb();
+            await using var db = await GetDb(cancel);
 
-            var flags = await GetBanExemptionCore(db, userId);
+            var flags = await GetBanExemptionCore(db, userId, cancel);
             return flags ?? ServerBanExemptFlags.None;
         }
 
@@ -500,11 +511,13 @@ namespace Content.Server.Database
         /// <param name="address">The IP address of the user.</param>
         /// <param name="userId">The NetUserId of the user.</param>
         /// <param name="hwId">The Hardware Id of the user.</param>
+        /// <param name="modernHWIds">The modern HWIDs of the user.</param>
         /// <param name="includeUnbanned">Whether expired and pardoned bans are included.</param>
         /// <returns>The user's role ban history.</returns>
         public abstract Task<List<ServerRoleBanDef>> GetServerRoleBansAsync(IPAddress? address,
             NetUserId? userId,
             ImmutableArray<byte>? hwId,
+            ImmutableArray<ImmutableArray<byte>>? modernHWIds,
             bool includeUnbanned);
 
         public abstract Task<ServerRoleBanDef> AddServerRoleBanAsync(ServerRoleBanDef serverRoleBan);
@@ -513,16 +526,23 @@ namespace Content.Server.Database
         public async Task EditServerRoleBan(int id, string reason, NoteSeverity severity, DateTimeOffset? expiration, Guid editedBy, DateTimeOffset editedAt)
         {
             await using var db = await GetDb();
+            var roleBanDetails = await db.DbContext.RoleBan
+                .Where(b => b.Id == id)
+                .Select(b => new { b.BanTime, b.PlayerUserId })
+                .SingleOrDefaultAsync();
 
-            var ban = await db.DbContext.RoleBan.SingleOrDefaultAsync(b => b.Id == id);
-            if (ban is null)
+            if (roleBanDetails == default)
                 return;
-            ban.Severity = severity;
-            ban.Reason = reason;
-            ban.ExpirationTime = expiration?.UtcDateTime;
-            ban.LastEditedById = editedBy;
-            ban.LastEditedAt = editedAt.UtcDateTime;
-            await db.DbContext.SaveChangesAsync();
+
+            await db.DbContext.RoleBan
+                .Where(b => b.BanTime == roleBanDetails.BanTime && b.PlayerUserId == roleBanDetails.PlayerUserId)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(b => b.Severity, severity)
+                    .SetProperty(b => b.Reason, reason)
+                    .SetProperty(b => b.ExpirationTime, expiration.HasValue ? expiration.Value.UtcDateTime : (DateTime?)null)
+                    .SetProperty(b => b.LastEditedById, editedBy)
+                    .SetProperty(b => b.LastEditedAt, editedAt.UtcDateTime)
+                );
         }
         #endregion
 
@@ -587,7 +607,7 @@ namespace Content.Server.Database
             NetUserId userId,
             string userName,
             IPAddress address,
-            ImmutableArray<byte> hwId)
+            ImmutableTypedHwid? hwId)
         {
             await using var db = await GetDb();
 
@@ -604,7 +624,7 @@ namespace Content.Server.Database
             record.LastSeenTime = DateTime.UtcNow;
             record.LastSeenAddress = address;
             record.LastSeenUserName = userName;
-            record.LastSeenHWId = hwId.ToArray();
+            record.LastSeenHWId = hwId;
 
             await db.DbContext.SaveChangesAsync();
         }
@@ -650,7 +670,7 @@ namespace Content.Server.Database
                 player.LastSeenUserName,
                 new DateTimeOffset(NormalizeDatabaseTime(player.LastSeenTime)),
                 player.LastSeenAddress,
-                player.LastSeenHWId?.ToImmutableArray());
+                player.LastSeenHWId);
         }
 
         #endregion
@@ -659,11 +679,11 @@ namespace Content.Server.Database
         /*
          * CONNECTION LOG
          */
-        public abstract Task<int> AddConnectionLogAsync(
-            NetUserId userId,
+        public abstract Task<int> AddConnectionLogAsync(NetUserId userId,
             string userName,
             IPAddress address,
-            ImmutableArray<byte> hwId,
+            ImmutableTypedHwid? hwId,
+            float trust,
             ConnectionDenyReason? denied,
             int serverId);
 
@@ -876,10 +896,41 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         public async Task AddAdminLogs(List<AdminLog> logs)
         {
+            const int maxRetryAttempts = 5;
+            var initialRetryDelay = TimeSpan.FromSeconds(5);
+
             DebugTools.Assert(logs.All(x => x.RoundId > 0), "Adding logs with invalid round ids.");
-            await using var db = await GetDb();
-            db.DbContext.AdminLog.AddRange(logs);
-            await db.DbContext.SaveChangesAsync();
+
+            var attempt = 0;
+            var retryDelay = initialRetryDelay;
+
+            while (attempt < maxRetryAttempts)
+            {
+                try
+                {
+                    await using var db = await GetDb();
+                    db.DbContext.AdminLog.AddRange(logs);
+                    await db.DbContext.SaveChangesAsync();
+                    _opsLog.Debug($"Successfully saved {logs.Count} admin logs.");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    attempt += 1;
+                    _opsLog.Error($"Attempt {attempt} failed to save logs: {ex}");
+
+                    if (attempt >= maxRetryAttempts)
+                    {
+                        _opsLog.Error($"Max retry attempts reached. Failed to save {logs.Count} admin logs.");
+                        return;
+                    }
+
+                    _opsLog.Warning($"Retrying in {retryDelay.TotalSeconds} seconds...");
+                    await Task.Delay(retryDelay);
+
+                    retryDelay *= 2;
+                }
+            }
         }
 
         protected abstract IQueryable<AdminLog> StartAdminLogsQuery(ServerDbContext db, LogFilter? filter = null);
@@ -1066,6 +1117,29 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             }
 
             dbPlayer.LastReadRules = date.UtcDateTime;
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> GetBlacklistStatusAsync(NetUserId player)
+        {
+            await using var db = await GetDb();
+
+            return await db.DbContext.Blacklist.AnyAsync(w => w.UserId == player);
+        }
+
+        public async Task AddToBlacklistAsync(NetUserId player)
+        {
+            await using var db = await GetDb();
+
+            db.DbContext.Blacklist.Add(new Blacklist() { UserId = player });
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFromBlacklistAsync(NetUserId player)
+        {
+            await using var db = await GetDb();
+            var entry = await db.DbContext.Blacklist.SingleAsync(w => w.UserId == player);
+            db.DbContext.Blacklist.Remove(entry);
             await db.DbContext.SaveChangesAsync();
         }
 
@@ -1684,6 +1758,16 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             public abstract ServerDbContext DbContext { get; }
 
             public abstract ValueTask DisposeAsync();
+        }
+
+        protected void NotificationReceived(DatabaseNotification notification)
+        {
+            OnNotificationReceived?.Invoke(notification);
+        }
+
+        public virtual void Shutdown()
+        {
+
         }
     }
 }

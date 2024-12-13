@@ -75,7 +75,7 @@
   - type: Gun
     minAngle: 24
     maxAngle: 45
-    fireRate: 8
+    fireRate: 6
     soundEmpty: /Audio/Backmen/Misc/error.ogg
     soundGunshot:
       path: /Audio/Weapons/Guns64/Pulse/ap12j.ogg
@@ -230,7 +230,7 @@
 
 - type: entity
   id: MuzzlePulseEffect
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 0.4
@@ -250,7 +250,7 @@
 
 - type: entity
   id: BulletPulseEffect
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 0.25
@@ -271,7 +271,7 @@
   id: PulseBullet
   name: pulse bullet
   parent: BaseBullet
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     sprite: Backmen/Objects/Weapons/Gunsx64/Effects/muzzle/pulse.rsi
@@ -285,7 +285,7 @@
     damage:
       types:
         Heat: 5
-        Piercing: 4
+        Piercing: 3
     soundHit:
       path: /Audio/Weapons/Guns/Hits/bullet_hit.ogg
   - type: Tag
@@ -328,6 +328,7 @@
       - MagazinePulseRifle
   - type: BallisticAmmoProvider
     mayTransfer: true
+    cycleable: false
     capacity: 60
     proto: PulseBullet
     whitelist:
@@ -405,14 +406,23 @@
     tags:
     - ShellShotgunPulse
   - type: CartridgeAmmo
-    proto: PulseBullet
-    count: 10
-    spread: 15
+    proto: PulseBulletSpread
   - type: Sprite
     sprite: Backmen/Objects/Weapons/Gunsx64/Ammunition/Casings/battary.rsi
     layers:
       - state: base
         map: [ "enum.AmmoVisualLayers.Base" ]
+
+- type: entity
+  id: PulseBulletSpread
+  name: pulse bullet
+  parent: PulseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: ProjectileSpread
+    proto: PelletShotgun
+    count: 12
+    spread: 15
 
 - type: Tag
   id: MagazinePulseSubMachinePistol
@@ -428,6 +438,7 @@
       - MagazinePulseSubMachinePistol
   - type: BallisticAmmoProvider
     mayTransfer: true
+    cycleable: false
     capacity: 100
     proto: PulseBullet
     whitelist:

@@ -39,7 +39,8 @@
         !type:DamageTrigger
         damage: 150
       behaviors:
-      - !type:GibBehavior { }
+      - !type:GibBehavior
+        gibContents: Skip
   - type: SlowOnDamage #modified speeds because they're so weak
     speedModifierThresholds:
       60: 0.9
@@ -109,11 +110,20 @@
           32:
             sprite: Mobs/Species/Human/displacement.rsi
             state: jumpsuit-female
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - TauCetiBasic
+    - Tradeband
+    understands:
+    - TauCetiBasic
+    - Tradeband
 
 - type: entity
   parent: BaseSpeciesDummy
   id: MobSkeletonPersonDummy
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: HumanoidAppearance
     species: Skeleton

@@ -1,5 +1,5 @@
 - type: entity
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: BSSClothingBackpackSatchelDrone
   id: BSSClothingBackpackSatchelDroneMED
   name: Сумка БСС Дрона Медицинского Направления
@@ -61,7 +61,6 @@
   - type: NameIdentifier
     group: BSSDroneMED
   - type: MetaData
-  - type: BorgAINT
   - type: IntrinsicRadioReceiver
   - type: IntrinsicRadioTransmitter
     channels:
@@ -165,8 +164,16 @@
         base:
           Off: { state: shell }
           On: { state: drone }
-  - type: ReplacementAccent
-    accent: silicon
+#  - type: ReplacementAccent
+#    accent: silicon
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - Binary
+    understands:
+    - Binary
+    - TauCetiBasic
   - type: TTS
     voice: TrainingRobot
   - type: ZombieImmune
@@ -185,5 +192,5 @@
     tags:
       - CannotSuicide
   - type: SpecForce
-  - type: ClothingRequiredStepTriggerImmune
+  - type: ProtectedFromStepTriggers
     slots: WITHOUT_POCKET

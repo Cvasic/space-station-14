@@ -5,12 +5,21 @@
   name: Urist McFloof
   abstract: true
   components:
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - TauCetiBasic
+    - Shadokin
+    understands:
+    - TauCetiBasic
+    - Shadokin
   - type: HumanoidAppearance
     eyeColor: '#ffffff'
     species: Shadowkin
   - type: Hunger
   - type: Icon
-    sprite: Backmen/Mobs/Species/shadowkin.rsi
+    sprite: Backmen/Mobs/Species/Shadowkin/parts.rsi
     state: full
   - type: Body
     prototype: Shadowkin
@@ -115,6 +124,6 @@
   save: false
   parent: MobShadowkinBase
   id: MobShadowkinDummy
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   description: A dummy shadowkin meant to be used in character setup.
 

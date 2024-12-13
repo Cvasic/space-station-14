@@ -36,6 +36,7 @@
 
 - type: statusEffect
   id: PressureImmunity
+  alwaysAllowed: true # Backmen: Used by space animal heart to work on anything
 
 - type: statusEffect
   id: Muted
@@ -62,3 +63,13 @@
 
 - type: statusEffect
   id: Flashed
+
+- type: statusEffect
+  id: RadiationProtection
+
+- type: statusEffect
+  id: Drowsiness #blurs your vision and makes you randomly fall asleep
+
+- type: statusEffect
+  id: Adrenaline
+  alert: Adrenaline

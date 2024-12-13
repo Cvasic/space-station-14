@@ -24,7 +24,6 @@ using Content.Server.GameTicking.Rules;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Maps;
 using Content.Server.Mind;
-using Content.Server.Paper;
 using Content.Server.Parallax;
 using Content.Server.Popups;
 using Content.Server.Power.Components;
@@ -55,6 +54,7 @@ using Content.Shared.Damage;
 using Content.Shared.Dataset;
 using Content.Shared.Doors.Components;
 using Content.Shared.FixedPoint;
+using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Ghost;
 using Content.Shared.Gravity;
@@ -65,6 +65,8 @@ using Content.Shared.Maps;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
+using Content.Shared.Nutrition.Components;
+using Content.Shared.Paper;
 using Content.Shared.Parallax;
 using Content.Shared.Parallax.Biomes;
 using Content.Shared.Physics;
@@ -146,6 +148,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
     [Dependency] private readonly MetaDataSystem _metadata = default!;
     [Dependency] private readonly SharedPinpointerSystem _pinpointerSystem = default!;
     [Dependency] private readonly TagSystem _tagSystem = default!;
+    [Dependency] private readonly SharedSalvageSystem _salvageSystem = default!;
 
     public override void Initialize()
     {
@@ -341,8 +344,8 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
         }
     }
 */
-    [ValidatePrototypeId<DatasetPrototype>]
-    private const string PlanetNames = "names_borer";
+    [ValidatePrototypeId<LocalizedDatasetPrototype>]
+    private const string PlanetNames = "NamesBorer";
 
     private const int MaxPreloadOffset  = 200;
 
@@ -426,7 +429,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
         }
 
         // planetName
-        var planetName = SharedSalvageSystem.GetFTLName(_prototypeManager.Index<DatasetPrototype>(PlanetNames), seed);
+        var planetName = _salvageSystem.GetFTLName(_prototypeManager.Index<LocalizedDatasetPrototype>(PlanetNames), seed);
         _metadata.SetEntityName(planetMapUid, planetName);
 
         // Позиция карта (точка начала)
@@ -696,23 +699,17 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
 
         var jobProtoId = _random.Pick(component.AvailableJobPrototypes);
 
-        if (!_prototypeManager.TryIndex(jobProtoId, out var jobPrototype))
-            throw new ArgumentException($"Invalid JobPrototype: {jobProtoId}");
-
         var mindId = _mindSystem.CreateMind(player.UserId, profile.Name);
 
-        var job = new JobComponent
-        {
-            Prototype = jobProtoId
-        };
-        _roleSystem.MindAddRole(mindId, job);
+        _roleSystem.MindAddJobRole(mindId, jobPrototype:jobProtoId);
+        _roleSystem.MindHasRole<JobRoleComponent>(mindId!, out var job);
 
-        var mob = _stationSpawningSystem.SpawnPlayerMob(spawnPoint, job, profile, station: null);
+        var mob = _stationSpawningSystem.SpawnPlayerMob(spawnPoint, job!.Value.Comp1.JobPrototype, profile, station: null);
         var mobName = MetaData(mob).EntityName;
 
         manifest.AppendLine(Loc.GetString("passenger-manifest-passenger-line",
                 ("name", mobName),
-                ("details", jobPrototype.LocalizedName)));
+                ("details", job.Value.Comp1.JobPrototype!.Value.Id)));
 
         // SpawnPlayerMob requires a PDA to setup the ID details,
         // and PDAs are a bit too posh for our rugged travellers.
@@ -720,8 +717,19 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
             TryComp<IdCardComponent>(idUid, out var idCardComponent))
         {
             _cardSystem.TryChangeFullName(idUid.Value, mobName, idCardComponent);
-            _cardSystem.TryChangeJobTitle(idUid.Value, jobPrototype.LocalizedName, idCardComponent);
+            _cardSystem.TryChangeJobTitle(idUid.Value, job.Value.Comp1.JobPrototype, idCardComponent);
         }
+
+        var hunger = EnsureComp<HungerComponent>(mob);
+        hunger.StarvationDamage = new()
+        {
+            DamageDict = new()
+            {
+                { "Cold", 0.5f },
+                { "Bloodloss", 0.5f }
+            },
+        };
+        Dirty(mob, hunger);
 
         EnsureComp<ZombieImmuneComponent>(mob);
 
@@ -837,6 +845,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
             200f,
             5f,
             30f,
+            null,
             // Try not to break any tiles.
             // It's weird on planets.
             tileBreakScale: 0,
@@ -1137,6 +1146,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
             200f,
             1f,
             100f,
+            null,
             // Try not to break any tiles.
             tileBreakScale: 0,
             maxTileBreak: 0,
@@ -1155,24 +1165,20 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
         }
 
         // Fry the console.
-        var consoleQuery = EntityQueryEnumerator<TransformComponent, ShuttleConsoleComponent>();
-        while (consoleQuery.MoveNext(out var consoleUid, out var consoleXform, out _))
+        var consoleQuery = EntityQueryEnumerator<TransformComponent, DamageableComponent, ShuttleConsoleComponent>();
+        while (consoleQuery.MoveNext(out var consoleUid, out var consoleXform, out var damageableComponent, out _))
         {
             if (consoleXform.GridUid != component.Shuttle)
                 continue;
 
             var limit = _destructibleSystem.DestroyedAt(consoleUid);
 
-            // Here at Nyanotrasen, we have damage variance, so...
-            var damageVariance = _configurationManager.GetCVar(CCVars.DamageVariance);
-            limit *= 1f + damageVariance;
-
             var smash = new DamageSpecifier();
             smash.DamageDict.Add("Structural", limit);
-            _damageableSystem.TryChangeDamage(consoleUid, smash, ignoreResistances: true);
+            _damageableSystem.TryChangeDamage(consoleUid, smash, ignoreResistances: true, damageable: damageableComponent);
 
             // Break, because we're technically modifying the enumeration by destroying the console.
-            break;
+            //break;
         }
 
         var crashSound = new SoundPathSpecifier("/Audio/Nyanotrasen/Effects/crash_impact_metal.ogg");
@@ -1555,7 +1561,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
         OpenAllRuleJobs(component);
     }
 
-    private EntityUid? SpawnManifest(EntityUid uid, ShipwreckedRuleComponent component)
+    private Entity<PaperComponent>? SpawnManifest(EntityUid uid, ShipwreckedRuleComponent component)
     {
         var consoleQuery = EntityQueryEnumerator<TransformComponent, ShuttleConsoleComponent>();
         while (consoleQuery.MoveNext(out var consoleUid, out var consoleXform, out _))
@@ -1563,7 +1569,9 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
             if (consoleXform.GridUid != component.Shuttle)
                 continue;
 
-            return Spawn("PaperManifestPassenger", consoleXform.Coordinates);
+            var paper = Spawn("PaperManifestPassenger", consoleXform.Coordinates);
+
+            return (paper, EnsureComp<PaperComponent>(paper));
         }
 
         return null;
@@ -1797,7 +1805,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
                 continue;
             if (TryComp<AirlockComponent>(row, out var airlock) && !airlock.EmergencyAccess)
             {
-                _airlockSystem.ToggleEmergencyAccess(row, airlock);
+                _airlockSystem.SetEmergencyAccess((row, airlock), true);
                 continue;
             }
             _lockSystem.Unlock(row, uid);
@@ -1833,7 +1841,7 @@ public sealed class ShipwreckedRuleSystem : GameRuleSystem<ShipwreckedRuleCompon
             }
             if (TryComp<AirlockComponent>(row, out var airlock) && !airlock.EmergencyAccess)
             {
-                _airlockSystem.ToggleEmergencyAccess(row, airlock);
+                _airlockSystem.SetEmergencyAccess((row, airlock), true);
                 continue;
             }
             _lockSystem.Unlock(row, uid);

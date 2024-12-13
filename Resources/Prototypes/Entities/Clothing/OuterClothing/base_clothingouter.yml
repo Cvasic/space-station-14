@@ -109,13 +109,14 @@
     highPressureMultiplier: 0.3
     lowPressureMultiplier: 1000
   - type: TemperatureProtection
-    coefficient: 0.01
+    heatingCoefficient: 0.01
+    coolingCoefficient: 0.01
   - type: ClothingSpeedModifier
     walkModifier: 0.4
     sprintModifier: 0.6
   - type: HeldSpeedModifier
   - type: Item
-    size: Ginormous
+    size: Huge
   - type: Armor
     modifiers:
       coefficients:
@@ -135,11 +136,18 @@
     - FullBodyOuter
     - Hardsuit
     - WhitelistChameleon
-  - type: ClothingRequiredStepTriggerImmune
+  - type: ProtectedFromStepTriggers
     slots: WITHOUT_POCKET
   - type: ClothingGrant
     component:
     - type: BkmSupermatterImmune
+  - type: DamageOnInteractProtection
+    damageProtection:
+      flatReductions:
+        Heat: 10 # the average lightbulb only does around four damage!
+    slots: OUTERCLOTHING
+  - type: DiseaseProtection #Backmen & Ataraxia anti viral
+    protection: 0.4
 
 - type: entity
   abstract: true
@@ -151,7 +159,8 @@
     highPressureMultiplier: 0.6
     lowPressureMultiplier: 1000
   - type: TemperatureProtection
-    coefficient: 0.01 # Not complete protection from fire
+    heatingCoefficient: 0.01 # Not complete protection from fire
+    coolingCoefficient: 0.01
   - type: ClothingSpeedModifier
     walkModifier: 0.8
     sprintModifier: 0.8
@@ -161,8 +170,14 @@
   - type: Tag
     tags:
       - FullBodyOuter
-  - type: ClothingRequiredStepTriggerImmune
-    slots: WITHOUT_POCKET
+  - type: ProtectedFromStepTriggers
+  - type: DamageOnInteractProtection
+    damageProtection:
+      flatReductions:
+        Heat: 10 # the average lightbulb only does around four damage!
+    slots: OUTERCLOTHING
+  - type: DiseaseProtection #Backmen & Ataraxia anti viral
+    protection: 0.3
 
 - type: entity
   parent: ClothingOuterBase

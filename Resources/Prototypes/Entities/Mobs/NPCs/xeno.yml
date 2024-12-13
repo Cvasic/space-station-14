@@ -127,6 +127,16 @@
     isToggle: true
     color: "#808080"
     playSoundOn: false
+  - type: LanguageSpeaker
+    currentLanguage: Xeno
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - Xeno
+    understands:
+    - Xeno
+    - TauCetiBasic
+  - type: TTS
+    voice: Xenia
 
 - type: entity
   name: praetorian
@@ -386,6 +396,10 @@
         Base: dead_purple_snake
       Dead:
         Base: dead_purple_snake
+  - type: Butcherable
+    spawned:
+    - id: FoodMeatSnake
+      amount: 4
   - type: Grammar
     attributes:
       proper: true
@@ -452,5 +466,9 @@
         Base: dead_small_purple_snake
       Dead:
         Base: dead_small_purple_snake
+  - type: Butcherable
+    spawned:
+    - id: FoodMeatSnake
+      amount: 2
   - type: SolutionTransfer
     maxTransferAmount: 1

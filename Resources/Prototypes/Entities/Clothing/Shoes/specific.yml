@@ -15,7 +15,6 @@
   parent: [ClothingShoesBaseButcherable, ClothingSlotBase]
   id: ClothingShoesClownBase
   components:
-  - type: WaddleWhenWorn
   - type: ItemSlots
     slots:
       item:
@@ -41,6 +40,8 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepClown
+      params:
+        variation: 0.17
   # for H.O.N.K. construction
   - type: Tag
     tags:
@@ -60,6 +61,8 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepSlip
+      params:
+        variation: 0.10
   - type: Construction
     graph: BananaClownShoes
     node: shoes
@@ -80,6 +83,8 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepClown
+      params:
+        variation: 0.17
   - type: PointLight
     enabled: true
     radius: 3
@@ -109,12 +114,11 @@
   - type: Clothing
     sprite: Clothing/Shoes/Specific/galoshes.rsi
   - type: NoSlip
-  - type: ClothingSpeedModifier # Corvax-MRP
-    walkModifier: 0.9
-    sprintModifier: 0.9
+  - type: SlowedOverSlippery
+    slowdownModifier: 0.7
 
 - type: entity
-  parent: ClothingShoesBaseButcherable
+  parent: [ClothingShoesBaseButcherable, BaseMajorContraband]
   id: ClothingShoesSpaceNinja
   name: space ninja shoes
   description: A pair of nano-enhanced boots with built-in magnetic suction cups.
@@ -134,8 +138,8 @@
     entries:
     - label: corvax-hidden-desc-NoSlip-ninja
       whitelistMind:
-        components:
-          - NinjaRole
+        mindRoles:
+        - NinjaRole
     - label: corvax-hidden-desc-NoSlip-research
       jobRequired:
         - ResearchAssistant
@@ -210,9 +214,9 @@
       entries:
       - label: corvax-hidden-desc-Chameleon-syndicate
         whitelistMind:
-          components:
-            - TraitorRole
-            - NukeOperative
+          mindRoles:
+          - TraitorRole
+          - NukeopsRole
       - label: corvax-hidden-desc-Chameleon-research
         jobRequired:
           - ResearchAssistant
@@ -234,14 +238,14 @@
     entries:
     - label: corvax-hidden-desc-Chameleon-syndicate
       whitelistMind:
-        components:
-          - TraitorRole
-          - NukeOperative
+        mindRoles:
+        - TraitorRole
+        - NukeopsRole
     - label: corvax-hidden-desc-NoSlip-syndicate
       whitelistMind:
-        components:
-          - TraitorRole
-          - NukeOperative
+        mindRoles:
+        - TraitorRole
+        - NukeopsRole
     - label: corvax-hidden-desc-Chameleon-research
       jobRequired:
         - ResearchAssistant
@@ -255,7 +259,7 @@
         - Scientist
         - Borg
 # Corvax-HiddenDesc-End
-          
+
 - type: entity
   parent: ClothingShoesClown
   id: ClothingShoesJester
@@ -269,6 +273,8 @@
     - type: FootstepModifier
       footstepSoundCollection:
         collection: FootstepJester
+        params:
+          variation: 0.07
 
 - type: entity
   parent: ClothingShoesClown
@@ -297,6 +303,8 @@
     clothingVisuals:
       shoes:
       - state: equipped-FEET
+        offset: "0, -0.02"
+      - state: equipped-FEET-reptilian # Corvax reptilian
         offset: "0, -0.02"
   - type: Item
     size: Small
@@ -339,6 +347,8 @@
       shoes:
       - state: equipped-FEET
         offset: "0, -0.04"
+      - state: equipped-FEET-reptilian # Corvax reptilian
+        offset: "0, -0.04"
   - type: Item
     sprite: Clothing/Shoes/Specific/skates.rsi
   - type: ClothingSpeedModifier
@@ -348,3 +358,5 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepSkates
+      params:
+        variation: 0.08

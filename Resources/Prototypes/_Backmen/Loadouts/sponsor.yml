@@ -2,43 +2,30 @@
 #Дрель
 - type: loadout
   id: PowerDrillBkm
-  equipment: PowerDrillBkm
-
-- type: startingGear
-  id: PowerDrillBkm
   storage:
     back:
     - PowerDrill
 
 #Анти-пси
 - type: loadout
-  id: AntiPsychicKnifeBkm
-  equipment: AntiPsychicKnifeBkm
+  id: TinfoilBkmLoadout
+  equipment:
+    head: ClothingHeadTinfoil
 
-- type: startingGear
+- type: loadout
   id: AntiPsychicKnifeBkm
   storage:
     back:
     - AntiPsychicKnife
-  equipment:
-    head: ClothingHeadTinfoil
 
 #БДСМ
 - type: loadout
   id: ClothingUniformJumpsuitGachiBkm
-  equipment: ClothingUniformJumpsuitGachiBkm
-
-- type: startingGear
-  id: ClothingUniformJumpsuitGachiBkm
   equipment:
-    innerclothing: ClothingUniformJumpsuitGachi
+    jumpsuit: ClothingUniformJumpsuitGachi
 
 #Стартовый капитал
 - type: loadout
-  id: SpaceCash5000Bkm
-  equipment: SpaceCash5000Bkm
-
-- type: startingGear
   id: SpaceCash5000Bkm
   storage:
     back:
@@ -47,10 +34,6 @@
 #Человечина
 - type: loadout
   id: ClothingOuterHardsuitLingBkm
-  equipment: ClothingOuterHardsuitLingBkm
-
-- type: startingGear
-  id: ClothingOuterHardsuitLingBkm
   equipment:
     outerClothing: ClothingOuterHardsuitLing
 
@@ -58,4 +41,87 @@
 #  ClothingJokermask
 #  ClothingWolfMask
 #  ClothingDallasMask
+
+# OopsieDoopsie
+- type: loadout
+  id: ClothingOuterAtmosianBomberJacketLoadout
+  storage:
+    back:
+    - ClothingOuterAtmosianBomberJacket
+
+- type: loadout
+  id: ClothingMaskGasAtmosianLoadout
+  storage:
+    back:
+    - ClothingMaskGasAtmosian
+
+- type: loadout
+  id: ClothingCloakAtmosianLoadout
+  storage:
+    back:
+    - ClothingCloakAtmosian
+
+# Fezory
+- type: loadout
+  id: ClothingMaskSkullLoadout
+  storage:
+    back:
+    - ClothingMaskSkull
+
+- type: loadout
+  id: ClothingCloakGamerLoadout
+  storage:
+    back:
+    - ClothingCloakGamer
+
+- type: loadout
+  id: ClothingUniformJumpsuitSkeletonLoadout
+  storage:
+    back:
+    - ClothingUniformJumpsuitSkeleton
+
+# ondapapers
+- type: loadout
+  id: FancyCrownLoadout
+  storage:
+    back:
+    - ClothingHeadHatFancyCrown
+
+# ken41k
+- type: loadout
+  id: DivineWatchLoadout
+  storage:
+    back:
+    - ClothingHandsWatchDivine
+
+#Кокнус 2024, что-то связанное с ркн
+- type: loadout
+  id: PresentRandomKonkursBkm
+  storage:
+    back:
+    - PresentRandom
+
+- type: loadout
+  id: PneumaticCannonXM1014KonkursBkm
+  storage:
+    back:
+    - WeaponImprovisedPneumaticCannonXM1014
+
+- type: loadout
+  id: ScarfSyndieKonkursBkm
+  storage:
+    back:
+    - ClothingNeckScarfStripedSyndieRed
+
+- type: loadout
+  id: BizarreKonkursBkm
+  storage:
+    back:
+    - ClothingOuterCoatBizarre
+
+- type: loadout
+  id: BizarreHatKonkursBkm
+  storage:
+    back:
+    - ClothingHeadHatBizarreSoft
 

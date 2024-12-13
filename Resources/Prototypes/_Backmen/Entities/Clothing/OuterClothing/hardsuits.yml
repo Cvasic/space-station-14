@@ -25,7 +25,8 @@
         Caustic: 0.75
         Stun: 0.4
   - type: TemperatureProtection
-    coefficient: 0.001
+    heatingCoefficient: 0.001
+    coolingCoefficient: 0.001
   - type: ExplosionResistance
     damageCoefficient: 0.2
   - type: ToggleableClothing
@@ -58,7 +59,8 @@
         Caustic: 0.15
         Stun: 0.15
   - type: TemperatureProtection
-    coefficient: 0.01
+    heatingCoefficient: 0.001
+    coolingCoefficient: 0.001
   - type: ExplosionResistance
     damageCoefficient: 0.1
   - type: ToggleableClothing
@@ -91,7 +93,8 @@
         Caustic: 0.85
         Stun: 0.65
   - type: TemperatureProtection
-    coefficient: 0.01
+    heatingCoefficient: 0.01
+    coolingCoefficient: 0.01
   - type: ExplosionResistance
     damageCoefficient: 0.1
   - type: ToggleableClothing
@@ -185,7 +188,7 @@
     damageCoefficient: 0.8
 
 - type: entity
-  parent: ClothingOuterHardsuitSyndieCommander
+  parent: ClothingOuterHardsuitSyndie
   id: ClothingOuterHardsuitERTOperativeAlpha1
   name: ERT alpha hardsuit
   description: A protective hardsuit worn by the leader of an emergency response team.
@@ -221,6 +224,8 @@
         Piercing: 0.9
         Heat: 0.9
   - type: PNV
+  - type: TinfoilHat
+    destroyOnFry: false
 
 - type: entity
   parent: ClothingOuterHardsuitSyndieElite
@@ -287,7 +292,7 @@
 - type: entity
   parent: ClothingOuterHardsuitDeathsquad
   id: ClothingOuterHardsuitSpecialForce
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: EarthGov special force hardsuit
   components:
   - type: Sprite
@@ -302,7 +307,7 @@
 - type: entity
   parent: ClothingOuterHardsuitRTULeader
   id: ClothingOuterHardsuitRTU
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: EarthGov RTU hardsuit
   description: A rescue troop unit suit designed specifically for combat in space and the harsh far-off worlds.
   components:
@@ -316,7 +321,7 @@
 - type: entity
   parent: ClothingOuterHardsuitRTULeader
   id: ClothingOuterHardsuitRTUMedick
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: EarthGov medic RTU hardsuit
   components:
   - type: Sprite
@@ -329,7 +334,7 @@
 - type: entity
   parent: ClothingOuterHardsuitRTULeader
   id: ClothingOuterHardsuitRTUEnginegr
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: EarthGov engineer RTU hardsuit
   components:
   - type: Sprite
@@ -342,7 +347,7 @@
 - type: entity
   parent: ClothingOuterHardsuitSyndie
   id: ClothingOuterHardsuitRTULeader
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: EarthGov commander RTU hardsuit
   components:
   - type: Sprite
@@ -394,7 +399,8 @@
     highPressureMultiplier: 0.02
     lowPressureMultiplier: 1000
   - type: TemperatureProtection
-    coefficient: 0.001
+    heatingCoefficient: 0.001
+    coolingCoefficient: 0.001
   - type: ExplosionResistance
     damageCoefficient: 0.2
   - type: Armor
@@ -411,3 +417,52 @@
     sprintModifier: 1
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitChronoLegionnaire
+
+- type: entity
+  parent: ClothingOuterHardsuitSecurityRed
+  id: ClothingOuterHardsuitBlueShield
+  name: боевой скафандр Синего Щита
+  description: Модицифированный военный скафандр разведки ОПЗ, имеет литые тяжелые бронеплиты и гидро-экзоскелет, в разы увеличивает физические способности, а так же морской камуфляж, который позволяет прятаться в море.
+  components:
+  - type: Sprite
+    sprite: Backmen/Clothing/OuterClothing/Hardsuits/bluehardsuit.rsi
+  - type: Clothing
+    sprite: Backmen/Clothing/OuterClothing/Hardsuits/bluehardsuit.rsi
+  - type: ToggleableClothing
+    clothingPrototype: ClothingHeadHelmetHardsuitBlueShield
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+
+# Changeling
+- type: entity
+  parent: ClothingOuterBaseLarge
+  id: ChangelingClothingOuterHardsuit
+  name: organic space suit
+  description: A spaceworthy biomass of pressure and temperature resistant tissue.
+  suffix: Unremoveable
+  components:
+  - type: Sprite
+    sprite: Backmen/Changeling/ling_spacesuit.rsi
+  - type: Clothing
+    sprite: Backmen/Changeling/ling_spacesuit.rsi
+  - type: PressureProtection
+    highPressureMultiplier: 0.225
+    lowPressureMultiplier: 1000
+  - type: TemperatureProtection
+    heatingCoefficient: 0.001
+    coolingCoefficient: 0.001
+  - type: ExplosionResistance
+    damageCoefficient: 0.2
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+        Slash: 0.95
+        Piercing: 1
+        Heat: 0.5
+  - type: ClothingSpeedModifier
+    walkModifier: 0.9
+    sprintModifier: 0.9
+  - type: HeldSpeedModifier
+  - type: Unremoveable

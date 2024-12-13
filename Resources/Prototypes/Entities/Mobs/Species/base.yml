@@ -3,6 +3,7 @@
   parent:
   - BaseMob
   - MobDamageable
+  - MobPolymorphable
   - MobCombat
   - StripableInventoryBase
   id: BaseMobSpecies
@@ -99,6 +100,7 @@
         layer:
         - MobLayer
   - type: FloorOcclusion
+  - type: Mood
   - type: RangedDamageSound
     soundGroups:
       Brute:
@@ -139,6 +141,9 @@
     - PsionicallyInsulated
     - SeeAll
     - Flashed
+    - RadiationProtection
+    - Drowsiness
+    - Adrenaline
   - type: Body
     prototype: Human
     requiredLegs: 2
@@ -169,10 +174,10 @@
   - type: SleepEmitSound
   - type: SSDIndicator
   - type: StandingState
-  - type: Fingerprint
   - type: Dna
   - type: MindContainer
     showExamineInfo: true
+  - type: CanEnterCryostorage
   - type: InteractionPopup
     successChance: 1
     interactSuccessString: hugging-success-generic
@@ -186,14 +191,14 @@
   - type: Stripping
   - type: UserInterface
     interfaces:
-      enum.VoiceMaskUIKey.Key:
-        type: VoiceMaskBoundUserInterface
       enum.HumanoidMarkingModifierKey.Key:
         type: HumanoidMarkingModifierBoundUserInterface
       enum.StrippingUiKey.Key:
         type: StrippableBoundUserInterface
       enum.StoreUiKey.Key:
         type: StoreBoundUserInterface
+      enum.SurgeryUIKey.Key: # backmen: surgery
+        type: SurgeryBui
   - type: Puller
   - type: Speech
     speechSounds: Alto
@@ -213,14 +218,23 @@
     price: 1500 # Kidnapping a living person and selling them for cred is a good move.
     deathPenalty: 0.01 # However they really ought to be living and intact, otherwise they're worth 100x less.
   - type: PotentialPsionic
+  - type: LayingDown # backmen: LayingDown
   - type: Tag
     tags:
     - CanPilot
     - FootstepSound
     - DoorBumpOpener
-  - type: CameraFollow # Backmen-Changes-End
-    backStrength: 50
-    defaultBackStrength: 20
+    - AnomalyHost
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - TauCetiBasic
+    understands:
+    - TauCetiBasic
+  - type: Immersive # backmen: immersive
+  - type: Targeting # backmen: surgery
+  - type: SurgeryTarget # backmen: surgery
 
 - type: entity
   save: false
@@ -233,7 +247,9 @@
   id: BaseMobSpeciesOrganic
   abstract: true
   components:
+  - type: Absorbable # Changeling
   - type: DiseaseCarrier # backmen
+  - type: Targeting # backmen: surgery
   - type: Barotrauma
     damage:
       types:
@@ -248,6 +264,7 @@
         Heat: -0.07
       groups:
         Brute: -0.07
+  - type: Fingerprint
   - type: Blindable
   # Other
   - type: Temperature
@@ -261,6 +278,11 @@
     heatDamage:
       types:
         Heat: 1.5 #per second, scales with temperature & other constants
+  - type: TemperatureSpeed
+    thresholds:
+      293: 0.8
+      280: 0.6
+      260: 0.4
   - type: ThermalRegulator
     metabolismHeat: 800
     radiatedHeat: 100
@@ -284,6 +306,13 @@
         Asphyxiation: -1.0
   - type: FireVisuals
     alternateState: Standing
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - TauCetiBasic
+    understands:
+    - TauCetiBasic
 
 - type: entity
   save: false
@@ -344,7 +373,9 @@
   - type: Body
     prototype: Human
     requiredLegs: 2
+  - type: Absorbable # Changeling
   - type: UserInterface
     interfaces:
       enum.HumanoidMarkingModifierKey.Key: # sure, this can go here too
         type: HumanoidMarkingModifierBoundUserInterface
+

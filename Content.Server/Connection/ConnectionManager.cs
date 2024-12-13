@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using Content.Corvax.Interfaces.Server;
 using Content.Corvax.Interfaces.Shared;
 using Content.Server.Chat.Managers;
@@ -16,6 +16,7 @@ using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.Network;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Player;
 using Robust.Shared.Timing;
 
@@ -28,6 +29,7 @@ namespace Content.Server.Connection
     public interface IConnectionManager
     {
         void Initialize();
+        void PostInit();
         Task<bool> HavePrivilegedJoin(NetUserId userId); // Corvax-Queue
 
         /// <summary>
@@ -46,23 +48,24 @@ namespace Content.Server.Connection
     /// <summary>
     ///     Handles various duties like guest username assignment, bans, connection logs, etc...
     /// </summary>
-    public sealed class ConnectionManager : IConnectionManager
+    public sealed partial class ConnectionManager : IConnectionManager
     {
-        [Dependency] private readonly IServerDbManager _dbManager = default!;
         [Dependency] private readonly IPlayerManager _plyMgr = default!;
         [Dependency] private readonly IServerNetManager _netMgr = default!;
         [Dependency] private readonly IServerDbManager _db = default!;
         [Dependency] private readonly IConfigurationManager _cfg = default!;
         [Dependency] private readonly ILocalizationManager _loc = default!;
         [Dependency] private readonly ServerDbEntryManager _serverDbEntry = default!;
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly ILogManager _logManager = default!;
         [Dependency] private readonly IChatManager _chatManager = default!;
         private ISharedSponsorsManager? _sponsorsMgr; // Corvax-Sponsors
         private IServerVPNGuardManager? _vpnGuardMgr; // Corvax-VPNGuard
 
-        private readonly Dictionary<NetUserId, TimeSpan> _temporaryBypasses = [];
         private ISawmill _sawmill = default!;
+        private readonly Dictionary<NetUserId, TimeSpan> _temporaryBypasses = [];
+
 
         public void Initialize()
         {
@@ -115,11 +118,14 @@ namespace Content.Server.Connection
 
             var serverId = (await _serverDbEntry.ServerEntity).Id;
 
+            var hwid = e.UserData.GetModernHwid();
+            var trust = e.UserData.Trust;
+
             if (deny != null)
             {
                 var (reason, msg, banHits) = deny.Value;
 
-                var id = await _db.AddConnectionLogAsync(userId, e.UserName, addr, e.UserData.HWId, reason, serverId);
+                var id = await _db.AddConnectionLogAsync(userId, e.UserName, addr, hwid, trust, reason, serverId);
                 if (banHits is { Count: > 0 })
                     await _db.AddServerBanHitsAsync(id, banHits);
 
@@ -131,12 +137,12 @@ namespace Content.Server.Connection
             }
             else
             {
-                await _db.AddConnectionLogAsync(userId, e.UserName, addr, e.UserData.HWId, null, serverId);
+                await _db.AddConnectionLogAsync(userId, e.UserName, addr, hwid, trust, null, serverId);
 
                 if (!ServerPreferencesManager.ShouldStorePrefs(e.AuthType))
                     return;
 
-                await _db.UpdatePlayerRecordAsync(userId, e.UserName, addr, e.UserData.HWId);
+                await _db.UpdatePlayerRecordAsync(userId, e.UserName, addr, hwid);
             }
         }
 
@@ -194,7 +200,9 @@ namespace Content.Server.Connection
                 hwId = null;
             }
 
-            var bans = await _db.GetServerBansAsync(addr, userId, hwId, includeUnbanned: false);
+            var modernHwid = e.UserData.ModernHWIds;
+
+            var bans = await _db.GetServerBansAsync(addr, userId, hwId, modernHwid, includeUnbanned: false);
             if (bans.Count > 0)
             {
                 var firstBan = bans[0];
@@ -208,7 +216,7 @@ namespace Content.Server.Connection
                 return null;
             }
 
-            var adminData = await _dbManager.GetAdminDataForAsync(e.UserId);
+            var adminData = await _db.GetAdminDataForAsync(e.UserId);
 
             // Corvax-Start: Allow privileged players bypass bunker
             var isPrivileged = await HavePrivilegedJoin(e.UserId);
@@ -219,9 +227,9 @@ namespace Content.Server.Connection
                 var customReason = _cfg.GetCVar(CCVars.PanicBunkerCustomReason);
 
                 var minMinutesAge = _cfg.GetCVar(CCVars.PanicBunkerMinAccountAge);
-                var record = await _dbManager.GetPlayerRecordByUserId(userId);
+                var record = await _db.GetPlayerRecordByUserId(userId);
                 var validAccountAge = record != null &&
-                                      record.FirstSeenTime.CompareTo(DateTimeOffset.Now - TimeSpan.FromMinutes(minMinutesAge)) <= 0;
+                                      record.FirstSeenTime.CompareTo(DateTimeOffset.UtcNow - TimeSpan.FromMinutes(minMinutesAge)) <= 0;
                 var bypassAllowed = _cfg.GetCVar(CCVars.BypassBunkerWhitelist) && await _db.GetWhitelistStatusAsync(userId);
 
                 // Use the custom reason if it exists & they don't have the minimum account age
@@ -297,20 +305,33 @@ namespace Content.Server.Connection
                 return (ConnectionDenyReason.Full, Loc.GetString("soft-player-cap-full"), null);
             }
 
-            if (_cfg.GetCVar(CCVars.WhitelistEnabled))
+            // Checks for whitelist IF it's enabled AND the user isn't an admin. Admins are always allowed.
+            if (_cfg.GetCVar(CCVars.WhitelistEnabled) && adminData is null)
             {
-                var min = _cfg.GetCVar(CCVars.WhitelistMinPlayers);
-                var max = _cfg.GetCVar(CCVars.WhitelistMaxPlayers);
-                var playerCountValid = _plyMgr.PlayerCount >= min && _plyMgr.PlayerCount < max;
-
-                if (playerCountValid && await _db.GetWhitelistStatusAsync(userId) == false
-                                     && adminData is null)
+                if (_whitelists is null)
                 {
-                    var msg = Loc.GetString(_cfg.GetCVar(CCVars.WhitelistReason));
-                    // was the whitelist playercount changed?
-                    if (min > 0 || max < int.MaxValue)
-                        msg += "\n" + Loc.GetString("whitelist-playercount-invalid", ("min", min), ("max", max));
-                    return (ConnectionDenyReason.Whitelist, msg, null);
+                    _sawmill.Error("Whitelist enabled but no whitelists loaded.");
+                    // Misconfigured, deny everyone.
+                    return (ConnectionDenyReason.Whitelist, Loc.GetString("whitelist-misconfigured"), null);
+                }
+
+                foreach (var whitelist in _whitelists)
+                {
+                    if (!IsValid(whitelist, _plyMgr.PlayerCount))
+                    {
+                        // Not valid for current player count.
+                        continue;
+                    }
+
+                    var whitelistStatus = await IsWhitelisted(whitelist, e.UserData, _sawmill);
+                    if (!whitelistStatus.isWhitelisted)
+                    {
+                        // Not whitelisted.
+                        return (ConnectionDenyReason.Whitelist, Loc.GetString("whitelist-fail-prefix", ("msg", whitelistStatus.denyMessage!)), null);
+                    }
+
+                    // Whitelisted, don't check any more.
+                    break;
                 }
             }
 
@@ -330,13 +351,13 @@ namespace Content.Server.Connection
             var maxPlaytimeMinutes = _cfg.GetCVar(CCVars.BabyJailMaxOverallMinutes);
 
             // Wait some time to lookup data
-            var record = await _dbManager.GetPlayerRecordByUserId(userId);
+            var record = await _db.GetPlayerRecordByUserId(userId);
 
             // No player record = new account or the DB is having a skill issue
             if (record == null)
                 return (false, "");
 
-            var isAccountAgeInvalid = record.FirstSeenTime.CompareTo(DateTimeOffset.Now - TimeSpan.FromMinutes(maxAccountAgeMinutes)) <= 0;
+            var isAccountAgeInvalid = record.FirstSeenTime.CompareTo(DateTimeOffset.UtcNow - TimeSpan.FromMinutes(maxAccountAgeMinutes)) <= 0;
 
             if (isAccountAgeInvalid)
             {
@@ -410,11 +431,10 @@ namespace Content.Server.Connection
         [Dependency] private readonly IEntityManager _entityManager = default!;
         public async Task<bool> HavePrivilegedJoin(NetUserId userId)
         {
-            if (HasTemporaryBypass(userId))
-                return true;
-            var adminBypass = _cfg.GetCVar(CCVars.AdminBypassMaxPlayers) && await _dbManager.GetAdminDataForAsync(userId) != null;
+
+            var adminBypass = _cfg.GetCVar(CCVars.AdminBypassMaxPlayers) && await _db.GetAdminDataForAsync(userId) != null;
             var havePriorityJoin = _sponsorsMgr != null && _sponsorsMgr.HaveServerPriorityJoin(userId); // Corvax-Sponsors
-            var wasInGame = EntitySystem.TryGet<GameTicker>(out var ticker) &&
+            var wasInGame = _entityManager.TrySystem<GameTicker>(out var ticker) &&
                             ticker.PlayerGameStatuses.TryGetValue(userId, out var status) &&
                             status == PlayerGameStatus.JoinedGame;
             return adminBypass ||

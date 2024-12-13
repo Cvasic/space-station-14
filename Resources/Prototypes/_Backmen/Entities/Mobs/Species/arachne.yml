@@ -5,6 +5,15 @@
   id: MobArachneClassicBase
   abstract: true
   components:
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - TauCetiBasic
+    - Spider
+    understands:
+    - TauCetiBasic
+    - Spider
   - type: Sprite
     netsync: false
     noRot: true
@@ -116,13 +125,14 @@
     tags:
     - CanPilot
     - DoorBumpOpener
-  - type: ClothingRequiredStepTriggerImmune
+  - type: ProtectedFromStepTriggers
     slots: WITHOUT_POCKET
   - type: Bloodstream
     bloodReagent: DemonsBlood
   - type: BloodSucker
     webRequired: true
   - type: Arachne
+  - type: Cocooner
   - type: DamageVisuals
     thresholds: [ 10, 20, 30, 50, 70, 100 ]
     targetLayers:
@@ -170,7 +180,7 @@
   name: ArachneClassic Dummy
   parent: MobHumanDummy
   id: MobArachneClassicDummy
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   description: A dummy ArachneClassic meant to be used in character setup.
   components:
   - type: Sprite

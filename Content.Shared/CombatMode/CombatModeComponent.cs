@@ -1,9 +1,12 @@
 using Content.Shared.MouseRotator;
 using Content.Shared.Movement.Components;
 using Robust.Shared.Audio;
+using Robust.Shared.GameObjects;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
+using Robust.Shared.ViewVariables;
 
 namespace Content.Shared.CombatMode
 {
@@ -48,5 +51,19 @@ namespace Content.Shared.CombatMode
         /// </summary>
         [DataField, AutoNetworkedField]
         public bool ToggleMouseRotator = true;
+
+        // BACKMEN START
+        /// <summary>
+        ///     If true, sets <see cref="MouseRotatorComponent.AngleTolerance"/> to 1 degree and <see cref="MouseRotatorComponent.Simple4DirMode"/>
+        ///     to false when the owner enters combatmode. This is currently being tested as of 06.12.24,
+        ///     so a simple bool switch should suffice.
+        ///     Leaving AutoNetworking just in case shitmins need to disable it for someone. Will only take effect when re-enabling combat mode.
+        /// </summary>
+        /// <remarks>
+        ///     No effect if <see cref="ToggleMouseRotator"/> is false.
+        /// </remarks>
+        [DataField, AutoNetworkedField]
+        public bool SmoothRotation = true;
+        // BACKMEN END
     }
 }

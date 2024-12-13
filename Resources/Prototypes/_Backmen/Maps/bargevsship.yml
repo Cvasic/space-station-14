@@ -9,7 +9,7 @@
   - BaseStationSiliconLawCrewsimov
   - BaseStationAllEventsEligible
   - BaseStationNanotrasen
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Transform
 
@@ -33,7 +33,7 @@
       - type: StationTeamMarker
         team: TeamA
         goal:
-        - AICoreShip
+        - PlayerStationAiSAI
         - ComputerShipyardTeamA
         requireJobs:
         - Captain
@@ -58,7 +58,7 @@
       - type: StationTeamMarker
         team: TeamB
         goal:
-        - AICoreShip
+        - PlayerStationAiSAI
         - ComputerShipyardTeamB
         requireJobs:
         - Captain

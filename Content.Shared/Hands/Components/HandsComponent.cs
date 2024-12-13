@@ -30,6 +30,7 @@ public sealed partial class HandsComponent : Component
     /// <summary>
     ///     List of hand-names. These are keys for <see cref="Hands"/>. The order of this list determines the order in which hands are iterated over.
     /// </summary>
+    [ViewVariables]
     public List<string> SortedHands = new();
 
     /// <summary>
@@ -80,6 +81,12 @@ public sealed partial class HandsComponent : Component
 
     [DataField]
     public DisplacementData? HandDisplacement;
+
+    /// <summary>
+    /// If false, hands cannot be stripped, and they do not show up in the stripping menu.
+    /// </summary>
+    [DataField]
+    public bool CanBeStripped = true;
 }
 
 [Serializable, NetSerializable]

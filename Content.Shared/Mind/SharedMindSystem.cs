@@ -39,6 +39,7 @@ public abstract class SharedMindSystem : EntitySystem
         SubscribeLocalEvent<VisitingMindComponent, EntityTerminatingEvent>(OnVisitingTerminating);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnReset);
         SubscribeLocalEvent<MindComponent, ComponentStartup>(OnMindStartup);
+        SubscribeLocalEvent<MindComponent, EntityRenamedEvent>(OnRenamed);
     }
 
     public override void Shutdown()
@@ -154,19 +155,10 @@ public abstract class SharedMindSystem : EntitySystem
 
         var dead = _mobState.IsDead(uid);
 
-        // start-backmen: SAI
         var mind = CompOrNull<MindComponent>(mindContainer.Mind);
-
-        var remoteMind = CompOrNull<VisitingMindComponent>(uid);
-        if (remoteMind != null)
-        {
-            mind = CompOrNull<MindComponent>(remoteMind.MindId);
-        }
 
         var hasUserId = mind?.UserId;
         var hasSession = mind?.Session;
-
-        // end-backmen: SAI
 
         if (dead && hasUserId == null)
             args.PushMarkup($"[color=mediumpurple]{Loc.GetString("comp-mind-examined-dead-and-irrecoverable", ("ent", uid))}[/color]");
@@ -178,21 +170,25 @@ public abstract class SharedMindSystem : EntitySystem
             args.PushMarkup($"[color=mediumpurple]{Loc.GetString("comp-mind-examined-catatonic", ("ent", uid))}[/color]");
         else if (hasSession == null)
             args.PushMarkup($"[color=yellow]{Loc.GetString("comp-mind-examined-ssd", ("ent", uid))}[/color]");
-
-        // start-backmen: SAI
-        if(remoteMind != null) args.PushMarkup($"[color=red]{Loc.GetString("comp-mind-examined-remote-controlled")}[/color]");
-        // end-backmen: SAI
     }
 
+    /// <summary>
+    /// Checks to see if the user's mind prevents them from suicide
+    /// Handles the suicide event without killing the user if true
+    /// </summary>
     private void OnSuicide(EntityUid uid, MindContainerComponent component, SuicideEvent args)
     {
         if (args.Handled)
             return;
 
         if (TryComp(component.Mind, out MindComponent? mind) && mind.PreventSuicide)
-        {
-            args.BlockSuicideAttempt(true);
-        }
+            args.Handled = true;
+    }
+
+    private void OnRenamed(Entity<MindComponent> ent, ref EntityRenamedEvent args)
+    {
+        ent.Comp.CharacterName = args.NewName;
+        Dirty(ent);
     }
 
     public EntityUid? GetMind(EntityUid uid, MindContainerComponent? mind = null)
@@ -328,6 +324,10 @@ public abstract class SharedMindSystem : EntitySystem
     public virtual void TransferTo(EntityUid mindId, EntityUid? entity, bool ghostCheckOverride = false, bool createGhost = true, MindComponent? mind = null)
     {
     }
+
+    public virtual void ControlMob(EntityUid user, EntityUid target) {}
+
+    public virtual void ControlMob(NetUserId user, EntityUid target) {}
 
     /// <summary>
     /// Tries to create and add an objective from its prototype id.
@@ -487,19 +487,6 @@ public abstract class SharedMindSystem : EntitySystem
     }
 
     /// <summary>
-    /// Gets a role component from a player's mind.
-    /// </summary>
-    /// <returns>Whether a role was found</returns>
-    public bool TryGetRole<T>(EntityUid user, [NotNullWhen(true)] out T? role) where T : IComponent
-    {
-        role = default;
-        if (!TryComp<MindContainerComponent>(user, out var mindContainer) || mindContainer.Mind == null)
-            return false;
-
-        return TryComp(mindContainer.Mind, out role);
-    }
-
-    /// <summary>
     /// Sets the Mind's UserId, Session, and updates the player's PlayerData. This should have no direct effect on the
     /// entity that any mind is connected to, except as a side effect of the fact that it may change a player's
     /// attached entity. E.g., ghosts get deleted.
@@ -548,22 +535,19 @@ public abstract class SharedMindSystem : EntitySystem
     /// <summary>
     /// Returns a list of every living humanoid player's minds, except for a single one which is exluded.
     /// </summary>
-    public List<EntityUid> GetAliveHumansExcept(EntityUid exclude)
+    public HashSet<Entity<MindComponent>> GetAliveHumans(EntityUid? exclude = null)
     {
-        var mindQuery = EntityQuery<MindComponent>();
-
-        var allHumans = new List<EntityUid>();
+        var allHumans = new HashSet<Entity<MindComponent>>();
         // HumanoidAppearanceComponent is used to prevent mice, pAIs, etc from being chosen
-        var query = EntityQueryEnumerator<MindContainerComponent, MobStateComponent, HumanoidAppearanceComponent>();
-        while (query.MoveNext(out var uid, out var mc, out var mobState, out _))
+        var query = EntityQueryEnumerator<MobStateComponent, HumanoidAppearanceComponent>();
+        while (query.MoveNext(out var uid, out var mobState, out _))
         {
-            // the player needs to have a mind and not be the excluded one
-            if (mc.Mind == null || mc.Mind == exclude)
+            // the player needs to have a mind and not be the excluded one +
+            // the player has to be alive
+            if (!TryGetMind(uid, out var mind, out var mindComp) || mind == exclude || !_mobState.IsAlive(uid, mobState))
                 continue;
 
-            // the player has to be alive
-            if (_mobState.IsAlive(uid, mobState))
-                allHumans.Add(mc.Mind.Value);
+            allHumans.Add(new Entity<MindComponent>(mind, mindComp));
         }
 
         return allHumans;

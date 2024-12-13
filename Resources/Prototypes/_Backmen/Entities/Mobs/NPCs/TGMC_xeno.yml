@@ -46,13 +46,6 @@
   - type: Polymorphable
   - type: Buckle
   - type: Insulated
-  - type: BlobSpeak
-    name: speak-vv-xeno
-    channel: Hivemind
-  - type: ReplacementAccent
-    accent: xeno
-  - type: TTS
-    voice: Xenia
   - type: Hands
     showInHands: true
   - type: MobState
@@ -155,6 +148,9 @@
   description: Молодой ксеноморф.
   parent: KsenosXenoBase
   components:
+  - type: ActionGrant
+    actions:
+    - ActionViewLaws
   - type: Sprite
     drawdepth: Mobs
     layers:
@@ -224,6 +220,18 @@
       - id: XenoRCD
       - id: WeaponXenoHealingSpit
       - id: PinpointerXeno
+  - type: XenoAcidSpiller
+  - type: SolutionContainerManager
+    solutions:
+      udder:
+        maxVol: 250
+        reagents:
+        - ReagentId: SlermQueenPlus
+          Quantity: 30
+  - type: Udder
+    reagentId: SlermQueenPlus
+    quantityPerUpdate: 25
+    growthDelay: 30
   - type: Destructible
     thresholds:
     - trigger:
@@ -288,7 +296,7 @@
   id: XenoLayEgg
   name: Отложить яйцо ксеноморфа
   description: Пригодится в любом гнезде.
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     icon: { sprite: Backmen/test/base/rsi/Textures/Misc/Egg.rsi, state: icon }
@@ -723,7 +731,7 @@
   id: ActionHunterInvisibility
   name: action-name-psionic-invisibility
   description: action-description-psionic-invisibility
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: InstantAction
       useDelay: 30
@@ -1136,19 +1144,19 @@
 - type: entity
   id: XenoSpitBullet4
   parent: XenoSpitBullet
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: CartridgeAmmo
     deleteOnSpawn: true
     proto: XenoSpitBullet
-    count: 4
-    spread: 12
+    #count: 4
+    #spread: 12
 
 - type: entity
   id: XenoSpitBullet
   name: плевок ксено
   parent: BulletDisablerPractice
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     sprite: Objects/Weapons/Guns/Projectiles/magic.rsi
@@ -1235,7 +1243,7 @@
   id: GasXenoSpitBullet
   name: газовый плевок ксено
   parent: BaseBulletTrigger
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     sprite: Objects/Weapons/Guns/Projectiles/magic.rsi
@@ -1262,7 +1270,7 @@
   id: XenoGas
   name: smoke
   parent: Smoke
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -1279,7 +1287,7 @@
   id: FireXenoSpitBullet
   name: плевок ксено
   parent: FoodInjectableBase
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     sprite: Objects/Weapons/Guns/Projectiles/magic.rsi
@@ -1417,7 +1425,7 @@
   id: XenoSpitHealingBullet
   name: феромоны ксено
   parent: BulletDisablerPractice
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     sprite: Objects/Weapons/Guns/Projectiles/magic.rsi
@@ -1485,7 +1493,7 @@
   id: XenoWeedsAction
   name: Корни
   description: Взращивает липкие корни
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     icon: Backmen/test/base/rsi/Textures/Structures/xeno/weeds.rsi/full.png
@@ -1771,6 +1779,14 @@
   description: На вид мерзкое.
   save: false
   components:
+  - type: LanguageSpeaker
+    currentLanguage: Xeno
+  - type: LanguageKnowledge #backmen: languages
+    speaks:
+    - Xeno
+    understands:
+    - Xeno
+    - TauCetiBasic
   - type: ContainerContainer
   - type: ActionsContainer
   - type: Actions
@@ -1808,7 +1824,7 @@
   #  softness: 5
   #  color: "#FF33FF"
   #  autoRot: true
-  - type: GhostTakeoverAvailable
+  #- type: GhostTakeoverAvailable
   - type: GhostRole
     allowMovement: false
     allowSpeech: false
@@ -1818,8 +1834,8 @@
     rules: "Вырасти в полноценного защитника улья."
     raffle:
       settings: default
-  - type: Polymorphable
-    innatePolymorphs: [ EggToLarva ]
+  - type: GhostRoleMobSpawner
+    prototype: KsenosXenoLarva
 
 
 # LOCATOR #
@@ -1856,7 +1872,7 @@
 
 - type: entity
   id: ActionToLarva
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     event: !type:PolymorphActionEvent
@@ -1871,7 +1887,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: LarvaToDrone
@@ -1882,7 +1898,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: LarvaToRunner
@@ -1893,7 +1909,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: DroneToSpitter
@@ -1904,7 +1920,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: RunnerToWarrior
@@ -1915,7 +1931,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: RunnerToHunter
@@ -1926,7 +1942,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 # ABILITIES #
 
@@ -1952,7 +1968,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: false
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Larva
@@ -1963,7 +1979,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Drone
@@ -1974,7 +1990,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Runner
@@ -1985,7 +2001,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Spitter
@@ -1996,7 +2012,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Warrior
@@ -2007,7 +2023,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Praetorian
@@ -2018,7 +2034,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Ravager
@@ -2029,7 +2045,7 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30
 
 - type: polymorph
   id: Queen
@@ -2040,4 +2056,4 @@
     revertOnCrit: false
     revertOnDeath: false
     allowRepeatedMorphs: true
-    delay: 30
+    cooldown: 30

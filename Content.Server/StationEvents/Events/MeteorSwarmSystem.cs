@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 using Content.Server.Chat.Systems;
 using Content.Server.GameTicking.Rules;
@@ -28,9 +29,13 @@ public sealed class MeteorSwarmSystem : GameRuleSystem<MeteorSwarmComponent>
 
         component.WaveCounter = component.Waves.Next(RobustRandom);
 
+        // we don't want to send to players who aren't in game (i.e. in the lobby)
+        Filter allPlayersInGame = Filter.Empty().AddWhere(GameTicker.UserHasJoinedGame);
+
         if (component.Announcement is { } locId)
-            _chat.DispatchGlobalAnnouncement(Loc.GetString(locId), playSound: false, colorOverride: Color.Gold);
-        _audio.PlayGlobal(component.AnnouncementSound, Filter.Broadcast(), true);
+            _chat.DispatchFilteredAnnouncement(allPlayersInGame, Loc.GetString(locId), playSound: false, colorOverride: Color.Gold);
+
+        _audio.PlayGlobal(component.AnnouncementSound, allPlayersInGame, true);
     }
 
     protected override void ActiveTick(EntityUid uid, MeteorSwarmComponent component, GameRuleComponent gameRule, float frameTime)
@@ -40,11 +45,12 @@ public sealed class MeteorSwarmSystem : GameRuleSystem<MeteorSwarmComponent>
 
         component.NextWaveTime += TimeSpan.FromSeconds(component.WaveCooldown.Next(RobustRandom));
 
+        var stations = _station.GetStations().Where(HasComp<StationEventEligibleComponent>).ToList();
 
-        if (_station.GetStations().Count == 0)
+        if (stations.Count == 0)
             return;
 
-        var station = RobustRandom.Pick(_station.GetStations());
+        var station = RobustRandom.Pick(stations); // backmen: centcomm
         if (_station.GetLargestGrid(Comp<StationDataComponent>(station)) is not { } grid)
             return;
 

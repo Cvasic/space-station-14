@@ -13,8 +13,11 @@
     interfaces:
       enum.ShipyardConsoleUiKey.Shipyard:
         type: ShipyardConsoleBoundUserInterface
+      enum.WiresUiKey.Key:
+        type: WiresBoundUserInterface
   - type: Computer
     board: ShipyardComputerCircuitboard
+  - type: StationAiWhitelist
   - type: PointLight
     radius: 1.5
     energy: 1.6

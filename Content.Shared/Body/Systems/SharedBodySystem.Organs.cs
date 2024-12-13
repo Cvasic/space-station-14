@@ -1,14 +1,34 @@
 using System.Diagnostics.CodeAnalysis;
+using Content.Shared.Backmen.Surgery.Body.Organs;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Events;
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
+using Content.Shared.Damage;
 using Robust.Shared.Containers;
+
+// Shitmed Change
 
 namespace Content.Shared.Body.Systems;
 
 public partial class SharedBodySystem
 {
+    // Shitmed Change Start
+
+    private void InitializeOrgans()
+    {
+        SubscribeLocalEvent<OrganComponent, MapInitEvent>(OnMapInit);
+        SubscribeLocalEvent<OrganComponent, OrganEnableChangedEvent>(OnOrganEnableChanged);
+    }
+
+    private void OnMapInit(Entity<OrganComponent> ent, ref MapInitEvent args)
+    {
+        if (ent.Comp.OnAdd is not null || ent.Comp.OnRemove is not null)
+            EnsureComp<OrganEffectComponent>(ent);
+    }
+
+    // Shitmed Change End
+
     private void AddOrgan(
         Entity<OrganComponent> organEnt,
         EntityUid bodyUid,
@@ -20,9 +40,18 @@ public partial class SharedBodySystem
 
         if (organEnt.Comp.Body is not null)
         {
+            organEnt.Comp.OriginalBody = organEnt.Comp.Body; // Shitmed Change
             var addedInBodyEv = new OrganAddedToBodyEvent(bodyUid, parentPartUid);
             RaiseLocalEvent(organEnt, ref addedInBodyEv);
+            var organEnabledEv = new OrganEnableChangedEvent(true);
+            RaiseLocalEvent(organEnt, ref organEnabledEv);
         }
+
+        // Shitmed Change Start
+        if (TryComp(parentPartUid, out DamageableComponent? damageable)
+            && damageable.TotalDamage > 200)
+            TrySetOrganUsed(organEnt, true, organEnt.Comp);
+        // Shitmed Change End
 
         Dirty(organEnt, organEnt.Comp);
     }
@@ -34,9 +63,19 @@ public partial class SharedBodySystem
 
         if (organEnt.Comp.Body is { Valid: true } bodyUid)
         {
+            // Shitmed Change Start
+            organEnt.Comp.OriginalBody = organEnt.Comp.Body;
+            var organDisabledEv = new OrganEnableChangedEvent(false);
+            RaiseLocalEvent(organEnt, ref organDisabledEv);
+            // Shitmed Change End
             var removedInBodyEv = new OrganRemovedFromBodyEvent(bodyUid, parentPartUid);
             RaiseLocalEvent(organEnt, ref removedInBodyEv);
         }
+
+        if (parentPartUid is { Valid: true }
+            && TryComp(parentPartUid, out DamageableComponent? damageable)
+            && damageable.TotalDamage > 200)
+            TrySetOrganUsed(organEnt, true, organEnt.Comp);
 
         organEnt.Comp.Body = null;
         Dirty(organEnt, organEnt.Comp);
@@ -124,7 +163,7 @@ public partial class SharedBodySystem
     /// </summary>
     public bool RemoveOrgan(EntityUid organId, OrganComponent? organ = null)
     {
-        if (!Containers.TryGetContainingContainer(organId, out var container))
+        if (!Containers.TryGetContainingContainer((organId, null, null), out var container))
             return false;
 
         var parent = container.Owner;
@@ -158,26 +197,24 @@ public partial class SharedBodySystem
     }
 
     /// <summary>
-    ///     Returns a list of ValueTuples of <see cref="T"/> and OrganComponent on each organ
-    ///     in the given body.
+    /// Returns a list of Entity<<see cref="T"/>, <see cref="OrganComponent"/>>
+    /// for each organ of the body
     /// </summary>
-    /// <param name="uid">The body entity id to check on.</param>
-    /// <param name="body">The body to check for organs on.</param>
-    /// <typeparam name="T">The component to check for.</typeparam>
-    public List<(T Comp, OrganComponent Organ)> GetBodyOrganComponents<T>(
-        EntityUid uid,
-        BodyComponent? body = null)
+    /// <typeparam name="T">The component that we want to return</typeparam>
+    /// <param name="entity">The body to check the organs of</param>
+    public List<Entity<T, OrganComponent>> GetBodyOrganEntityComps<T>(
+        Entity<BodyComponent?> entity)
         where T : IComponent
     {
-        if (!Resolve(uid, ref body))
-            return new List<(T Comp, OrganComponent Organ)>();
+        if (!Resolve(entity, ref entity.Comp))
+            return new List<Entity<T, OrganComponent>>();
 
         var query = GetEntityQuery<T>();
-        var list = new List<(T Comp, OrganComponent Organ)>(3);
-        foreach (var organ in GetBodyOrgans(uid, body))
+        var list = new List<Entity<T, OrganComponent>>(3);
+        foreach (var organ in GetBodyOrgans(entity.Owner, entity.Comp))
         {
             if (query.TryGetComponent(organ.Id, out var comp))
-                list.Add((comp, organ.Component));
+                list.Add((organ.Id, comp, organ.Component));
         }
 
         return list;
@@ -192,19 +229,18 @@ public partial class SharedBodySystem
     /// <param name="body">The body to check for organs on.</param>
     /// <typeparam name="T">The component to check for.</typeparam>
     /// <returns>Whether any were found.</returns>
-    public bool TryGetBodyOrganComponents<T>(
-        EntityUid uid,
-        [NotNullWhen(true)] out List<(T Comp, OrganComponent Organ)>? comps,
-        BodyComponent? body = null)
+    public bool TryGetBodyOrganEntityComps<T>(
+        Entity<BodyComponent?> entity,
+        [NotNullWhen(true)] out List<Entity<T, OrganComponent>>? comps)
         where T : IComponent
     {
-        if (!Resolve(uid, ref body))
+        if (!Resolve(entity.Owner, ref entity.Comp))
         {
             comps = null;
             return false;
         }
 
-        comps = GetBodyOrganComponents<T>(uid, body);
+        comps = GetBodyOrganEntityComps<T>(entity);
 
         if (comps.Count != 0)
             return true;
@@ -212,4 +248,63 @@ public partial class SharedBodySystem
         comps = null;
         return false;
     }
+
+    // Shitmed Change Start
+
+    public bool TrySetOrganUsed(EntityUid organId, bool used, OrganComponent? organ = null)
+    {
+        if (!Resolve(organId, ref organ)
+            || organ.Used == used)
+            return false;
+
+        organ.Used = used;
+        Dirty(organId, organ);
+        return true;
+    }
+
+    private void OnOrganEnableChanged(Entity<OrganComponent> organEnt, ref OrganEnableChangedEvent args)
+    {
+        if (!organEnt.Comp.CanEnable && args.Enabled)
+            return;
+
+        organEnt.Comp.Enabled = args.Enabled;
+
+        if (args.Enabled)
+            EnableOrgan(organEnt);
+        else
+            DisableOrgan(organEnt);
+
+        if (organEnt.Comp.Body is { Valid: true } bodyEnt)
+            RaiseLocalEvent(organEnt, new OrganComponentsModifyEvent(bodyEnt, args.Enabled));
+
+        Dirty(organEnt, organEnt.Comp);
+    }
+
+    private void EnableOrgan(Entity<OrganComponent> organEnt)
+    {
+        if (!TryComp(organEnt.Comp.Body, out BodyComponent? body))
+            return;
+
+        // I hate having to hardcode these checks so much.
+        if (HasComp<EyesComponent>(organEnt))
+        {
+            var ev = new OrganEnabledEvent(organEnt);
+            RaiseLocalEvent(organEnt, ref ev);
+        }
+    }
+
+    private void DisableOrgan(Entity<OrganComponent> organEnt)
+    {
+        if (!TryComp(organEnt.Comp.Body, out BodyComponent? body))
+            return;
+
+        // I hate having to hardcode these checks so much.
+        if (HasComp<EyesComponent>(organEnt))
+        {
+            var ev = new OrganDisabledEvent(organEnt);
+            RaiseLocalEvent(organEnt, ref ev);
+        }
+    }
+
+    // Shitmed Change End
 }

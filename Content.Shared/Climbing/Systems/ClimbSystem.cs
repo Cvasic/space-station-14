@@ -1,5 +1,5 @@
 using Content.Shared.ActionBlocker;
-using Content.Shared.Body.Systems;
+using Content.Shared.Backmen.Targeting;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Climbing.Components;
 using Content.Shared.Climbing.Events;
@@ -15,6 +15,7 @@ using Content.Shared.Popups;
 using Content.Shared.Stunnable;
 using Content.Shared.Verbs;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Containers;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Collision.Shapes;
 using Robust.Shared.Physics.Components;
@@ -35,6 +36,7 @@ public sealed partial class ClimbSystem : VirtualController
     [Dependency] private readonly FixtureSystem _fixtureSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfterSystem = default!;
+    [Dependency] private readonly SharedContainerSystem _containers = default!;
     [Dependency] private readonly SharedInteractionSystem _interactionSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
@@ -44,6 +46,7 @@ public sealed partial class ClimbSystem : VirtualController
     private const string ClimbingFixtureName = "climb";
     private const int ClimbingCollisionGroup = (int) (CollisionGroup.TableLayer | CollisionGroup.LowImpassable);
 
+    private EntityQuery<ClimbableComponent> _climbableQuery;
     private EntityQuery<FixturesComponent> _fixturesQuery;
     private EntityQuery<TransformComponent> _xformQuery;
 
@@ -51,6 +54,7 @@ public sealed partial class ClimbSystem : VirtualController
     {
         base.Initialize();
 
+        _climbableQuery = GetEntityQuery<ClimbableComponent>();
         _fixturesQuery = GetEntityQuery<FixturesComponent>();
         _xformQuery = GetEntityQuery<TransformComponent>();
 
@@ -146,6 +150,10 @@ public sealed partial class ClimbSystem : VirtualController
     private void OnCanDragDropOn(EntityUid uid, ClimbableComponent component, ref CanDropTargetEvent args)
     {
         if (args.Handled)
+            return;
+
+        // If already climbing then don't show outlines.
+        if (TryComp(args.Dragged, out ClimbingComponent? climbing) && climbing.IsClimbing)
             return;
 
         var canVault = args.User == args.Dragged
@@ -246,6 +254,18 @@ public sealed partial class ClimbSystem : VirtualController
             return;
 
         if (!Resolve(climbable, ref comp, false))
+            return;
+
+        var selfEvent = new SelfBeforeClimbEvent(uid, user, (climbable, comp));
+        RaiseLocalEvent(uid, selfEvent);
+
+        if (selfEvent.Cancelled)
+            return;
+
+        var targetEvent = new TargetBeforeClimbEvent(uid, user, (climbable, comp));
+        RaiseLocalEvent(climbable, targetEvent);
+
+        if (targetEvent.Cancelled)
             return;
 
         if (!ReplaceFixtures(uid, climbing, fixtures))
@@ -350,12 +370,31 @@ public sealed partial class ClimbSystem : VirtualController
     {
         if (args.OurFixtureId != ClimbingFixtureName
             || !component.IsClimbing
-            || component.NextTransition != null
-            || args.OurFixture.Contacts.Count > 1)
+            || component.NextTransition != null)
         {
             return;
         }
 
+        foreach (var contact in args.OurFixture.Contacts.Values)
+        {
+            if (!contact.IsTouching)
+                continue;
+
+            var otherEnt = contact.OtherEnt(uid);
+            var (otherFixtureId, otherFixture) = contact.OtherFixture(uid);
+
+            // TODO: Remove this on engine.
+            if (args.OtherEntity == otherEnt && args.OtherFixtureId == otherFixtureId)
+                continue;
+
+            if (otherFixture is { Hard: true } &&
+                _climbableQuery.HasComp(otherEnt))
+            {
+                return;
+            }
+        }
+
+        // TODO: Is this even needed anymore?
         foreach (var otherFixture in args.OurFixture.Contacts.Keys)
         {
             // If it's the other fixture then ignore em
@@ -422,6 +461,12 @@ public sealed partial class ClimbSystem : VirtualController
             return false;
         }
 
+        if (_containers.IsEntityInContainer(user))
+        {
+            reason = Loc.GetString("comp-climbable-cant-reach");
+            return false;
+        }
+
         reason = string.Empty;
         return true;
     }
@@ -459,6 +504,12 @@ public sealed partial class ClimbSystem : VirtualController
             return false;
         }
 
+        if (_containers.IsEntityInContainer(user) || _containers.IsEntityInContainer(dragged))
+        {
+            reason = Loc.GetString("comp-climbable-cant-reach");
+            return false;
+        }
+
         reason = string.Empty;
         return true;
     }
@@ -478,7 +529,7 @@ public sealed partial class ClimbSystem : VirtualController
         if (TryComp<PhysicsComponent>(args.Climber, out var physics) && physics.Mass <= component.MassLimit)
             return;
 
-        _damageableSystem.TryChangeDamage(args.Climber, component.ClimberDamage, origin: args.Climber);
+        _damageableSystem.TryChangeDamage(args.Climber, component.ClimberDamage, origin: args.Climber, targetPart: TargetBodyPart.FullLegs); // backmen: surgery
         _damageableSystem.TryChangeDamage(uid, component.TableDamage, origin: args.Climber);
         _stunSystem.TryParalyze(args.Climber, TimeSpan.FromSeconds(component.StunTime), true);
 

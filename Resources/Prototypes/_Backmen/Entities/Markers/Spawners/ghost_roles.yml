@@ -23,7 +23,7 @@
   id: SpawnPointGhostFugitive
   name: ghost role spawn point
   parent: MarkerBase
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: GhostRoleMobSpawner
       prototype: MobHumanFugitive
@@ -47,7 +47,7 @@
   name: ghost role spawn point
   suffix: Ifrit
   parent: MarkerBase
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: GhostRoleMobSpawner
       prototype: MobIfritFamiliar
@@ -90,7 +90,7 @@
   id: SpawnPointGhostBlobRat
   name: точка спавна мыши блоба
   suffix: Блоб, роль призрак
-  parent: MarkerBase
+  parent: BaseAntagSpawner
   components:
     - type: GhostRoleMobSpawner
       prototype: MobMouseCancer
